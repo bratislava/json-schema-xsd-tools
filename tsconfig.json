@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "target": "es5",
+    // "jsx": "preserve",
+    // "lib": [
+    //   "dom",
+    //   "dom.iterable",
+    //   "esnext"
+    // ],
+    "allowJs": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    "module": "es6",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    "plugins": [
+      {
+        "name": "typescript-strict-plugin"
+      }
+    ],
+    "baseUrl": "./",
+    "paths": {
+      
+    }
+  }
+  // "include": [
+  //   "**/*.ts",
+  //   "**/*.tsx",
+  //   "**/*.js",
+  //   "**/*.jsx",
+  //   "next-env.d.ts"
+  // ],
+  // "exclude": [
+  //   "node_modules"
+  // ]
+}
