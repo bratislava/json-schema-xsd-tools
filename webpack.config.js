@@ -19,7 +19,11 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'json-schema-xsd-tools.js',
-    library: "jsonSchemaXsdTools",
+    globalObject: 'this',
+    library: {
+      name: 'json-schema-xsd-tools',
+      type: 'umd',
+    },
   },
   mode: 'production',
   plugins: [new ESLintPlugin()]
