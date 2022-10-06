@@ -61,7 +61,7 @@ const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode) : J
       if (!enumeration) {
         enumeration = []
         restriction.children('xs\\:enumeration').each(function () {
-          enumeration.push($(el).attr('value'))
+          enumeration.push($(this).attr('value'))
         })
         enumMap.set(type, enumeration)
       }
