@@ -32,6 +32,53 @@ const getJsonSchemaType = (type: string | undefined): JsonSchemaType => {
 }
 
 const enumMap = new Map()
+const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode) : JsonSchema => {
+  const title = $(el).attr('name')
+  const type = $(el).attr('type')
+
+  if (!type) {
+    const restriction = $(this).find(`xs\\:restriction`)
+    return {
+      title,
+      type: getJsonSchemaType(restriction.attr('base')),
+      pattern: $(restriction).children(`xs\\:pattern`).attr('value'),
+    }
+  } else if (type.startsWith('xs:')) {
+    return {
+      title,
+      type: getJsonSchemaType(type),
+    }
+  } else {
+    const simpleType = $(`xs\\:simpleType[name='${type}']`)
+    if (simpleType.length) {
+      const restriction = simpleType.find(`xs\\:restriction`)
+      let enumeration = enumMap.get(type)
+      if (!enumeration) {
+        enumeration = []
+        restriction.children('xs\\:enumeration').each(function () {
+          enumeration.push($(this).attr('value'))
+        })
+        enumMap.set(type, enumeration)
+      }
+
+      return {
+        title,
+        type: getJsonSchemaType(restriction.attr('base')),
+        pattern: $(restriction).children(`xs\\:pattern`).attr('value'),
+        enum: enumeration,
+      }
+    } else {
+      const schema = buildJsonSchema($, `xs\\:complexType[name='${type}']`)
+      return {
+        title,
+        type: 'object',
+        properties: schema.properties,
+        required: schema.required
+      }
+    }
+  }
+}
+
 const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema => {
   const properties: JsonSchemaProperties = {}
   const required: string[] = []
@@ -42,56 +89,14 @@ const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema => {
     path = `xs\\:complexType[name='${type}']`
   }
 
-  $(`${path} xs\\:element`).each(function () {
-    const title = $(this).attr('name')
-    const key = toLowerCamelCase(title)
-    const type = $(this).attr('type')
-    
+  $(`${path} xs\\:element`).each(function () {    
+    const property = buildJsonSchemaProperty($, this);
+    const key = toLowerCamelCase(property.title);
+    properties[key] = property;
+
     const minOccurs = $(this).attr('minOccurs');
     if(!minOccurs || minOccurs === '1') {
       required.push(key);
-    }
-
-    if (!type) {
-      const restriction = $(this).find(`xs\\:restriction`)
-      properties[key] = {
-        title,
-        type: getJsonSchemaType(restriction.attr('base')),
-        pattern: $(restriction).children(`xs\\:pattern`).attr('value'),
-      }
-    } else if (type.startsWith('xs:')) {
-      properties[key] = {
-        title,
-        type: getJsonSchemaType(type),
-      }
-    } else {
-      const simpleType = $(`xs\\:simpleType[name='${type}']`)
-      if (simpleType.length) {
-        const restriction = simpleType.find(`xs\\:restriction`)
-        let enumeration = enumMap.get(type)
-        if (!enumeration) {
-          enumeration = []
-          restriction.children('xs\\:enumeration').each(function () {
-            enumeration.push($(this).attr('value'))
-          })
-          enumMap.set(type, enumeration)
-        }
-
-        properties[key] = {
-          title,
-          type: getJsonSchemaType(restriction.attr('base')),
-          pattern: $(restriction).children(`xs\\:pattern`).attr('value'),
-          enum: enumeration,
-        }
-      } else {
-        const schema = buildJsonSchema($, `xs\\:complexType[name='${type}']`)
-        properties[key] = {
-          title,
-          type: 'object',
-          properties: schema.properties,
-          required: schema.required
-        }
-      }
     }
   })
 
