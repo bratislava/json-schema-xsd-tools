@@ -13,6 +13,11 @@ interface JsonSchema {
   enum?: string[]
 }
 
+interface Error {
+  path: string[],
+  message: string
+}
+
 interface JsonSchemaProperties {
   [key: string]: JsonSchema
 }
@@ -37,7 +42,7 @@ const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode) : J
   const type = $(el).attr('type')
 
   if (!type) {
-    const restriction = $(this).find(`xs\\:restriction`)
+    const restriction = $(el).find(`xs\\:restriction`)
     return {
       title,
       type: getJsonSchemaType(restriction.attr('base')),
@@ -56,7 +61,7 @@ const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode) : J
       if (!enumeration) {
         enumeration = []
         restriction.children('xs\\:enumeration').each(function () {
-          enumeration.push($(this).attr('value'))
+          enumeration.push($(el).attr('value'))
         })
         enumMap.set(type, enumeration)
       }
@@ -94,7 +99,7 @@ const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema => {
     const key = toLowerCamelCase(property.title);
     properties[key] = property;
 
-    const minOccurs = $(this).attr('minOccurs');
+    const minOccurs = $(this).attr('minOccurs')
     if(!minOccurs || minOccurs === '1') {
       required.push(key);
     }
@@ -103,12 +108,39 @@ const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema => {
   return { properties, required, type: 'object' }
 }
 
-export const loadXsdAndBuildJsonSchema = (xsd: string) : JsonSchema => {
-  const $ = cheerio.load(xsd, { xmlMode: true })
+export const loadAndBuildJsonSchema = (xsdSchema: string) : JsonSchema => {
+  const $ = cheerio.load(xsdSchema, { xmlMode: true })
   const jsonSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
   return jsonSchema
 }
 
-export const validate = () : boolean => {
-  return true
+const validate = (xsdSchema: JsonSchema, jsonSchema: JsonSchema, path: string[]) : Error[] => {
+  let errors : Error[] = [];
+
+  if(xsdSchema.properties) {
+    Object.keys(xsdSchema.properties).forEach(key => {
+
+      if(xsdSchema.properties) {
+        if(!jsonSchema.properties) {
+          errors.push({
+            path,
+            message: 'missing property'
+          })
+        }
+        else {
+          errors = [...errors, ...validate(xsdSchema.properties?.[key], jsonSchema.properties[key], [...path, key])]
+        }
+      }
+    });
+  }
+
+  return errors;
+}
+
+export const loadAndValidate = (xsd: string, jsonSchema: JsonSchema): Error[] => {
+  const $ = cheerio.load(xsd, { xmlMode: true })
+  const xsdSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
+
+  const errors = validate(xsdSchema, jsonSchema, [])
+  return errors
 }
