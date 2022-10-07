@@ -16,7 +16,7 @@
   },
   "keywords": [],
   "author": "",
-  "private": true,
+  "private": false,
   "license": "EUPL-1.2",
   "bugs": {
     "url": "https://github.com/bratislava/json-schema-xsd-tools/issues"
