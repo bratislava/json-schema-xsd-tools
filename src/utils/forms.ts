@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio'
 import { toLowerCamelCase } from './strings'
 
 type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-type JsonSchemaFormat = 'date' | 'date-time' | undefined
+type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | undefined
 
 export interface JsonSchema {
   type: JsonSchemaType
@@ -10,9 +10,15 @@ export interface JsonSchema {
   title?: string
   description?: string
   properties?: JsonSchemaProperties
+  items?: JsonSchemaItems
   required?: string[]
   pattern?: string
   enum?: string[]
+}
+
+interface JsonSchemaItems {
+  type: JsonSchemaType
+  format?: string
 }
 
 interface JsonSchemaProperties {
@@ -83,10 +89,11 @@ const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode): Js
       const schema = buildJsonSchema($, `xs\\:complexType[name='${type}']`)
       return {
         title,
-        type: 'object',
+        type: schema.type,
         description: schema.description,
         properties: schema.properties,
         required: schema.required,
+        format: schema.format,
       }
     }
   }
@@ -96,14 +103,16 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
   const properties: JsonSchemaProperties = {}
   const required: string[] = []
   let description
+  let isAttachment = false
+  let isEnum = false
 
   const extension = $(`${path} xs\\:extension`)
   if (extension.length) {
     const type = extension.attr('base')
     path = `xs\\:complexType[name='${type}']`
 
-    // const isEnumType = type === 'EnumerationType';
-    // const isAttachmentType = 'PrilohaType';
+    isEnum = type === 'EnumerationType'
+    isAttachment = type === 'PrilohaType'
   }
 
   const el = $(`${path}`)
@@ -120,7 +129,9 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
 
       const maxOccurs = $(this).attr('maxOccurs')
       if (maxOccurs === 'unbounded') {
+        property.items = { type: property.type, format: property.format }
         property.type = 'array'
+        property.format = undefined
       }
       properties[key] = property
 
@@ -131,7 +142,13 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
     })
   }
 
-  return { properties, description, required, type: 'object' }
+  return {
+    properties,
+    description,
+    required,
+    type: isEnum || isAttachment ? 'string' : 'object',
+    format: isAttachment ? 'data-url' : undefined,
+  }
 }
 
 export const loadAndBuildJsonSchema = (xsdSchema: string): JsonSchema => {
