@@ -1,45 +1,28 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 16 + ESM + Strictest",
   "compilerOptions": {
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "target": "es5",
-    // "jsx": "preserve",
-    // "lib": [
-    //   "dom",
-    //   "dom.iterable",
-    //   "esnext"
-    // ],
-    "allowJs": true,
+    "lib": [
+      "es2021"
+    ],
+    "module": "es2022",
+    "target": "es2021",
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "strict": false,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": false,
-    "module": "es6",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    "plugins": [
-      {
-        "name": "typescript-strict-plugin"
-      }
-    ],
-    "baseUrl": "./",
-    "paths": {
-      
-    }
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "importsNotUsedAsValues": "error",
+    "checkJs": true
   }
-  // "include": [
-  //   "**/*.ts",
-  //   "**/*.tsx",
-  //   "**/*.js",
-  //   "**/*.jsx",
-  //   "next-env.d.ts"
-  // ],
-  // "exclude": [
-  //   "node_modules"
-  // ]
 }
