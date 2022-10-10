@@ -297,30 +297,13 @@
                    },
                    "stat":{
                       "title":"Stat",
-                      "type":"object",
+                      "type":"string",
                       "description":"Číselník SUSR_0086 - Krajiny OSN",
                       "properties":{
-                         "code":{
-                            "title":"Code",
-                            "type":"string",
-                            "pattern":"[0-9]{3}",
-                            "enum":[
-                               
-                            ]
-                         },
-                         "name":{
-                            "title":"Name",
-                            "type":"string"
-                         },
-                         "wsEnumCode":{
-                            "title":"WsEnumCode",
-                            "type":"string"
-                         }
+                         
                       },
                       "required":[
-                         "code",
-                         "name",
-                         "wsEnumCode"
+                         
                       ]
                    }
                 },
@@ -812,30 +795,13 @@
                          },
                          "stat":{
                             "title":"Stat",
-                            "type":"object",
+                            "type":"string",
                             "description":"Číselník SUSR_0086 - Krajiny OSN",
                             "properties":{
-                               "code":{
-                                  "title":"Code",
-                                  "type":"string",
-                                  "pattern":"[0-9]{3}",
-                                  "enum":[
-                                     
-                                  ]
-                               },
-                               "name":{
-                                  "title":"Name",
-                                  "type":"string"
-                               },
-                               "wsEnumCode":{
-                                  "title":"WsEnumCode",
-                                  "type":"string"
-                               }
+                               
                             },
                             "required":[
-                               "code",
-                               "name",
-                               "wsEnumCode"
+                               
                             ]
                          }
                       },
