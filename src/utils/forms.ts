@@ -121,8 +121,12 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
     description = documentation.text()
   }
 
-  const abstract = el.attr('abstract')
-  if (abstract !== 'true') {
+  const restriction = el.find(`xs\\:restriction`)
+  if (restriction.length && restriction.attr('base') === 'EnumerationType') {
+    isEnum = true
+  }
+
+  if (!isEnum && !isAttachment) {
     el.find(`xs\\:element`).each(function () {
       const property = buildJsonSchemaProperty($, this)
       const key = toLowerCamelCase(property.title)
