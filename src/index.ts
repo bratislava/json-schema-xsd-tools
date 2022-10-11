@@ -1,6 +1,6 @@
-import { validate } from './utils/forms'
+import { loadAndValidate } from './utils/validation'
 
 export {
-  validate
+  loadAndValidate
 }
 

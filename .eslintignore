@@ -1,5 +1,6 @@
 *config.*
 .eslintrc.js
 dist
+forms
 node_modules
 package-lock.json
