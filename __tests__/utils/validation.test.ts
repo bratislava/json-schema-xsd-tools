@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { cwd } from 'node:process'
-import { ErrorType, loadAndValidate } from './validation'
+import { ErrorType, loadAndValidate } from '../../src/utils/validation'
 
 describe('validation', () => {
   let xsdSchemaBuffer: Buffer
