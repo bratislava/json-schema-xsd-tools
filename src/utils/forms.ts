@@ -1,24 +1,33 @@
 import * as cheerio from 'cheerio'
-import { toLowerCamelCase } from './strings'
+import { firstCharToLower, firstCharToUpper } from './strings'
 
+type XsdType =
+  | 'xs:string'
+  | 'xs:boolean'
+  | 'xs:date'
+  | 'xs:dateTime'
+  | 'PrilohaType'
+  | 'EnumerationType'
+  | 'xs:integer'
+  | ''
 type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | undefined
+type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | undefined
 
 export interface JsonSchema {
   type: JsonSchemaType
   format?: JsonSchemaFormat
-  title?: string
-  description?: string
-  properties?: JsonSchemaProperties
-  items?: JsonSchemaItems
-  required?: string[]
-  pattern?: string
-  enum?: string[]
+  title?: string | undefined
+  description?: string | undefined
+  properties?: JsonSchemaProperties | undefined
+  items?: JsonSchemaItems | undefined
+  required?: string[] | undefined
+  pattern?: string | undefined
+  enum?: string[] | undefined
 }
 
 interface JsonSchemaItems {
   type: JsonSchemaType
-  format?: string
+  format?: JsonSchemaFormat
 }
 
 interface JsonSchemaProperties {
@@ -31,6 +40,9 @@ const getJsonSchemaType = (type: string | undefined): JsonSchemaType => {
       return 'boolean'
     case 'xs:string':
     case 'xs:date':
+    case 'xs:dateTime':
+    case 'PrilohaType':
+    case 'EnumerationType':
       return 'string'
     case 'xs:integer':
       return 'number'
@@ -43,6 +55,12 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   switch (type) {
     case 'xs:date':
       return 'date'
+    case 'xs:dateTime':
+      return 'date-time'
+    case 'PrilohaType':
+      return 'data-url'
+    case 'EnumerationType':
+      return 'ciselnik'
     default:
       return undefined
   }
@@ -60,7 +78,7 @@ const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode): Js
       type: getJsonSchemaType(restriction.attr('base')),
       pattern: $(restriction).children(`xs\\:pattern`).attr('value'),
     }
-  } else if (type.startsWith('xs:')) {
+  } else if (type.startsWith('xs:') || type === 'PrilohaType' || type === 'EnumerationType') {
     return {
       title,
       type: getJsonSchemaType(type),
@@ -83,7 +101,7 @@ const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode): Js
         title,
         type: getJsonSchemaType(restriction.attr('base')),
         pattern: $(restriction).children(`xs\\:pattern`).attr('value'),
-        enum: enumeration,
+        enum: enumeration.length > 0 ? enumeration : undefined,
       }
     } else {
       const schema = buildJsonSchema($, `xs\\:complexType[name='${type}']`)
@@ -129,7 +147,7 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
   if (!isEnum && !isAttachment) {
     el.find(`xs\\:element`).each(function () {
       const property = buildJsonSchemaProperty($, this)
-      const key = toLowerCamelCase(property.title)
+      const key = firstCharToLower(property.title)
 
       const maxOccurs = $(this).attr('maxOccurs')
       if (maxOccurs === 'unbounded') {
@@ -151,7 +169,7 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
     description,
     required,
     type: isEnum || isAttachment ? 'string' : 'object',
-    format: isAttachment ? 'data-url' : undefined,
+    format: isAttachment ? 'data-url' : isEnum ? 'ciselnik' : undefined,
   }
 }
 
@@ -159,4 +177,121 @@ export const loadAndBuildJsonSchema = (xsdSchema: string): JsonSchema => {
   const $ = cheerio.load(xsdSchema, { xmlMode: true })
   const jsonSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
   return jsonSchema
+}
+
+const getXsdTypeByJsonSchemaType = (type: JsonSchemaType): XsdType => {
+  switch (type) {
+    case 'boolean':
+      return 'xs:boolean'
+    case 'string':
+      return 'xs:string'
+    case 'number':
+      return 'xs:integer'
+    case 'null':
+    default:
+      return ''
+  }
+}
+
+const getXsdTypeByFormat = (format: JsonSchemaFormat): XsdType => {
+  switch (format) {
+    case 'date':
+      return 'xs:date'
+    case 'date-time':
+      return 'xs:dateTime'
+    case 'data-url':
+      return 'PrilohaType'
+    case 'ciselnik':
+      return 'EnumerationType'
+    default:
+      return 'xs:string'
+  }
+}
+
+const getXsdType = (
+  key: string,
+  property: JsonSchema,
+  type: JsonSchemaType,
+  format: JsonSchemaFormat
+): XsdType | string => {
+  let xsdType
+  if (type === 'string') {
+    if (property.pattern || (property.enum && property.enum.length)) {
+      xsdType = firstCharToUpper(key) + 'Type'
+    } else {
+      xsdType = getXsdTypeByFormat(format)
+    }
+  } else if (type === 'object') {
+    xsdType = firstCharToUpper(key) + 'Type'
+  } else {
+    xsdType = getXsdTypeByJsonSchemaType(type)
+  }
+  return xsdType
+}
+
+const buildXsd = (
+  container: cheerio.Cheerio<cheerio.Element>,
+  name: string,
+  required: string[] | undefined,
+  properties: JsonSchemaProperties,
+  processed: string[]
+) => {
+  const content: string[] = []
+  content.push(`<xs:complexType name=${name}><xs:sequence>`)
+
+  Object.keys(properties).forEach((key) => {
+    const property = properties?.[key]
+    const isRequired = required && required.includes(key)
+
+    if (property) {
+      const isArray = property.type === 'array'
+      const type = isArray && property.items ? property.items.type : property.type
+      const format = isArray && property.items ? property.items.format : property.format
+      const xsdType = getXsdType(key, property, type, format)
+
+      content.push(
+        `<xs:element name="${firstCharToUpper(key)}" type="${xsdType}" minOccurs="${isRequired ? 1 : 0}" maxOccurs="${
+          isArray ? 'unbounded' : 1
+        }" />`
+      )
+
+      if (!processed.includes(xsdType)) {
+        processed.push(xsdType)
+
+        if (type === 'object' && property.properties) {
+          buildXsd(container, xsdType, property.required, property.properties, processed)
+        } else if (property.enum && property.enum.length > 0) {
+          container.append(buildEnumSimpleType(xsdType, property.enum))
+        } else if (property.pattern) {
+          container.append(buildPatternSimpleType(xsdType, property.pattern))
+        }
+      }
+    }
+  })
+
+  content.push(`</xs:complexType></xs:sequence>`)
+  container.append(content.join(''))
+}
+
+const buildPatternSimpleType = (name: string, pattern: string): string => {
+  return `<xs:simpleType name="${name}"><xs:restriction base="xs:string"><xs:pattern value="${pattern}"/></xs:restriction></xs:simpleType>`
+}
+
+const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
+  const content: string[] = []
+  content.push(`<xs:simpleType name="${name}"><xs:restriction base="xs:string">`)
+  enumeration.forEach((e) => {
+    content.push(`<xs:enumeration value="${e}"/>`)
+  })
+  content.push(`</xs:restriction></xs:simpleType>`)
+  return content.join('')
+}
+
+export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
+  const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
+  if (jsonSchema.properties) {
+    buildXsd($(`xs\\:schema`), 'E-formBodyType', jsonSchema.required, jsonSchema.properties, [])
+  }
+
+  return $.html()
 }
