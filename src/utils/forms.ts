@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import { toCamelCase, toLowerCamelCase } from './strings'
+import { firstCharToLower, firstCharToUpper } from './strings'
 
 type XsdType =
   | 'xs:string'
@@ -147,7 +147,7 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
   if (!isEnum && !isAttachment) {
     el.find(`xs\\:element`).each(function () {
       const property = buildJsonSchemaProperty($, this)
-      const key = toLowerCamelCase(property.title)
+      const key = firstCharToLower(property.title)
 
       const maxOccurs = $(this).attr('maxOccurs')
       if (maxOccurs === 'unbounded') {
@@ -217,12 +217,12 @@ const getXsdType = (
   let xsdType
   if (type === 'string') {
     if (property.pattern || (property.enum && property.enum.length)) {
-      xsdType = toCamelCase(key) + 'Type'
+      xsdType = firstCharToUpper(key) + 'Type'
     } else {
       xsdType = getXsdTypeByFormat(format)
     }
   } else if (type === 'object') {
-    xsdType = toCamelCase(key) + 'Type'
+    xsdType = firstCharToUpper(key) + 'Type'
   } else {
     xsdType = getXsdTypeByJsonSchemaType(type)
   }
@@ -250,7 +250,7 @@ const buildXsd = (
       const xsdType = getXsdType(key, property, type, format)
 
       content.push(
-        `<xs:element name="${toCamelCase(key)}" type="${xsdType}" minOccurs="${isRequired ? 1 : 0}" maxOccurs="${
+        `<xs:element name="${firstCharToUpper(key)}" type="${xsdType}" minOccurs="${isRequired ? 1 : 0}" maxOccurs="${
           isArray ? 'unbounded' : 1
         }" />`
       )

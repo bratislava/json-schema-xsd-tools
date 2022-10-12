@@ -1,4 +1,4 @@
-export const toLowerCamelCase = (input: string | undefined) : string => {
+export const firstCharToLower = (input: string | undefined) : string => {
   if(!input) {
     return ''
   }
@@ -6,7 +6,7 @@ export const toLowerCamelCase = (input: string | undefined) : string => {
   return input.charAt(0).toLowerCase() + input.slice(1)
 }
 
-export const toCamelCase = (input: string | undefined) : string => {
+export const firstCharToUpper = (input: string | undefined) : string => {
   if(!input) {
     return ''
   }
