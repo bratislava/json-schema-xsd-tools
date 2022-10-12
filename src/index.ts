@@ -1,6 +1,5 @@
+import type { loadAndBuildJsonSchema, loadAndBuildXsd } from './utils/forms'
 import { loadAndValidate } from './utils/validation'
 
-export {
-  loadAndValidate
-}
+export { loadAndBuildJsonSchema, loadAndBuildXsd, loadAndValidate }
 
