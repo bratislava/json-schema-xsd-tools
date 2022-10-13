@@ -72,8 +72,8 @@ XSD template includes E-form metadata and some basic types (EnumerationType, Pri
 
 
 ## Documentation
-Explore the docs.
+Explore the [DOCS](https://bratislava.github.io/json-schema-xsd-tools/).
 
 
 ## License
-[EUPL-1.2](LICENSE)
+[EUPL-1.2](https://github.com/bratislava/json-schema-xsd-tools/blob/master/LICENSE.md)
