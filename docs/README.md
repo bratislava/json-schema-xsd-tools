@@ -1,12 +1,12 @@
+JSON schema XSD tools - v0.1.0 / [Exports](modules.md)
+
 # json-schema-xsd-tools
 <!-- [![npm](https://img.shields.io/npm/v/json-schema-xsd-tools)](https://www.npmjs.com/package/json-schema-xsd-tools) -->
 
 Tools capable of using JSON Schema to generate and validate XSD.
 
-
 JSON Schema is a vocabulary that allows to annotate and validate JSON documents.
 Read more about [JSON Schema](https://json-schema.org/).
-
 
 ## Installation
 In a browser:
@@ -20,7 +20,6 @@ Using yarn:
 Usign npm:
 
 `npm install json-schema-xsd-tools`
-
 
 ## Get started
 ```ts
@@ -60,10 +59,8 @@ console.log(errors) // => []
 
 XSD template includes E-form metadata and some basic types (EnumerationType, PrilohaType), see [template.xsd](forms/00603481.dopravneZnacenie.sk/template.xsd)
 
-
 ## Documentation
 Explore the [docs](docs/modules.md)
-
 
 ## License
 [EUPL-1.2](LICENSE)
