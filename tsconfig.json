@@ -25,5 +25,10 @@
     "noUnusedParameters": true,
     "importsNotUsedAsValues": "error",
     "checkJs": true
-  }
+  },
+  "exclude": [
+    "dist",
+    "docs",
+    "node_modules"
+  ]
 }

@@ -26,5 +26,19 @@ module.exports = {
     },
   },
   mode: 'production',
-  plugins: [new ESLintPlugin()]
+  plugins: [new ESLintPlugin()],
+  externals: {
+    lodash: {
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      amd: 'lodash',
+      root: '_',
+    },
+    cheerio: {
+      commonjs: 'cheerio',
+      commonjs2: 'cheerio',
+      amd: 'cheerio',
+      root: 'cheerio',
+    }
+  }
 };

@@ -10,9 +10,14 @@ type XsdType =
   | 'EnumerationType'
   | 'xs:integer'
   | ''
-type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | undefined
+export type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
+export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | undefined
 
+/**
+ * JSON schema object
+ * 
+ * Read more about [JSON schema](https://json-schema.org/).
+ */
 export interface JsonSchema {
   type: JsonSchemaType
   format?: JsonSchemaFormat
@@ -25,12 +30,12 @@ export interface JsonSchema {
   enum?: string[] | undefined
 }
 
-interface JsonSchemaItems {
+export interface JsonSchemaItems {
   type: JsonSchemaType
   format?: JsonSchemaFormat
 }
 
-interface JsonSchemaProperties {
+export interface JsonSchemaProperties {
   [key: string]: JsonSchema
 }
 
@@ -173,6 +178,12 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
   }
 }
 
+/**
+ * Loads XSD and returns generated JSON schema.
+ *
+ * @param xsdSchema - XSD schema
+ * @returns JSON schema
+ */
 export const loadAndBuildJsonSchema = (xsdSchema: string): JsonSchema => {
   const $ = cheerio.load(xsdSchema, { xmlMode: true })
   const jsonSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
@@ -287,6 +298,27 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
   return content.join('')
 }
 
+/**
+ * Loads JSON schema and returns generated XSD.
+ * 
+ * @remarks
+ * 
+ * Form is generated into Body element of XSD template:
+ * ```xml
+ * <xs:element name="E-form">
+ *   <xs:complexType>
+ *     <xs:sequence>
+ *       <xs:element name="Meta" type="E-formMetaType"/>
+ *       <xs:element name="Body" type="E-formBodyType"/>
+ *     </xs:sequence>
+ *   </xs:complexType>
+ * </xs:element>
+ * ```
+ *
+ * @param jsonSchema - JSON schema
+ * @param xsd - XSD template including E-form metadata and some basic types (EnumerationType, PrilohaType)
+ * @returns XSD schema
+ */
 export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
   if (jsonSchema.properties) {
