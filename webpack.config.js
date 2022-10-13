@@ -33,6 +33,12 @@ module.exports = {
       commonjs2: 'lodash',
       amd: 'lodash',
       root: '_',
+    },
+    cheerio: {
+      commonjs: 'cheerio',
+      commonjs2: 'cheerio',
+      amd: 'cheerio',
+      root: 'cheerio',
     }
   }
 };
