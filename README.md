@@ -9,6 +9,13 @@ Read more about [JSON Schema](https://json-schema.org/).
 
 
 ## Installation
+- Clone or download this repository.
+- run `yarn` or `npm install`
+- run `yarn run build` or `npm run build`
+- Navigate to your app.
+- run `yarn add <path to json-schema-xsd-tools folder>` or `npm install <path to json-schema-xsd-tools folder>`, 
+
+<!--
 In a browser:
 
 `<script src="dist/json-schema-xsd-tools.js"></script>`
@@ -20,12 +27,12 @@ Using yarn:
 Usign npm:
 
 `npm install json-schema-xsd-tools`
-
+-->
 
 ## Get started
 ```ts
 import { loadAndBuildXsd, loadAndValidate } from "json-schema-xsd-tools";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 
 const jsonSchema = {
   title: "A registration form",
@@ -50,9 +57,12 @@ const jsonSchema = {
   },
 };
 
-const templatePath = "template.xsd";
+const xsdPath = "schema.xsd"
+const templatePath = "template.xsd"
+
 const templateBuffer = await readFile(templatePath)
 const xsd = loadAndBuildXsd(jsonSchema, templateBuffer.toString())
+await writeFile(xsdPath, xsd)
 
 const errors = loadAndValidate(xsd, jsonSchema);
 console.log(errors) // => [] 
@@ -62,7 +72,7 @@ XSD template includes E-form metadata and some basic types (EnumerationType, Pri
 
 
 ## Documentation
-Explore the [docs](docs/modules.md)
+Explore the docs.
 
 
 ## License
