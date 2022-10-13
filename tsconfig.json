@@ -27,6 +27,8 @@
     "checkJs": true
   },
   "exclude": [
-    "dist"
+    "dist",
+    "docs",
+    "node_modules"
   ]
 }
