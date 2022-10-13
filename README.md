@@ -13,7 +13,7 @@ Read more about [JSON Schema](https://json-schema.org/).
 - run `yarn` or `npm install`
 - run `yarn run build` or `npm run build`
 - Navigate to your app.
-- run `yarn add <path to json-schema-xsd-tools folder>` or `npm install <path to json-schema-xsd-tools folder>`, 
+- run `yarn add <path to json-schema-xsd-tools folder>` or `npm install <path to json-schema-xsd-tools folder>`
 
 <!--
 In a browser:
