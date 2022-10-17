@@ -76,8 +76,8 @@ XSD template includes E-form metadata and some basic types (EnumerationType, Pri
 run `json-schema-xsd-tools <command> [options]`
 
 CLI provides these commands:
-- generate-xsd - generate XSD from JSON schema 
-- validate - validate XSD against JSON schema
+- `generate-xsd` - generate XSD from JSON schema 
+- `validate` - validate XSD against JSON schema
 
 ## Options
 ### -t, --template
