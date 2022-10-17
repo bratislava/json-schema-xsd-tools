@@ -23,7 +23,7 @@ const validate = async (jsonSchemaPath, xsdPath) => {
 }
 
 const options = yargs
-  .usage('Usage: <operation> -t <template> -x <xsd> -j <json>')
+  .usage('Usage: json-schema-xsd-tools <command> -t <template> -x <xsd> -j <json>')
   .option('t', { alias: 'template', describe: 'Template path', type: 'string' })
   .option('x', { alias: 'xsd', describe: 'XSD path', type: 'string' })
   .option('j', { alias: 'json', describe: 'JSON schema path', type: 'string' }).argv
@@ -32,8 +32,8 @@ const templatePath = resolve(cwd(), options.template || 'template.xsd')
 const xsdPath = resolve(cwd(), 'forms', options.xsd || 'schema.xsd')
 const jsonSchemaPath = resolve(cwd(), options.json || 'schema.invalid.json')
 
-const operation = yargs.argv._[0]
-switch (operation) {
+const command = yargs.argv._[0]
+switch (command) {
   case 'generate-xsd':
     generateXsd(jsonSchemaPath, templatePath, xsdPath).then(() => {
       console.log(chalk.cyan.bold('generated: '), xsdPath)

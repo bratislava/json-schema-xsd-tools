@@ -27,8 +27,9 @@ Read more about <a href="https://json-schema.org/">JSON Schema</a>.</p>
 <li>Clone or download this repository.</li>
 <li>run <code>yarn</code> or <code>npm install</code></li>
 <li>run <code>yarn run build</code> or <code>npm run build</code></li>
+<li>For using CLI, run <code>npm install -g .</code></li>
 <li>Navigate to your app.</li>
-<li>run <code>yarn add &lt;path to json-schema-xsd-tools folder&gt;</code> or <code>npm install &lt;path to json-schema-xsd-tools folder&gt;</code></li>
+<li>run <code>npm install &lt;path to json-schema-xsd-tools folder&gt;</code></li>
 </ul>
 <!--
 In a browser:
@@ -48,19 +49,52 @@ Usign npm:
 <a href="#get-started" id="get-started" style="color: inherit; text-decoration: none;">
   <h2>Get started</h2>
 </a>
+
+<a href="#using-lib" id="using-lib" style="color: inherit; text-decoration: none;">
+  <h3>using lib</h3>
+</a>
 <pre><code class="language-ts"><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">loadAndBuildXsd</span><span class="hl-1">, </span><span class="hl-2">loadAndValidate</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;json-schema-xsd-tools&quot;</span><span class="hl-1">;</span><br/><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">readFile</span><span class="hl-1">, </span><span class="hl-2">writeFile</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;node:fs/promises&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">jsonSchema</span><span class="hl-1"> = {</span><br/><span class="hl-1">  </span><span class="hl-2">title:</span><span class="hl-1"> </span><span class="hl-3">&quot;A registration form&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">description:</span><span class="hl-1"> </span><span class="hl-3">&quot;A simple form example.&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">type:</span><span class="hl-1"> </span><span class="hl-3">&quot;object&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">required:</span><span class="hl-1"> [</span><span class="hl-3">&quot;firstName&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;lastName&quot;</span><span class="hl-1">],</span><br/><span class="hl-1">  </span><span class="hl-2">properties:</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-2">firstName:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-2">type:</span><span class="hl-1"> </span><span class="hl-3">&quot;string&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-2">title:</span><span class="hl-1"> </span><span class="hl-3">&quot;First name&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-2">default:</span><span class="hl-1"> </span><span class="hl-3">&quot;Chuck&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-2">lastName:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-2">type:</span><span class="hl-1"> </span><span class="hl-3">&quot;string&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-2">title:</span><span class="hl-1"> </span><span class="hl-3">&quot;Last name&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-2">telephone:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-2">type:</span><span class="hl-1"> </span><span class="hl-3">&quot;string&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-2">title:</span><span class="hl-1"> </span><span class="hl-3">&quot;Telephone&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-2">minLength:</span><span class="hl-1"> </span><span class="hl-6">10</span><span class="hl-1">,</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">xsdPath</span><span class="hl-1"> = </span><span class="hl-3">&quot;schema.xsd&quot;</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">templatePath</span><span class="hl-1"> = </span><span class="hl-3">&quot;template.xsd&quot;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">templateBuffer</span><span class="hl-1"> = </span><span class="hl-0">await</span><span class="hl-1"> </span><span class="hl-7">readFile</span><span class="hl-1">(</span><span class="hl-2">templatePath</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">xsd</span><span class="hl-1"> = </span><span class="hl-7">loadAndBuildXsd</span><span class="hl-1">(</span><span class="hl-2">jsonSchema</span><span class="hl-1">, </span><span class="hl-2">templateBuffer</span><span class="hl-1">.</span><span class="hl-7">toString</span><span class="hl-1">())</span><br/><span class="hl-0">await</span><span class="hl-1"> </span><span class="hl-7">writeFile</span><span class="hl-1">(</span><span class="hl-2">xsdPath</span><span class="hl-1">, </span><span class="hl-2">xsd</span><span class="hl-1">)</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">errors</span><span class="hl-1"> = </span><span class="hl-7">loadAndValidate</span><span class="hl-1">(</span><span class="hl-2">xsd</span><span class="hl-1">, </span><span class="hl-2">jsonSchema</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">(</span><span class="hl-2">errors</span><span class="hl-1">) </span><span class="hl-8">// =&gt; [] </span>
 </code></pre>
 <p>XSD template includes E-form metadata and some basic types (EnumerationType, PrilohaType), see <a href="forms/00603481.dopravneZnacenie.sk/template.xsd">template.xsd</a></p>
 
+<a href="#using-cli" id="using-cli" style="color: inherit; text-decoration: none;">
+  <h3>using CLI</h3>
+</a>
+<p>run <code>json-schema-xsd-tools &lt;command&gt; [options]</code></p>
+<p>CLI provides these commands:</p>
+<ul>
+<li>generate-xsd - generate XSD from JSON schema </li>
+<li>validate - validate XSD against JSON schema</li>
+</ul>
+
+<a href="#options" id="options" style="color: inherit; text-decoration: none;">
+  <h2>Options</h2>
+</a>
+
+<a href="#-t---template" id="-t---template" style="color: inherit; text-decoration: none;">
+  <h3>-t, --template</h3>
+</a>
+<p>XSD template path, default &#39;template.xsd&#39;</p>
+
+<a href="#-x---xsd" id="-x---xsd" style="color: inherit; text-decoration: none;">
+  <h3>-x, --xsd</h3>
+</a>
+<p>XSD path, default &#39;schema.xsd&#39;</p>
+
+<a href="#-j---xsd" id="-j---xsd" style="color: inherit; text-decoration: none;">
+  <h3>-j, --xsd</h3>
+</a>
+<p>JSON schema path, default &#39;schema.json&#39;</p>
+
 <a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
   <h2>Documentation</h2>
 </a>
-<p>Explore the <a href="https://bratislava.github.io/json-schema-xsd-tools/">DOCS</a>.</p>
+<p>Explore the <a href="https://bratislava.github.io/json-schema-xsd-tools/">docs</a>.</p>
 
 <a href="#license" id="license" style="color: inherit; text-decoration: none;">
   <h2>License</h2>
 </a>
-<p><a href="LICENSE">EUPL-1.2</a></p>
+<p><a href="https://github.com/bratislava/json-schema-xsd-tools/blob/master/LICENSE.md">EUPL-1.2</a></p>
 </div></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
