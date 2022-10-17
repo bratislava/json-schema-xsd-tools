@@ -30,7 +30,7 @@ const options = yargs
 
 const templatePath = resolve(cwd(), options.template || 'template.xsd')
 const xsdPath = resolve(cwd(), 'forms', options.xsd || 'schema.xsd')
-const jsonSchemaPath = resolve(cwd(), options.json || 'schema.invalid.json')
+const jsonSchemaPath = resolve(cwd(), options.json || 'schema.json')
 
 const command = yargs.argv._[0]
 switch (command) {
