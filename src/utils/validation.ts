@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { defaults, isEqual } from 'lodash'
-import { buildJsonSchema, JsonSchema } from './forms'
+import { buildJsonSchema, JsonSchema, JsonSchemaProperties } from './forms'
 
 /**
  * Validation options
@@ -54,6 +54,34 @@ const isSubset = (first: string[] | undefined, second: string[] | undefined): bo
   return first.every((el) => second.includes(el))
 }
 
+const getProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
+  let properties: JsonSchemaProperties = {}
+  if (jsonSchema.properties) {
+    properties = jsonSchema.properties
+  } else if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s) => {
+      properties = { ...properties, ...s.properties }
+    })
+  }
+  
+  return properties
+}
+
+const getRequired = (jsonSchema: JsonSchema): string[] => {
+  let required : string[] = [];
+  if (jsonSchema.required) {
+    required = jsonSchema.required
+  } else if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s) => {
+      if(s.required) {
+        required = [...required, ...s.required];
+      }
+    })
+  }
+  
+  return required
+}
+
 const validate = (
   xsdSchema: JsonSchema | undefined,
   jsonSchema: JsonSchema | undefined,
@@ -98,7 +126,7 @@ const validate = (
     })
   }
 
-  if (!options.ignore.includes('required') && !isSubset(xsdSchema.required, jsonSchema.required)) {
+  if (!options.ignore.includes('required') && !isSubset(xsdSchema.required, getRequired(jsonSchema))) {
     errors.push({
       path,
       type: ErrorType.Required,
@@ -129,11 +157,9 @@ const validate = (
   if (xsdSchema.properties) {
     Object.keys(xsdSchema.properties).forEach((key) => {
       if (xsdSchema.properties) {
-        if (jsonSchema.properties && jsonSchema.properties[key]) {
-          errors = [
-            ...errors,
-            ...validate(xsdSchema.properties?.[key], jsonSchema.properties[key], options, [...path, key]),
-          ]
+        const properties = getProperties(jsonSchema);
+        if (properties[key]) {
+          errors = [...errors, ...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key])]
         } else {
           errors.push({
             path,
@@ -152,16 +178,18 @@ const validate = (
  *
  * @param xsd - XSD schema
  * @param jsonSchema - JSON schema
+ * @param bodyElement - path to body element in XSD, default `xs:complexType[name="E-formBodyType"]`
  * @param options - Options object
  * @returns List of errors, empty array if JSON schema is valid
  */
 export const loadAndValidate = (
   xsd: string,
   jsonSchema: JsonSchema,
+  bodyElement: string | undefined = `xs\\:complexType[name='E-formBodyType']`,
   options: Options | undefined = undefined
 ): Error[] => {
   const $ = cheerio.load(xsd, { xmlMode: true })
-  const xsdSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
+  const xsdSchema = buildJsonSchema($, bodyElement)
 
   options = defaults(options, {
     ignore: [],

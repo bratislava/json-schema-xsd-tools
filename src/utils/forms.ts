@@ -15,7 +15,7 @@ export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | 
 
 /**
  * JSON schema object
- * 
+ *
  * Read more about [JSON schema](https://json-schema.org/).
  */
 export interface JsonSchema {
@@ -28,6 +28,7 @@ export interface JsonSchema {
   required?: string[] | undefined
   pattern?: string | undefined
   enum?: string[] | undefined
+  allOf?: JsonSchema[] | undefined
 }
 
 export interface JsonSchemaItems {
@@ -182,11 +183,12 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
  * Loads XSD and returns generated JSON schema.
  *
  * @param xsdSchema - XSD schema
+ * @param bodyElement - path to body element in XSD
  * @returns JSON schema
  */
-export const loadAndBuildJsonSchema = (xsdSchema: string): JsonSchema => {
+export const loadAndBuildJsonSchema = (xsdSchema: string, bodyElement: string): JsonSchema => {
   const $ = cheerio.load(xsdSchema, { xmlMode: true })
-  const jsonSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
+  const jsonSchema = buildJsonSchema($, bodyElement)
   return jsonSchema
 }
 
@@ -300,9 +302,9 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
 
 /**
  * Loads JSON schema and returns generated XSD.
- * 
+ *
  * @remarks
- * 
+ *
  * Form is generated into Body element of XSD template:
  * ```xml
  * <xs:element name="E-form">
@@ -321,9 +323,21 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
  */
 export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
+  
+  let required : string[] = [];
+  let properties : JsonSchemaProperties = {};
   if (jsonSchema.properties) {
-    buildXsd($(`xs\\:schema`), 'E-formBodyType', jsonSchema.required, jsonSchema.properties, [])
+    required = jsonSchema.required || [];
+    properties = jsonSchema.properties;
+  } else if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach(s => {
+      if(s.required) {
+        required = [...required, ...s.required];
+      }
+      properties = {...properties, ...s.properties}
+    });
   }
 
+  buildXsd($(`xs\\:schema`), 'E-formBodyType', required, properties, [])
   return $.html()
 }
