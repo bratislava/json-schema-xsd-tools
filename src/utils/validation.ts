@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import { defaults, isEqual } from 'lodash'
+import { defaults, isMatch } from 'lodash'
 import { buildJsonSchema, JsonSchema, JsonSchemaProperties } from './forms'
 
 /**
@@ -9,7 +9,7 @@ export interface Options {
   /**
    * Ignore array, useful to exclude meta keywords like title or custom keywords.
    *
-   * @defaultValue []
+   * @defaultValue ['title','description']
    */
   ignore: string[]
 }
@@ -54,31 +54,31 @@ const isSubset = (first: string[] | undefined, second: string[] | undefined): bo
   return first.every((el) => second.includes(el))
 }
 
-const getProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
+const getJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
   let properties: JsonSchemaProperties = {}
   if (jsonSchema.properties) {
-    properties = jsonSchema.properties
+    properties = jsonSchema.then ? { ...jsonSchema.properties, ...jsonSchema.then.properties } : jsonSchema.properties
   } else if (jsonSchema.allOf) {
     jsonSchema.allOf.forEach((s) => {
-      properties = { ...properties, ...s.properties }
+      properties = {...properties, ...getJsonSchemaProperties(s)}
     })
   }
-  
+
   return properties
 }
 
 const getRequired = (jsonSchema: JsonSchema): string[] => {
-  let required : string[] = [];
+  let required: string[] = []
   if (jsonSchema.required) {
     required = jsonSchema.required
   } else if (jsonSchema.allOf) {
     jsonSchema.allOf.forEach((s) => {
-      if(s.required) {
-        required = [...required, ...s.required];
+      if (s.required) {
+        required = [...required, ...s.required]
       }
     })
   }
-  
+
   return required
 }
 
@@ -147,7 +147,8 @@ const validate = (
     })
   }
 
-  if (!options.ignore.includes('items') && !isEqual(xsdSchema.items, jsonSchema.items)) {
+  if (!options.ignore.includes('items') && !isMatch(xsdSchema.items || {}, jsonSchema.items || {})) {
+    console
     errors.push({
       path,
       type: ErrorType.Items,
@@ -157,7 +158,7 @@ const validate = (
   if (xsdSchema.properties) {
     Object.keys(xsdSchema.properties).forEach((key) => {
       if (xsdSchema.properties) {
-        const properties = getProperties(jsonSchema);
+        const properties = getJsonSchemaProperties(jsonSchema)
         if (properties[key]) {
           errors = [...errors, ...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key])]
         } else {
@@ -192,7 +193,7 @@ export const loadAndValidate = (
   const xsdSchema = buildJsonSchema($, bodyElement)
 
   options = defaults(options, {
-    ignore: [],
+    ignore: ['title', 'description'],
   })
 
   const errors = validate(xsdSchema, jsonSchema, options, [])

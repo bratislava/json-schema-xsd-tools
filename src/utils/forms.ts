@@ -29,6 +29,7 @@ export interface JsonSchema {
   pattern?: string | undefined
   enum?: string[] | undefined
   allOf?: JsonSchema[] | undefined
+  then?: JsonSchema | undefined
 }
 
 export interface JsonSchemaItems {
@@ -272,7 +273,10 @@ const buildXsd = (
         processed.push(xsdType)
 
         if (type === 'object' && property.properties) {
-          buildXsd(container, xsdType, property.required, property.properties, processed)
+          const childProperties = property.then
+            ? { ...property.properties, ...property.then.properties }
+            : property.properties
+          buildXsd(container, xsdType, property.required, childProperties, processed)
         } else if (property.enum && property.enum.length > 0) {
           container.append(buildEnumSimpleType(xsdType, property.enum))
         } else if (property.pattern) {
@@ -323,19 +327,21 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
  */
 export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
-  
-  let required : string[] = [];
-  let properties : JsonSchemaProperties = {};
+
+  let required: string[] = []
+  let properties: JsonSchemaProperties = {}
   if (jsonSchema.properties) {
-    required = jsonSchema.required || [];
-    properties = jsonSchema.properties;
+    required = jsonSchema.required || []
+    properties = jsonSchema.properties
   } else if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach(s => {
-      if(s.required) {
-        required = [...required, ...s.required];
+    jsonSchema.allOf.forEach((s) => {
+      if (s.required) {
+        required = [...required, ...s.required]
       }
-      properties = {...properties, ...s.properties}
-    });
+      properties = s.then
+        ? { ...properties, ...s.properties, ...s.then.properties }
+        : { ...properties, ...s.properties }
+    })
   }
 
   buildXsd($(`xs\\:schema`), 'E-formBodyType', required, properties, [])
