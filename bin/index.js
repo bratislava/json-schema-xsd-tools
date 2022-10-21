@@ -62,6 +62,8 @@ const validate = async (jsonSchemaPath, xsdPath) => {
 
 const options = yargs
   .usage('Usage: json-schema-xsd-tools <command> -t <template> -x <xsd> -j <json>')
+  .command('generate-xsd', 'generate XSD from JSON schema')
+  .command('validate', 'validate XSD against JSON schema')
   .option('t', { alias: 'template', describe: 'Template path', type: 'string' })
   .option('x', { alias: 'xsd', describe: 'XSD path', type: 'string' })
   .option('j', { alias: 'json', describe: 'JSON schema path', type: 'string' }).argv
