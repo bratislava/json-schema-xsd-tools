@@ -29,7 +29,7 @@ const options = yargs
   .option('j', { alias: 'json', describe: 'JSON schema path', type: 'string' }).argv
 
 const templatePath = resolve(cwd(), options.template || 'template.xsd')
-const xsdPath = resolve(cwd(), 'forms', options.xsd || 'schema.xsd')
+const xsdPath = resolve(cwd(), options.xsd || 'schema.xsd')
 const jsonSchemaPath = resolve(cwd(), options.json || 'schema.json')
 
 const command = yargs.argv._[0]
