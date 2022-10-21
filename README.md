@@ -12,8 +12,9 @@ Read more about [JSON Schema](https://json-schema.org/).
 - Clone or download this repository.
 - run `yarn` or `npm install`
 - run `yarn run build` or `npm run build`
+- For using CLI, run `npm install -g .`
 - Navigate to your app.
-- run `yarn add <path to json-schema-xsd-tools folder>` or `npm install <path to json-schema-xsd-tools folder>`
+- run `npm install <path to json-schema-xsd-tools folder>`
 
 <!--
 In a browser:
@@ -30,6 +31,7 @@ Usign npm:
 -->
 
 ## Get started
+### using lib
 ```ts
 import { loadAndBuildXsd, loadAndValidate } from "json-schema-xsd-tools";
 import { readFile, writeFile } from "node:fs/promises";
@@ -70,9 +72,25 @@ console.log(errors) // => []
 
 XSD template includes E-form metadata and some basic types (EnumerationType, PrilohaType), see [template.xsd](forms/00603481.dopravneZnacenie.sk/template.xsd)
 
+### using CLI
+run `json-schema-xsd-tools <command> [options]` In case of `command not found`, try running using npx - `npx json-schema-xsd-tools <command> [options]`
+
+CLI provides these commands:
+- `generate-xsd` - generate XSD from JSON schema 
+- `validate` - validate XSD against JSON schema
+
+## Options
+### -t, --template
+XSD template path, default 'template.xsd'
+
+### -x, --xsd 
+XSD path, default 'schema.xsd'
+
+### -j, --xsd
+JSON schema path, default 'schema.json'
 
 ## Documentation
-Explore the [DOCS](https://bratislava.github.io/json-schema-xsd-tools/).
+Explore the [docs](https://bratislava.github.io/json-schema-xsd-tools/).
 
 
 ## License
