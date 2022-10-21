@@ -60,27 +60,57 @@ const validate = async (jsonSchemaPath, xsdPath) => {
   }
 }
 
-const options = yargs
+yargs
   .usage('Usage: json-schema-xsd-tools <command> -t <template> -x <xsd> -j <json>')
-  .command('generate-xsd', 'generate XSD from JSON schema')
-  .command('validate', 'validate XSD against JSON schema')
-  .option('t', { alias: 'template', describe: 'Template path', type: 'string' })
-  .option('x', { alias: 'xsd', describe: 'XSD path', type: 'string' })
-  .option('j', { alias: 'json', describe: 'JSON schema path', type: 'string' }).argv
+  .command({
+    command: 'generate-xsd',
+    describe: 'generate XSD from JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      template: {
+        alias: 't',
+        describe: 'Template path',
+        type: 'string',
+        default: 'template.xsd',
+      },
+      xsd: {
+        alias: 'x',
+        describe: 'XSD path',
+        type: 'string',
+        default: 'schema.xsd',
+      },
+    },
 
-const templatePath = options.template ? resolve(cwd(), options.template) : './template.xsd'
-const xsdPath = resolve(cwd(), options.xsd || 'schema.xsd')
-const jsonSchemaPath = resolve(cwd(), options.json || 'schema.json')
+    handler(argv) {
+      generateXsd(resolve(cwd(), argv.json), resolve(cwd(), argv.template), resolve(cwd(), argv.xsd))
+    },
+  })
+  .command({
+    command: 'validate',
+    describe: 'validate XSD against JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      xsd: {
+        alias: 'x',
+        describe: 'XSD path',
+        type: 'string',
+        demandOption: true,
+      },
+    },
 
-const command = yargs.argv._[0]
-switch (command) {
-  case 'generate-xsd':
-    generateXsd(jsonSchemaPath, templatePath, xsdPath)
-    break
-  case 'validate':
-    validate(jsonSchemaPath, xsdPath)
-    break
-  default:
-    yargs.showHelp()
-    break
-}
+    handler(argv) {
+      validate(resolve(cwd(), argv.json), resolve(cwd(), argv.xsd))
+    },
+  })
+  .demandCommand()
+  .argv
