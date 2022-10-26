@@ -11,7 +11,7 @@ type XsdType =
   | 'xs:integer'
   | ''
 export type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | undefined
+export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | 'email' | 'uri' | undefined
 
 /**
  * JSON schema object
