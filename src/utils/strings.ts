@@ -1,21 +1,25 @@
-import _ from "lodash"
+import _ from 'lodash'
 
-export const firstCharToLower = (input: string | undefined) : string => {
-  if(!input) {
+export const firstCharToLower = (input: string | undefined): string => {
+  if (!input) {
     return ''
   }
 
   return input.charAt(0).toLowerCase() + input.slice(1)
 }
 
-export const firstCharToUpper = (input: string | undefined) : string => {
-  if(!input) {
+export const firstCharToUpper = (input: string | undefined): string => {
+  if (!input) {
     return ''
   }
 
   return input.charAt(0).toUpperCase() + input.slice(1)
 }
 
-export const toSnakeCase = (input: string) : string => {
-  return _.snakeCase(input);
+export const toCamelCase = (input: string): string => {
+  return _.camelCase(input)
+}
+
+export const toSnakeCase = (input: string): string => {
+  return _.snakeCase(input)
 }

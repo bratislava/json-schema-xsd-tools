@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import { firstCharToLower, firstCharToUpper } from './strings'
+import { firstCharToLower, firstCharToUpper, toCamelCase } from './strings'
 
 type XsdType =
   | 'xs:string'
@@ -11,7 +11,7 @@ type XsdType =
   | 'xs:integer'
   | ''
 export type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | 'email' | 'uri' | undefined
+export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | undefined
 
 /**
  * JSON schema object
@@ -328,19 +328,11 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
 export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
 
-  let required: string[] = []
-  let properties: JsonSchemaProperties = {}
-  if (jsonSchema.properties) {
-    required = jsonSchema.required || []
-    properties = jsonSchema.properties
-  } else if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s) => {
-      if (s.required) {
-        required = [...required, ...s.required]
-      }
-      properties = s.then
-        ? { ...properties, ...s.properties, ...s.then.properties }
-        : { ...properties, ...s.properties }
+  const required: string[] = jsonSchema.required ?? []
+  const properties: JsonSchemaProperties = jsonSchema.properties ?? {}
+  if(jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s, index) => {
+      properties[firstCharToLower(toCamelCase(s.title || `node${index}`))] = s;
     })
   }
 
