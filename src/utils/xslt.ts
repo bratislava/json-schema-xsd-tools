@@ -1,7 +1,7 @@
 /* eslint-disable no-secrets/no-secrets */
 import * as cheerio from 'cheerio'
 import type { JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType } from './forms'
-import { firstCharToLower, firstCharToUpper, toCamelCase, toSnakeCase } from './strings'
+import { firstCharToUpper, toCamelCase, toSnakeCase } from './strings'
 
 const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): string => {
   if (type === 'string') {
@@ -80,7 +80,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
   const properties: JsonSchemaProperties = jsonSchema.properties ?? {}
   if(jsonSchema.allOf) {
     jsonSchema.allOf.forEach((s, index) => {
-      properties[firstCharToLower(toCamelCase(s.title || `node${index}`))] = s;
+      properties[toCamelCase(s.title || `node${index}`)] = s;
     })
   }
 

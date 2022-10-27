@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
 import { buildJsonSchema, JsonSchema, JsonSchemaProperties } from './forms'
-import { firstCharToLower, toCamelCase } from './strings'
+import { toCamelCase } from './strings'
 
 /**
  * Validation options
@@ -59,7 +59,7 @@ const getJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties =
   let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
   if (jsonSchema.allOf) {
     jsonSchema.allOf.forEach((s, index) => {
-      properties[firstCharToLower(toCamelCase(s.title || `node${index}`))] = s
+      properties[toCamelCase(s.title || `node${index}`)] = s
     })
   }
   if (jsonSchema.then) {
