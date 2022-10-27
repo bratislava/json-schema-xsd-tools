@@ -8,6 +8,7 @@
       "title": "Žiadateľ",
       "properties":{
         "ziatetelTyp":{
+          "title": "Žiada o splnomocnenie?",
           "type":"boolean"
         }
       },
