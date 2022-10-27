@@ -8,54 +8,58 @@
     <Gestor>string</Gestor>
     <RecipientId>string</RecipientId>
     <Version>string</Version>
-    <ZepRequired>false</ZepRequired>
+    <ZepRequired>0</ZepRequired>
     <EformUuid>string</EformUuid>
     <SenderID>mailto:</SenderID>
   </Meta>
   <Body>
-    <ZiatetelTyp>true</ZiatetelTyp>
-    <Splnomocnenie>
+    <Ziadatel>
+      <ZiatetelTyp>true</ZiatetelTyp>
+      <Splnomocnenie>
+        <Nazov>string</Nazov>
+        <Prilozena>false</Prilozena>
+      </Splnomocnenie>
+    </Ziadatel>
+    <ZiadatelUdaje>
       <Nazov>string</Nazov>
-      <Prilozena>true</Prilozena>
-    </Splnomocnenie>
-    <Splnomocnenie>
-      <Nazov>string</Nazov>
-      <Prilozena>true</Prilozena>
-    </Splnomocnenie>
-    <Splnomocnenie>
-      <Nazov>string</Nazov>
-      <Prilozena>0</Prilozena>
-    </Splnomocnenie>
-    <Nazov>string</Nazov>
-    <Sidlo>string</Sidlo>
-    <Mesto>
-      <Code>string</Code>
-      <Name>string</Name>
-      <WsEnumCode>string</WsEnumCode>
-    </Mesto>
-    <Psc>string</Psc>
-    <Ico>string</Ico>
-    <Banka>string</Banka>
-    <Iban>string</Iban>
-    <MenoPriezvisko>string</MenoPriezvisko>
-    <Email>string</Email>
-    <Telefon>009</Telefon>
-    <TypStanovistaUpresnenie>Nahradenie existujúceho stanovišťa</TypStanovistaUpresnenie>
-    <MestomPonukanaDokumentacia>0</MestomPonukanaDokumentacia>
-    <PopisZbernychNadob>string</PopisZbernychNadob>
-    <VegetacnaStrecha>true</VegetacnaStrecha>
-    <VegetacnaStena>true</VegetacnaStena>
-    <SadoveUpravy>false</SadoveUpravy>
-    <Kataster>string</Kataster>
-    <Kataster>string</Kataster>
-    <Parcela>
-      <Code>string</Code>
-      <Name>string</Name>
-      <WsEnumCode>string</WsEnumCode>
-    </Parcela>
-    <AdresaUmiestnenia>string</AdresaUmiestnenia>
-    <AdresaUmiestnenia>string</AdresaUmiestnenia>
-    <Velkost>3435</Velkost>
-    <Zaujem>Dotáciu na kontajnerové stojisko</Zaujem>
+      <Sidlo>string</Sidlo>
+      <Mesto>
+        <Code>string</Code>
+        <Name>string</Name>
+        <WsEnumCode>string</WsEnumCode>
+      </Mesto>
+      <Psc>string</Psc>
+      <Ico>string</Ico>
+      <Banka>string</Banka>
+      <Iban>string</Iban>
+      <MenoPriezvisko>string</MenoPriezvisko>
+      <Email>string</Email>
+      <Telefon>+6</Telefon>
+    </ZiadatelUdaje>
+    <TypStanovista>
+      <TypStanovistaUpresnenie>Nové</TypStanovistaUpresnenie>
+    </TypStanovista>
+    <StanovisteInformacie>
+      <MestomPonukanaDokumentacia>true</MestomPonukanaDokumentacia>
+      <PopisZbernychNadob>string</PopisZbernychNadob>
+      <VegetacnaStrecha>true</VegetacnaStrecha>
+      <VegetacnaStena>true</VegetacnaStena>
+      <SadoveUpravy>false</SadoveUpravy>
+    </StanovisteInformacie>
+    <MiestoUmiestnenia>
+      <Kataster>string</Kataster>
+      <Parcela>
+        <Code>string</Code>
+        <Name>string</Name>
+        <WsEnumCode>string</WsEnumCode>
+      </Parcela>
+      <AdresaUmiestnenia>string</AdresaUmiestnenia>
+      <AdresaUmiestnenia>string</AdresaUmiestnenia>
+      <AdresaUmiestnenia>string</AdresaUmiestnenia>
+      <Velkost>2161</Velkost>
+    </MiestoUmiestnenia>
+    <DovodZiadosti>
+      <Zaujem>Dotáciu na kontajnerové stojisko</Zaujem>
+    </DovodZiadosti>
   </Body>
 </E-form>

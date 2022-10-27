@@ -69,4 +69,4 @@
     </xs:sequence>
   </xs:complexType>
 
-<xs:complexType name="E-formBodyType"><xs:sequence><xs:element name="Lorem" type="xs:string" minOccurs="1" maxOccurs="1"/><xs:element name="Ipsum" type="xs:string" minOccurs="1" maxOccurs="1"/></xs:sequence></xs:complexType></xs:schema>
+<xs:complexType name="FirstType"><xs:sequence><xs:element name="Lorem" type="xs:string" minOccurs="1" maxOccurs="1"/></xs:sequence></xs:complexType><xs:complexType name="SecondType"><xs:sequence><xs:element name="Ipsum" type="xs:string" minOccurs="1" maxOccurs="1"/></xs:sequence></xs:complexType><xs:complexType name="E-formBodyType"><xs:sequence><xs:element name="First" type="FirstType" minOccurs="0" maxOccurs="1"/><xs:element name="Second" type="SecondType" minOccurs="0" maxOccurs="1"/></xs:sequence></xs:complexType></xs:schema>

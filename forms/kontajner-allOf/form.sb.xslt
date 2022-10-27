@@ -11,16 +11,67 @@
   <!-- this is the template which gets called inside the FO structure -->
   <xsl:template name="body">
     
-  <xsl:call-template name="wrapper">
-        <xsl:with-param name="values" select="z:Body"/>
-      </xsl:call-template></xsl:template>
+  <xsl:call-template name="base_block_with_title">
+          <xsl:with-param name="template_name" select="'ziadatel'"/>
+          <xsl:with-param name="title" select="'Žiadateľ'"/>
+          <xsl:with-param name="values" select="z:Body/z:Ziadatel"/>
+        </xsl:call-template><xsl:call-template name="base_block_with_title">
+          <xsl:with-param name="template_name" select="'ziadatel_udaje'"/>
+          <xsl:with-param name="title" select="'Žiadateľ (údaje)'"/>
+          <xsl:with-param name="values" select="z:Body/z:ZiadatelUdaje"/>
+        </xsl:call-template><xsl:call-template name="base_block_with_title">
+          <xsl:with-param name="template_name" select="'typ_stanovista'"/>
+          <xsl:with-param name="title" select="'Typ stanovišťa'"/>
+          <xsl:with-param name="values" select="z:Body/z:TypStanovista"/>
+        </xsl:call-template><xsl:call-template name="base_block_with_title">
+          <xsl:with-param name="template_name" select="'informacie_o_stanovisti'"/>
+          <xsl:with-param name="title" select="'Informácie o stanovišti'"/>
+          <xsl:with-param name="values" select="z:Body/z:InformacieOStanovisti"/>
+        </xsl:call-template><xsl:call-template name="base_block_with_title">
+          <xsl:with-param name="template_name" select="'miesto_umiestnenia'"/>
+          <xsl:with-param name="title" select="'Miesto umiestnenia'"/>
+          <xsl:with-param name="values" select="z:Body/z:MiestoUmiestnenia"/>
+        </xsl:call-template><xsl:call-template name="base_block_with_title">
+          <xsl:with-param name="template_name" select="'dovod_ziadosti'"/>
+          <xsl:with-param name="title" select="'Dôvod žiadosti'"/>
+          <xsl:with-param name="values" select="z:Body/z:DovodZiadosti"/>
+        </xsl:call-template></xsl:template>
 
   <!-- XSL cannot dynamically "yield" template, so here is simple mapping for each template based on name -->
   <!-- TODO better way to do this? -->
   <xsl:template name="map">
     <xsl:param name="template"/>
     <xsl:param name="values"/>
-    </xsl:template>
+    <xsl:choose>
+
+    
+
+    
+  <xsl:when test="$template = 'ziadatel'">
+          <xsl:call-template name="ziadatel">
+            <xsl:with-param name="values" select="$values"/>
+          </xsl:call-template>
+        </xsl:when><xsl:when test="$template = 'ziadatel_udaje'">
+          <xsl:call-template name="ziadatel_udaje">
+            <xsl:with-param name="values" select="$values"/>
+          </xsl:call-template>
+        </xsl:when><xsl:when test="$template = 'typ_stanovista'">
+          <xsl:call-template name="typ_stanovista">
+            <xsl:with-param name="values" select="$values"/>
+          </xsl:call-template>
+        </xsl:when><xsl:when test="$template = 'informacie_o_stanovisti'">
+          <xsl:call-template name="informacie_o_stanovisti">
+            <xsl:with-param name="values" select="$values"/>
+          </xsl:call-template>
+        </xsl:when><xsl:when test="$template = 'miesto_umiestnenia'">
+          <xsl:call-template name="miesto_umiestnenia">
+            <xsl:with-param name="values" select="$values"/>
+          </xsl:call-template>
+        </xsl:when><xsl:when test="$template = 'dovod_ziadosti'">
+          <xsl:call-template name="dovod_ziadosti">
+            <xsl:with-param name="values" select="$values"/>
+          </xsl:call-template>
+        </xsl:when></xsl:choose></xsl:template>
 
   <!-- ########################## -->
   <!-- ALL templates below, prefixed with "base_", are format-specific and should not be modified. -->
@@ -136,7 +187,7 @@
       <xsl:with-param name="node" select="$node"/>
     </xsl:call-template>
   </xsl:template>
-<xsl:template name="wrapper"><xsl:param name="values"/><xsl:if test="$values/z:ZiatetelTyp"><xsl:call-template name="base_labeled_field">
+<xsl:template name="ziadatel"><xsl:param name="values"/><xsl:if test="$values/z:ZiatetelTyp"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Žiada o splnomocnenie?'"/>
               <xsl:with-param name="node"><xsl:call-template name="base_boolean"><xsl:with-param name="bool" select="$values/z:ZiatetelTyp"/></xsl:call-template></xsl:with-param>
             </xsl:call-template></xsl:if><xsl:for-each select="$values/z:Splnomocnenie">
@@ -144,7 +195,7 @@
                 <xsl:with-param name="text" select="'Splnomocnenie na zastupovanie'"/>
                 <xsl:with-param name="node" select="z:Nazov"/>
               </xsl:call-template>
-            </xsl:for-each><xsl:if test="$values/z:Nazov"><xsl:call-template name="base_labeled_field">
+            </xsl:for-each></xsl:template><xsl:template name="ziadatel_udaje"><xsl:param name="values"/><xsl:if test="$values/z:Nazov"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Názov spoločenstva alebo obchodné meno správcu'"/>
               <xsl:with-param name="node" select="$values/z:Nazov"/>
             </xsl:call-template></xsl:if><xsl:if test="$values/z:Sidlo"><xsl:call-template name="base_labeled_field">
@@ -174,10 +225,10 @@
             </xsl:call-template></xsl:if><xsl:if test="$values/z:Telefon"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Telefónne číslo (v tvare +421...)'"/>
               <xsl:with-param name="node" select="$values/z:Telefon"/>
-            </xsl:call-template></xsl:if><xsl:if test="$values/z:TypStanovistaUpresnenie"><xsl:call-template name="base_labeled_field">
+            </xsl:call-template></xsl:if></xsl:template><xsl:template name="typ_stanovista"><xsl:param name="values"/><xsl:if test="$values/z:TypStanovistaUpresnenie"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Upresnite o aký typ stanovišťa sa jedná'"/>
               <xsl:with-param name="node" select="$values/z:TypStanovistaUpresnenie"/>
-            </xsl:call-template></xsl:if><xsl:if test="$values/z:MestomPonukanaDokumentacia"><xsl:call-template name="base_labeled_field">
+            </xsl:call-template></xsl:if></xsl:template><xsl:template name="informacie_o_stanovisti"><xsl:param name="values"/><xsl:if test="$values/z:MestomPonukanaDokumentacia"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Použijete niektorú z mestom ponúkaných projektových dokumentácií?'"/>
               <xsl:with-param name="node"><xsl:call-template name="base_boolean"><xsl:with-param name="bool" select="$values/z:MestomPonukanaDokumentacia"/></xsl:call-template></xsl:with-param>
             </xsl:call-template></xsl:if><xsl:if test="$values/z:PopisZbernychNadob"><xsl:call-template name="base_labeled_field">
@@ -192,7 +243,7 @@
             </xsl:call-template></xsl:if><xsl:if test="$values/z:SadoveUpravy"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Plánujete / urobili ste sadové úpravy bezprostredného okolia?'"/>
               <xsl:with-param name="node"><xsl:call-template name="base_boolean"><xsl:with-param name="bool" select="$values/z:SadoveUpravy"/></xsl:call-template></xsl:with-param>
-            </xsl:call-template></xsl:if><xsl:for-each select="$values/z:Kataster">
+            </xsl:call-template></xsl:if></xsl:template><xsl:template name="miesto_umiestnenia"><xsl:param name="values"/><xsl:for-each select="$values/z:Kataster">
               <xsl:call-template name="base_labeled_field">
                 <xsl:with-param name="text" select="'Katasttrálne územie pozemku'"/>
                 <xsl:with-param name="node" select="."/>
@@ -208,7 +259,7 @@
             </xsl:for-each><xsl:if test="$values/z:Velkost"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Veľkosť plochy (v m2)'"/>
               <xsl:with-param name="node" select="$values/z:Velkost"/>
-            </xsl:call-template></xsl:if><xsl:if test="$values/z:Zaujem"><xsl:call-template name="base_labeled_field">
+            </xsl:call-template></xsl:if></xsl:template><xsl:template name="dovod_ziadosti"><xsl:param name="values"/><xsl:if test="$values/z:Zaujem"><xsl:call-template name="base_labeled_field">
               <xsl:with-param name="text" select="'Mám záujem o'"/>
               <xsl:with-param name="node" select="$values/z:Zaujem"/>
             </xsl:call-template></xsl:if></xsl:template></xsl:stylesheet>
