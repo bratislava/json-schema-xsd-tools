@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
 import { buildJsonSchema, JsonSchema, JsonSchemaProperties } from './forms'
+import { firstCharToLower, toCamelCase } from './strings'
 
 /**
  * Validation options
@@ -55,13 +56,14 @@ const isSubset = (first: string[] | undefined, second: string[] | undefined): bo
 }
 
 const getJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
-  let properties: JsonSchemaProperties = {}
-  if (jsonSchema.properties) {
-    properties = jsonSchema.then ? { ...jsonSchema.properties, ...jsonSchema.then.properties } : jsonSchema.properties
-  } else if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s) => {
-      properties = {...properties, ...getJsonSchemaProperties(s)}
+  let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
+  if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s, index) => {
+      properties[firstCharToLower(toCamelCase(s.title || `node${index}`))] = s
     })
+  }
+  if (jsonSchema.then) {
+    properties = { ...properties, ...jsonSchema.then.properties }
   }
 
   return properties
