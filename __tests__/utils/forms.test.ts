@@ -19,11 +19,11 @@ describe('generate xsd', () => {
   })
 
   test('generate xsd (allOf)', async () => {
-    const templatePath = resolve(cwd(), 'forms', 'test', 'template.xsd')
-    const xsdPath = resolve(cwd(), 'forms', 'test', 'schema.xsd')
+    const templatePath = resolve(cwd(), 'forms', 'allOf', 'template.xsd')
+    const xsdPath = resolve(cwd(), 'forms', 'allOf', 'schema.xsd')
 
     const templateBuffer = await readFile(templatePath)
-    const jsonSchemaPath = resolve(cwd(), 'forms', 'test', 'schema.json')
+    const jsonSchemaPath = resolve(cwd(), 'forms', 'allOf', 'schema.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
     const xsd = loadAndBuildXsd(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString())
@@ -31,10 +31,10 @@ describe('generate xsd', () => {
   })
 
   test('valid xsd (allOf)', async () => {
-    const xsdSchemaPath = resolve(cwd(), 'forms', 'test', 'schema.xsd')
+    const xsdSchemaPath = resolve(cwd(), 'forms', 'allOf', 'schema.xsd')
     const xsdSchemaBuffer = await readFile(xsdSchemaPath)
 
-    const jsonSchemaPath = resolve(cwd(), 'forms', 'test', 'schema.json')
+    const jsonSchemaPath = resolve(cwd(), 'forms', 'allOf', 'schema.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
     const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()))
