@@ -55,7 +55,10 @@ const buildXslt = (
             </xsl:call-template>`
         )
 
-        buildXslt(rootEl, childTemplateName, childProperty.properties)
+        const allProperties = childProperty.then
+          ? { ...childProperty.properties, ...childProperty.then.properties }
+          : { ...childProperty.properties }
+        buildXslt(rootEl, childTemplateName, allProperties)
       } else {
         template.push(
           `<xsl:if test="$values/z:${el}"><xsl:call-template name="base_labeled_field">
@@ -116,15 +119,20 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
         </xsl:call-template>`
       )
 
-      buildXslt(rootEl, templateName, property.properties)
+      const allProperties = property.then
+        ? { ...property.properties, ...property.then.properties }
+        : { ...property.properties }
+      buildXslt(rootEl, templateName, allProperties)
     }
   })
 
   if (!isNested) {
+    mapEl.remove()
     bodyEl.append(
       `<xsl:call-template name="wrapper">
         <xsl:with-param name="values" select="z:Body" />
-      </xsl:call-template>`)
+      </xsl:call-template>`
+    )
 
     buildXslt(rootEl, 'wrapper', properties)
   }
