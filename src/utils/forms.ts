@@ -330,9 +330,9 @@ export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => 
 
   const required: string[] = jsonSchema.required ?? []
   const properties: JsonSchemaProperties = jsonSchema.properties ?? {}
-  if(jsonSchema.allOf) {
+  if (jsonSchema.allOf) {
     jsonSchema.allOf.forEach((s, index) => {
-      properties[firstCharToLower(toCamelCase(s.title || `node${index}`))] = s;
+      properties[toCamelCase(s.title || `node${index}`)] = s
     })
   }
 
