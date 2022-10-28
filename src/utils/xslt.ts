@@ -73,18 +73,14 @@ const buildXslt = (
 
 export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
   const $ = cheerio.load(xslt, { xmlMode: true, decodeEntities: false })
-
-  const properties = getJsonSchemaProperties(jsonSchema)
-
   const mapEl = $(`xsl\\:template[name='map'] > xsl\\:choose`)
   const bodyEl = $(`xsl\\:template[name='body']`)
   const rootEl = $(`xsl\\:stylesheet`)
-  let isNested = false
 
+  const properties = getJsonSchemaProperties(jsonSchema)
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {
-      isNested = true
       const templateName = toSnakeCase(key)
       mapEl.append(
         `<xsl:when test="$template = '${templateName}'">
@@ -106,16 +102,14 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
     }
   })
 
-  if (!isNested) {
-    mapEl.remove()
-    bodyEl.append(
-      `<xsl:call-template name="wrapper">
-        <xsl:with-param name="values" select="z:Body" />
-      </xsl:call-template>`
-    )
-
-    buildXslt(rootEl, 'wrapper', properties)
-  }
+  // one level
+  // mapEl.remove()
+  // bodyEl.append(
+  //   `<xsl:call-template name="wrapper">
+  //       <xsl:with-param name="values" select="z:Body" />
+  //     </xsl:call-template>`
+  // )
+  // buildXslt(rootEl, 'wrapper', properties)
 
   return $.html()
 }
