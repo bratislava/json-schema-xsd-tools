@@ -73,6 +73,33 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   }
 }
 
+export const getJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
+  let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
+  if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s, index) => {
+      properties[toCamelCase(s.title || `node${index}`)] = s
+    })
+  }
+  if (jsonSchema.then) {
+    properties = { ...properties, ...jsonSchema.then.properties }
+  }
+
+  return properties
+}
+
+export const getRequired = (jsonSchema: JsonSchema): string[] => {
+  let required: string[] = jsonSchema.required ?? []
+  if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s) => {
+      if (s.required) {
+        required = [...required, ...s.required]
+      }
+    })
+  }
+
+  return required
+}
+
 const enumMap = new Map()
 const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode): JsonSchema => {
   const title = $(el).attr('name')
@@ -272,11 +299,8 @@ const buildXsd = (
       if (!processed.includes(xsdType)) {
         processed.push(xsdType)
 
-        if (type === 'object' && property.properties) {
-          const childProperties = property.then
-            ? { ...property.properties, ...property.then.properties }
-            : property.properties
-          buildXsd(container, xsdType, property.required, childProperties, processed)
+        if (type === 'object') {
+          buildXsd(container, xsdType, getRequired(property), getJsonSchemaProperties(property), processed)
         } else if (property.enum && property.enum.length > 0) {
           container.append(buildEnumSimpleType(xsdType, property.enum))
         } else if (property.pattern) {
@@ -328,14 +352,8 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
 export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
 
-  const required: string[] = jsonSchema.required ?? []
-  const properties: JsonSchemaProperties = jsonSchema.properties ?? {}
-  if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s, index) => {
-      properties[toCamelCase(s.title || `node${index}`)] = s
-    })
-  }
-
+  const required = getRequired(jsonSchema)
+  const properties = getJsonSchemaProperties(jsonSchema)
   buildXsd($(`xs\\:schema`), 'E-formBodyType', required, properties, [])
   return $.html()
 }

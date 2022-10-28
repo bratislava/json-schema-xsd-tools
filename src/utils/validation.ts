@@ -1,7 +1,6 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
-import { buildJsonSchema, JsonSchema, JsonSchemaProperties } from './forms'
-import { toCamelCase } from './strings'
+import { buildJsonSchema, getJsonSchemaProperties, getRequired, JsonSchema } from './forms'
 
 /**
  * Validation options
@@ -53,35 +52,6 @@ const isSubset = (first: string[] | undefined, second: string[] | undefined): bo
   }
 
   return first.every((el) => second.includes(el))
-}
-
-const getJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
-  let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
-  if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s, index) => {
-      properties[toCamelCase(s.title || `node${index}`)] = s
-    })
-  }
-  if (jsonSchema.then) {
-    properties = { ...properties, ...jsonSchema.then.properties }
-  }
-
-  return properties
-}
-
-const getRequired = (jsonSchema: JsonSchema): string[] => {
-  let required: string[] = []
-  if (jsonSchema.required) {
-    required = jsonSchema.required
-  } else if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s) => {
-      if (s.required) {
-        required = [...required, ...s.required]
-      }
-    })
-  }
-
-  return required
 }
 
 const validate = (
