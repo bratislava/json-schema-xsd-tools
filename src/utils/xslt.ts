@@ -1,7 +1,7 @@
 /* eslint-disable no-secrets/no-secrets */
 import * as cheerio from 'cheerio'
-import type { JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType } from './forms'
-import { firstCharToUpper, toCamelCase, toSnakeCase } from './strings'
+import { getJsonSchemaProperties, JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType } from './forms'
+import { firstCharToUpper, toSnakeCase } from './strings'
 
 const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): string => {
   if (type === 'string') {
@@ -47,7 +47,7 @@ const buildXslt = (
               </xsl:call-template>
             </xsl:for-each>`
         )
-      } else if (childProperty.type === 'object' && childProperty.properties) {
+      } else if (childProperty.type === 'object') {
         const childTemplateName = toSnakeCase(childKey)
         template.push(
           `<xsl:call-template name="${childTemplateName}">
@@ -55,10 +55,7 @@ const buildXslt = (
             </xsl:call-template>`
         )
 
-        const allProperties = childProperty.then
-          ? { ...childProperty.properties, ...childProperty.then.properties }
-          : { ...childProperty.properties }
-        buildXslt(rootEl, childTemplateName, allProperties)
+        buildXslt(rootEl, childTemplateName, getJsonSchemaProperties(childProperty))
       } else {
         template.push(
           `<xsl:if test="$values/z:${el}"><xsl:call-template name="base_labeled_field">
@@ -77,12 +74,7 @@ const buildXslt = (
 export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
   const $ = cheerio.load(xslt, { xmlMode: true, decodeEntities: false })
 
-  const properties: JsonSchemaProperties = jsonSchema.properties ?? {}
-  if(jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s, index) => {
-      properties[toCamelCase(s.title || `node${index}`)] = s;
-    })
-  }
+  const properties = getJsonSchemaProperties(jsonSchema)
 
   const mapEl = $(`xsl\\:template[name='map'] > xsl\\:choose`)
   const bodyEl = $(`xsl\\:template[name='body']`)
@@ -91,7 +83,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
 
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
-    if (property && property.properties) {
+    if (property) {
       isNested = true
       const templateName = toSnakeCase(key)
       mapEl.append(
@@ -110,10 +102,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
         </xsl:call-template>`
       )
 
-      const allProperties = property.then
-        ? { ...property.properties, ...property.then.properties }
-        : { ...property.properties }
-      buildXslt(rootEl, templateName, allProperties)
+      buildXslt(rootEl, templateName, getJsonSchemaProperties(property))
     }
   })
 
