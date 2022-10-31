@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "allOf": [
+    {
+      "title": "first",
+      "type": "object",
+      "properties": {
+        "lorem": {
+          "title": "Lorem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lorem"
+      ]
+    },
+    {
+      "title": "second",
+      "type": "object",
+      "properties": {
+        "ipsum": {
+          "title": "Ipsum",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ipsum"
+      ]
+    }
+  ]
+}

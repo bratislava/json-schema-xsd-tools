@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio'
+import mergeAllOf from 'json-schema-merge-allof'
 import { firstCharToLower, firstCharToUpper } from './strings'
 
 type XsdType =
@@ -15,7 +16,7 @@ export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | 
 
 /**
  * JSON schema object
- * 
+ *
  * Read more about [JSON schema](https://json-schema.org/).
  */
 export interface JsonSchema {
@@ -28,6 +29,7 @@ export interface JsonSchema {
   required?: string[] | undefined
   pattern?: string | undefined
   enum?: string[] | undefined
+  then?: JsonSchema | undefined
 }
 
 export interface JsonSchemaItems {
@@ -69,6 +71,19 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
     default:
       return undefined
   }
+}
+
+export const mergeJsonSchema = (jsonSchema: JsonSchema) : JsonSchema => {
+  return mergeAllOf(jsonSchema)
+}
+
+export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
+  let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
+  if (jsonSchema.then) {
+    properties = { ...properties, ...jsonSchema.then.properties }
+  }
+
+  return properties
 }
 
 const enumMap = new Map()
@@ -182,11 +197,12 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
  * Loads XSD and returns generated JSON schema.
  *
  * @param xsdSchema - XSD schema
+ * @param bodyElement - path to body element in XSD
  * @returns JSON schema
  */
-export const loadAndBuildJsonSchema = (xsdSchema: string): JsonSchema => {
+export const loadAndBuildJsonSchema = (xsdSchema: string, bodyElement: string): JsonSchema => {
   const $ = cheerio.load(xsdSchema, { xmlMode: true })
-  const jsonSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
+  const jsonSchema = buildJsonSchema($, bodyElement)
   return jsonSchema
 }
 
@@ -269,8 +285,8 @@ const buildXsd = (
       if (!processed.includes(xsdType)) {
         processed.push(xsdType)
 
-        if (type === 'object' && property.properties) {
-          buildXsd(container, xsdType, property.required, property.properties, processed)
+        if (type === 'object') {
+          buildXsd(container, xsdType, property.required, getAllPossibleJsonSchemaProperties(property), processed)
         } else if (property.enum && property.enum.length > 0) {
           container.append(buildEnumSimpleType(xsdType, property.enum))
         } else if (property.pattern) {
@@ -300,9 +316,9 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
 
 /**
  * Loads JSON schema and returns generated XSD.
- * 
+ *
  * @remarks
- * 
+ *
  * Form is generated into Body element of XSD template:
  * ```xml
  * <xs:element name="E-form">
@@ -321,9 +337,9 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
  */
 export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
-  if (jsonSchema.properties) {
-    buildXsd($(`xs\\:schema`), 'E-formBodyType', jsonSchema.required, jsonSchema.properties, [])
-  }
 
+  const mergedJsonSchema = mergeJsonSchema(jsonSchema)
+  const properties = getAllPossibleJsonSchemaProperties(mergedJsonSchema)
+  buildXsd($(`xs\\:schema`), 'E-formBodyType', mergedJsonSchema.required, properties, [])
   return $.html()
 }

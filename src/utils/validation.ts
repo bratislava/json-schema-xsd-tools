@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
-import { defaults, isEqual } from 'lodash'
-import { buildJsonSchema, JsonSchema } from './forms'
+import { defaults, isMatch } from 'lodash'
+import { buildJsonSchema, getAllPossibleJsonSchemaProperties, JsonSchema, mergeJsonSchema } from './forms'
 
 /**
  * Validation options
@@ -9,7 +9,7 @@ export interface Options {
   /**
    * Ignore array, useful to exclude meta keywords like title or custom keywords.
    *
-   * @defaultValue []
+   * @defaultValue ['title','description']
    */
   ignore: string[]
 }
@@ -119,7 +119,8 @@ const validate = (
     })
   }
 
-  if (!options.ignore.includes('items') && !isEqual(xsdSchema.items, jsonSchema.items)) {
+  if (!options.ignore.includes('items') && !isMatch(xsdSchema.items || {}, jsonSchema.items || {})) {
+    console
     errors.push({
       path,
       type: ErrorType.Items,
@@ -129,11 +130,9 @@ const validate = (
   if (xsdSchema.properties) {
     Object.keys(xsdSchema.properties).forEach((key) => {
       if (xsdSchema.properties) {
-        if (jsonSchema.properties && jsonSchema.properties[key]) {
-          errors = [
-            ...errors,
-            ...validate(xsdSchema.properties?.[key], jsonSchema.properties[key], options, [...path, key]),
-          ]
+        const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
+        if (properties[key]) {
+          errors = [...errors, ...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key])]
         } else {
           errors.push({
             path,
@@ -152,21 +151,23 @@ const validate = (
  *
  * @param xsd - XSD schema
  * @param jsonSchema - JSON schema
+ * @param bodyElement - path to body element in XSD, default `xs:complexType[name="E-formBodyType"]`
  * @param options - Options object
  * @returns List of errors, empty array if JSON schema is valid
  */
 export const loadAndValidate = (
   xsd: string,
   jsonSchema: JsonSchema,
+  bodyElement: string | undefined = `xs\\:complexType[name='E-formBodyType']`,
   options: Options | undefined = undefined
 ): Error[] => {
   const $ = cheerio.load(xsd, { xmlMode: true })
-  const xsdSchema = buildJsonSchema($, `xs\\:element[name='E-form'] xs\\:element[name='Body']`)
+  const xsdSchema = buildJsonSchema($, bodyElement)
 
   options = defaults(options, {
-    ignore: [],
+    ignore: ['title', 'description'],
   })
 
-  const errors = validate(xsdSchema, jsonSchema, options, [])
+  const errors = validate(xsdSchema, mergeJsonSchema(jsonSchema), options, [])
   return errors
 }
