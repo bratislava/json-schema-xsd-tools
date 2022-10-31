@@ -73,7 +73,7 @@ console.log(errors) // => []
 XSD template includes E-form metadata and some basic types (EnumerationType, PrilohaType), see [template.xsd](forms/00603481.dopravneZnacenie.sk/template.xsd)
 
 ### using CLI
-run `json-schema-xsd-tools <command> [options]`
+run `json-schema-xsd-tools <command> [options]` In case of `command not found`, try running using npx - `npx json-schema-xsd-tools <command> [options]`
 
 CLI provides these commands:
 - `generate-xsd` - generate XSD from JSON schema 
