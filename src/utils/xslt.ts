@@ -1,6 +1,6 @@
 /* eslint-disable no-secrets/no-secrets */
 import * as cheerio from 'cheerio'
-import { getJsonSchemaProperties, JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType, mergeJsonSchema } from './forms'
+import { getAllPossibleJsonSchemaProperties, JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType, mergeJsonSchema } from './forms'
 import { firstCharToUpper, toSnakeCase } from './strings'
 
 const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): string => {
@@ -55,7 +55,7 @@ const buildXslt = (
             </xsl:call-template>`
         )
 
-        buildXslt(rootEl, childTemplateName, getJsonSchemaProperties(childProperty))
+        buildXslt(rootEl, childTemplateName, getAllPossibleJsonSchemaProperties(childProperty))
       } else {
         template.push(
           `<xsl:if test="$values/z:${el}"><xsl:call-template name="base_labeled_field">
@@ -98,7 +98,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
         </xsl:call-template>`
       )
 
-      buildXslt(rootEl, templateName, getJsonSchemaProperties(property))
+      buildXslt(rootEl, templateName, getAllPossibleJsonSchemaProperties(property))
     }
   })
 
