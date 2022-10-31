@@ -77,7 +77,7 @@ export const mergeJsonSchema = (jsonSchema: JsonSchema) : JsonSchema => {
   return mergeAllOf(jsonSchema)
 }
 
-export const getJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
+export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
   let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
   if (jsonSchema.then) {
     properties = { ...properties, ...jsonSchema.then.properties }
@@ -286,7 +286,7 @@ const buildXsd = (
         processed.push(xsdType)
 
         if (type === 'object') {
-          buildXsd(container, xsdType, property.required, getJsonSchemaProperties(property), processed)
+          buildXsd(container, xsdType, property.required, getAllPossibleJsonSchemaProperties(property), processed)
         } else if (property.enum && property.enum.length > 0) {
           container.append(buildEnumSimpleType(xsdType, property.enum))
         } else if (property.pattern) {
@@ -339,7 +339,7 @@ export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => 
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
 
   const mergedJsonSchema = mergeJsonSchema(jsonSchema)
-  const properties = getJsonSchemaProperties(mergedJsonSchema)
+  const properties = getAllPossibleJsonSchemaProperties(mergedJsonSchema)
   buildXsd($(`xs\\:schema`), 'E-formBodyType', mergedJsonSchema.required, properties, [])
   return $.html()
 }

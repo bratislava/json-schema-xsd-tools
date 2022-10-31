@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
-import { buildJsonSchema, getJsonSchemaProperties, JsonSchema, mergeJsonSchema } from './forms'
+import { buildJsonSchema, getAllPossibleJsonSchemaProperties, JsonSchema, mergeJsonSchema } from './forms'
 
 /**
  * Validation options
@@ -130,7 +130,7 @@ const validate = (
   if (xsdSchema.properties) {
     Object.keys(xsdSchema.properties).forEach((key) => {
       if (xsdSchema.properties) {
-        const properties = getJsonSchemaProperties(jsonSchema)
+        const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
         if (properties[key]) {
           errors = [...errors, ...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key])]
         } else {
