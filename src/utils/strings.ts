@@ -19,3 +19,7 @@ export const firstCharToUpper = (input: string | undefined): string => {
 export const toCamelCase = (input: string): string => {
   return _.camelCase(input)
 }
+
+export const toSnakeCase = (input: string): string => {
+  return _.snakeCase(input)
+}
