@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio'
-import { firstCharToLower, firstCharToUpper, toCamelCase } from './strings'
+import mergeAllOf from 'json-schema-merge-allof'
+import { firstCharToLower, firstCharToUpper } from './strings'
 
 type XsdType =
   | 'xs:string'
@@ -28,7 +29,6 @@ export interface JsonSchema {
   required?: string[] | undefined
   pattern?: string | undefined
   enum?: string[] | undefined
-  allOf?: JsonSchema[] | undefined
   then?: JsonSchema | undefined
 }
 
@@ -73,31 +73,17 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   }
 }
 
+export const mergeJsonSchema = (jsonSchema: JsonSchema) : JsonSchema => {
+  return mergeAllOf(jsonSchema)
+}
+
 export const getJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
   let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
-  if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s, index) => {
-      properties[toCamelCase(s.title || `node${index}`)] = s
-    })
-  }
   if (jsonSchema.then) {
     properties = { ...properties, ...jsonSchema.then.properties }
   }
 
   return properties
-}
-
-export const getRequired = (jsonSchema: JsonSchema): string[] => {
-  let required: string[] = jsonSchema.required ?? []
-  if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s) => {
-      if (s.required) {
-        required = [...required, ...s.required]
-      }
-    })
-  }
-
-  return required
 }
 
 const enumMap = new Map()
@@ -300,7 +286,7 @@ const buildXsd = (
         processed.push(xsdType)
 
         if (type === 'object') {
-          buildXsd(container, xsdType, getRequired(property), getJsonSchemaProperties(property), processed)
+          buildXsd(container, xsdType, property.required, getJsonSchemaProperties(property), processed)
         } else if (property.enum && property.enum.length > 0) {
           container.append(buildEnumSimpleType(xsdType, property.enum))
         } else if (property.pattern) {
@@ -352,8 +338,8 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
 export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
   const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
 
-  const required = getRequired(jsonSchema)
-  const properties = getJsonSchemaProperties(jsonSchema)
-  buildXsd($(`xs\\:schema`), 'E-formBodyType', required, properties, [])
+  const mergedJsonSchema = mergeJsonSchema(jsonSchema)
+  const properties = getJsonSchemaProperties(mergedJsonSchema)
+  buildXsd($(`xs\\:schema`), 'E-formBodyType', mergedJsonSchema.required, properties, [])
   return $.html()
 }

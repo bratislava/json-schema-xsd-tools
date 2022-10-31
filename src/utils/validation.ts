@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
-import { buildJsonSchema, getJsonSchemaProperties, getRequired, JsonSchema } from './forms'
+import { buildJsonSchema, getJsonSchemaProperties, JsonSchema, mergeJsonSchema } from './forms'
 
 /**
  * Validation options
@@ -98,7 +98,7 @@ const validate = (
     })
   }
 
-  if (!options.ignore.includes('required') && !isSubset(xsdSchema.required, getRequired(jsonSchema))) {
+  if (!options.ignore.includes('required') && !isSubset(xsdSchema.required, jsonSchema.required)) {
     errors.push({
       path,
       type: ErrorType.Required,
@@ -168,6 +168,6 @@ export const loadAndValidate = (
     ignore: ['title', 'description'],
   })
 
-  const errors = validate(xsdSchema, jsonSchema, options, [])
+  const errors = validate(xsdSchema, mergeJsonSchema(jsonSchema), options, [])
   return errors
 }

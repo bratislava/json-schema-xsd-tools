@@ -1,6 +1,6 @@
 /* eslint-disable no-secrets/no-secrets */
 import * as cheerio from 'cheerio'
-import { getJsonSchemaProperties, JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType } from './forms'
+import { getJsonSchemaProperties, JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType, mergeJsonSchema } from './forms'
 import { firstCharToUpper, toSnakeCase } from './strings'
 
 const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): string => {
@@ -77,7 +77,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
   const bodyEl = $(`xsl\\:template[name='body']`)
   const rootEl = $(`xsl\\:stylesheet`)
 
-  const properties = getJsonSchemaProperties(jsonSchema)
+  const properties = mergeJsonSchema(jsonSchema).properties ?? {}
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {
