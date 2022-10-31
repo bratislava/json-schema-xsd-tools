@@ -8,6 +8,7 @@
       "title": "Žiadateľ",
       "properties":{
         "ziatetelTyp":{
+          "title": "Žiada o splnomocnenie?",
           "type":"boolean"
         }
       },
@@ -202,11 +203,6 @@
           ]
         }
       }
-    },
-    "prilohy":{
-      "title":"Prílohy",
-      "description":"Ak neviete prílohy nahrať elektronicky, môžete stále pokračovať vo vypĺňaní žiadosti. Po vyplnení si ju môžete: - uložiť, stiahnuť a vrátiť sa k nej neskôr - vytlačiť a zaslať s kópiami príloh poštou - vytlačiť a zaniesť s kópiami príloh osobne",
-      "type":"object"
     }
   }
 }
