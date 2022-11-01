@@ -201,6 +201,266 @@
           }
         }
       }
+    },
+    {
+      "allOf": [
+        {
+          "properties": {
+            "zmluva": {
+              "type": "array",
+              "title": "Zmluva o výkone správy / Zmluva o bytovom spoločenstve",
+              "items": {
+                "type": "string",
+                "format": "data-url"
+              }
+            }
+          },
+          "required": ["zmluva"]
+        },
+        {
+          "if": {
+            "properties": {
+              "typStanovista": {
+                "properties": {
+                  "typStanovistaUpresnenie": {
+                    "const": "Nové"
+                  }
+                }
+              },
+              "dovodZiadosti": {
+                "properties": {
+                  "zaujem": {
+                    "oneOf": [
+                      {
+                        "const": "Nájom mestského pozemku pod stojiskom"
+                      },
+                      {
+                        "const": "Nájom aj dotáciu zároveň"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "stanovisko": {
+                "type": "array",
+                "title": "Stanovisko OLO",
+                "items": {
+                  "type": "string",
+                  "format": "data-url"
+                }
+              }
+            },
+            "required": ["stanovisko"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "typStanovista": {
+                "properties": {
+                  "typStanovistaUpresnenie": {
+                    "oneOf": [
+                      {
+                        "const": "Rekonštrukcia existujúceho stanovišťa"
+                      },
+                      {
+                        "const": "Nahradenie existujúceho stanovišťa"
+                      }
+                    ]
+                  }
+                }
+              },
+              "dovodZiadosti": {
+                "properties": {
+                  "zaujem": {
+                    "oneOf": [
+                      {
+                        "const": "Nájom mestského pozemku pod stojiskom"
+                      },
+                      {
+                        "const": "Nájom aj dotáciu zároveň"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "doklad": {
+                "type": "array",
+                "title": "Relevantný doklad potvrdzujúci súčasný odvoz",
+                "items": {
+                  "type": "string",
+                  "format": "data-url"
+                }
+              }
+            },
+            "required": ["doklad"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "dovodZiadosti": {
+                "properties": {
+                  "zaujem": {
+                    "const": "Dotáciu na kontajnerové stojisko"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "listVlastnictva": {
+                "type": "array",
+                "title": "Zmluva o nájme pozemku / List vlastníctva / Zmluva o zriadení vecného bremena",
+                "items": {
+                  "type": "string",
+                  "format": "data-url"
+                }
+              }
+            },
+            "required": ["listVlastnictva"]
+          }
+        },
+        {
+          "properties": {
+            "snimkaZMapy": {
+              "type": "array",
+              "title": "Snímka z katastrálnej mapy so zakresleným kontajnerovým stanovišťom",
+              "items": {
+                "type": "string",
+                "format": "data-url"
+              }
+            }
+          },
+          "required": ["snimkaZMapy"]
+        },
+        {
+          "properties": {
+            "podorysStanovista": {
+              "type": "array",
+              "title": "Pôdorys kontajnerového stanovišťa so zakreslením rozmiestnenia zberných nádob",
+              "items": {
+                "type": "string",
+                "format": "data-url"
+              }
+            }
+          },
+          "required": ["podorysStanovista"]
+        },
+        {
+          "properties": {
+            "vizualStanovista": {
+              "type": "array",
+              "title": "Vizuál kontajnerového stanovišťa - ilustračná alebo reálna fotografia / vizualizácia",
+              "items": {
+                "type": "string",
+                "format": "data-url"
+              }
+            }
+          },
+          "required": ["vizualStanovista"]
+        },
+        {
+          "properties": {
+            "technickyVykres": {
+              "title": "Technický výkres a rozmery navrhovanej konštrukci, popis navrhovaných / použitých materiálov a farieb",
+              "oneOf": [
+                {
+                  "title": "Prílohy",
+                  "properties": {
+                    "prilohy": {
+                      "title": "Prílohy",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "data-url"
+                      }
+                    }
+                  },
+                  "required": ["prilohy"]
+                },
+                {
+                  "title": "Text",
+                  "properties": {
+                    "text": {
+                      "title": "Text",
+                      "type": "string"
+                    }
+                  },
+                  "required": ["text"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "stavebnaDokumentacia": {
+              "type": "array",
+              "title": "Stavebná dokumentácia kontajnerového stanovišťa alebo výber z poskytnutých stavebných dokumentácií",
+              "items": {
+                "type": "string",
+                "format": "data-url"
+              }
+            }
+          },
+          "required": ["stavebnaDokumentacia"]
+        },
+        {
+          "properties": {
+            "rozpocet": {
+              "title": "Položkový rozpočet",
+              "oneOf": [
+                {
+                  "title": "Prílohy",
+                  "properties": {
+                    "prilohy": {
+                      "title": "Prílohy",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "data-url"
+                      }
+                    }
+                  },
+                  "required": ["prilohy"]
+                },
+                {
+                  "title": "Text",
+                  "properties": {
+                    "text": {
+                      "title": "Text",
+                      "type": "string"
+                    }
+                  },
+                  "required": ["text"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "inePrilohy": {
+              "type": "array",
+              "title": "Iné",
+              "items": {
+                "type": "string",
+                "format": "data-url"
+              }
+            }
+          }
+        }
+      ]
     }
   ]
 }
