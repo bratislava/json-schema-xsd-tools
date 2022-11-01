@@ -30,6 +30,9 @@ export interface JsonSchema {
   pattern?: string | undefined
   enum?: string[] | undefined
   then?: JsonSchema | undefined
+  oneOf?: JsonSchema[] | undefined
+  anyOf?: JsonSchema[] | undefined
+  allOf?: JsonSchema[] | undefined
 }
 
 export interface JsonSchemaItems {
@@ -94,7 +97,17 @@ export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
 export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
   let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
   if (jsonSchema.then) {
-    properties = { ...properties, ...jsonSchema.then.properties }
+    properties = { ...properties, ...getAllPossibleJsonSchemaProperties(jsonSchema.then) }
+  }
+  if (jsonSchema.oneOf) {
+    jsonSchema.oneOf.forEach((s) => {
+      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
+    })
+  }
+  if (jsonSchema.anyOf) {
+    jsonSchema.anyOf.forEach((s) => {
+      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
+    })
   }
 
   return properties
