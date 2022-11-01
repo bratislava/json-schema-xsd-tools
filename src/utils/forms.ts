@@ -73,8 +73,22 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   }
 }
 
-export const mergeJsonSchema = (jsonSchema: JsonSchema) : JsonSchema => {
-  return mergeAllOf(jsonSchema)
+export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
+  return mergeAllOf(jsonSchema, {
+    resolvers: {
+      if: () => {
+        return true
+      },
+      then: (values: JsonSchema[]): JsonSchema => {
+        let properties: JsonSchemaProperties = {}
+        values.forEach((s) => {
+          properties = { ...properties, ...s.properties }
+        })
+
+        return { properties, type: 'object' }
+      },
+    },
+  })
 }
 
 export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
