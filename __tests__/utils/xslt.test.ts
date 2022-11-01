@@ -7,15 +7,15 @@ import { loadAndBuildXslt } from '../../src/utils/xslt'
 describe('generate stylesheets', () => {
   let jsonSchemaBuffer: Buffer
   beforeAll(async () => {
-    const jsonSchemaPath = resolve(cwd(), 'forms', 'kontajner-allOf', 'schema.json')
+    const jsonSchemaPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'schema.json')
     jsonSchemaBuffer = await readFile(jsonSchemaPath)
   })
 
   test('generate text stylesheet', async () => {
-    const templatePath = resolve(cwd(), 'forms', 'kontajner-allOf', 'template.sb.xslt')
+    const templatePath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'template.sb.xslt')
     const templateBuffer = await readFile(templatePath)
 
-    const xsltPath = resolve(cwd(), 'forms', 'kontajner-allOf', 'form.sb.xslt')
+    const xsltPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'form.sb.xslt')
 
     const xslt = loadAndBuildXslt(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString());
 
