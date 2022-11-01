@@ -373,11 +373,12 @@
           "properties": {
             "technickyVykres": {
               "title": "Technický výkres a rozmery navrhovanej konštrukci, popis navrhovaných / použitých materiálov a farieb",
+              "type": "object",
               "oneOf": [
                 {
                   "title": "Prílohy",
                   "properties": {
-                    "prilohy": {
+                    "technickyVykresPrilohy": {
                       "title": "Prílohy",
                       "type": "array",
                       "items": {
@@ -386,21 +387,22 @@
                       }
                     }
                   },
-                  "required": ["prilohy"]
+                  "required": ["technickyVykresPrilohy"]
                 },
                 {
                   "title": "Text",
                   "properties": {
-                    "text": {
+                    "technickyVykresText": {
                       "title": "Text",
                       "type": "string"
                     }
                   },
-                  "required": ["text"]
+                  "required": ["technickyVykresText"]
                 }
               ]
             }
-          }
+          },
+          "required": ["technickyVykres"]
         },
         {
           "properties": {
@@ -419,11 +421,12 @@
           "properties": {
             "rozpocet": {
               "title": "Položkový rozpočet",
+              "type": "object",
               "oneOf": [
                 {
                   "title": "Prílohy",
                   "properties": {
-                    "prilohy": {
+                    "rozpocetPrilohy": {
                       "title": "Prílohy",
                       "type": "array",
                       "items": {
@@ -432,21 +435,22 @@
                       }
                     }
                   },
-                  "required": ["prilohy"]
+                  "required": ["rozpocetPrilohy"]
                 },
                 {
                   "title": "Text",
                   "properties": {
-                    "text": {
+                    "rozpocetText": {
                       "title": "Text",
                       "type": "string"
                     }
                   },
-                  "required": ["text"]
+                  "required": ["rozpocetText"]
                 }
               ]
             }
-          }
+          },
+          "required": ["rozpocet"]
         },
         {
           "properties": {
