@@ -1,6 +1,13 @@
 /* eslint-disable no-secrets/no-secrets */
 import * as cheerio from 'cheerio'
-import { getAllPossibleJsonSchemaProperties, JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType, mergeJsonSchema } from './forms'
+import {
+  getAllPossibleJsonSchemaProperties,
+  JsonSchema,
+  JsonSchemaFormat,
+  JsonSchemaProperties,
+  JsonSchemaType,
+  mergeJsonSchema
+} from './forms'
 import { firstCharToUpper, toSnakeCase } from './strings'
 
 const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): string => {
@@ -77,39 +84,62 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
   const bodyEl = $(`xsl\\:template[name='body']`)
   const rootEl = $(`xsl\\:stylesheet`)
 
-  const properties = mergeJsonSchema(jsonSchema).properties ?? {}
+  const oneLevelProperties : JsonSchemaProperties = {}
+  const properties = getAllPossibleJsonSchemaProperties(mergeJsonSchema(jsonSchema));
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {
       const templateName = toSnakeCase(key)
-      mapEl.append(
-        `<xsl:when test="$template = '${templateName}'">
-          <xsl:call-template name="${templateName}">
-            <xsl:with-param name="values" select="$values" />
-          </xsl:call-template>
-        </xsl:when>`
-      )
 
-      bodyEl.append(
-        `<xsl:call-template name="base_block_with_title">
-          <xsl:with-param name="template_name" select="'${templateName}'" />
-          <xsl:with-param name="title" select="'${property.title}'" />
-          <xsl:with-param name="values" select="z:Body/z:${firstCharToUpper(key)}" />
-        </xsl:call-template>`
-      )
+      if (property.properties) {
+        mapEl.append(
+          `<xsl:when test="$template = '${templateName}'">
+            <xsl:call-template name="${templateName}">
+              <xsl:with-param name="values" select="$values" />
+            </xsl:call-template>
+          </xsl:when>`
+        )
 
-      buildXslt(rootEl, templateName, getAllPossibleJsonSchemaProperties(property))
+        bodyEl.append(
+          `<xsl:call-template name="base_block_with_title">
+            <xsl:with-param name="template_name" select="'${templateName}'" />
+            <xsl:with-param name="title" select="'${property.title}'" />
+            <xsl:with-param name="values" select="z:Body/z:${firstCharToUpper(key)}" />
+          </xsl:call-template>`
+        )
+
+        buildXslt(rootEl, templateName, getAllPossibleJsonSchemaProperties(property))
+      } else {
+        oneLevelProperties[key] = property;
+      }
     }
   })
 
-  // one level
-  // mapEl.remove()
-  // bodyEl.append(
-  //   `<xsl:call-template name="wrapper">
-  //       <xsl:with-param name="values" select="z:Body" />
-  //     </xsl:call-template>`
-  // )
-  // buildXslt(rootEl, 'wrapper', properties)
+  if(Object.keys(oneLevelProperties).length > 0) {
+    const templateName = 'wrapper'
+    mapEl.append(
+      `<xsl:when test="$template = '${templateName}'">
+        <xsl:call-template name="${templateName}">
+          <xsl:with-param name="values" select="$values" />
+        </xsl:call-template>
+      </xsl:when>`
+    )
+
+    bodyEl.append(
+      `<xsl:call-template name="base_block_with_title">
+        <xsl:with-param name="template_name" select="'${templateName}'" />
+        <xsl:with-param name="title" select="'Ostatné'" />
+        <xsl:with-param name="values" select="z:Body" />
+      </xsl:call-template>`
+    )
+
+    // bodyEl.append(
+    //   `<xsl:call-template name="${templateName}">
+    //     <xsl:with-param name="values" select="z:Body" />
+    //   </xsl:call-template>`
+    // )
+    buildXslt(rootEl, templateName, oneLevelProperties)
+  }
 
   return $.html()
 }
