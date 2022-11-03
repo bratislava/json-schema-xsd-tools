@@ -81,6 +81,22 @@ const buildXslt = (
   rootEl.append(template.join(''))
 }
 
+/**
+ * Loads JSON schema and returns generated stylesheet.
+ *
+ * @remarks
+ *
+ * Properties are generated into body of xslt template:
+ * ```xml
+ * <xsl:template name="body">
+ *   
+ * </xsl:template>
+ * ```
+ *
+ * @param jsonSchema - JSON schema
+ * @param xsltTemplate - XSLT template including basic format-specific templates (prefixed with "base_")
+ * @returns stylesheet
+ */
 export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): string => {
   const $ = cheerio.load(xsltTemplate, { xmlMode: true, decodeEntities: false })
   const mapEl = $(`xsl\\:template[name='map'] > xsl\\:choose`)
@@ -147,14 +163,32 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
   return $.html()
 }
 
+/**
+ * Loads JSON schema and returns generated text stylesheet.
+ *
+ * @param jsonSchema - JSON schema
+ * @returns text stylesheet
+ */
 export const loadAndBuildTextXslt = (jsonSchema: JsonSchema): string => {
   return loadAndBuildXslt(jsonSchema, defaultTextTemplate)
 }
 
+/**
+ * Loads JSON schema and returns generated html stylesheet.
+ *
+ * @param jsonSchema - JSON schema
+ * @returns html stylesheet
+ */
 export const loadAndBuildHtmlXslt = (jsonSchema: JsonSchema): string => {
   return loadAndBuildXslt(jsonSchema, defaultHtmlTemplate)
 }
 
+/**
+ * Loads JSON schema and returns generated pdf stylesheet.
+ *
+ * @param jsonSchema - JSON schema
+ * @returns pdf stylesheet
+ */
 export const loadAndBuildPdfXslt = (jsonSchema: JsonSchema): string => {
   return loadAndBuildXslt(jsonSchema, defaultPdfTemplate)
 }
