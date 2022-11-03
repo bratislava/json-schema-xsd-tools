@@ -16,9 +16,25 @@ describe('generate stylesheets', () => {
     const templateBuffer = await readFile(templatePath)
 
     const xsltPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'form.sb.xslt')
-
     const xslt = loadAndBuildXslt(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString());
+    await writeFile(xsltPath, xslt);
+  })
 
+  test('generate html stylesheet', async () => {
+    const templatePath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'template.html.xslt')
+    const templateBuffer = await readFile(templatePath)
+
+    const xsltPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'form.html.xslt')
+    const xslt = loadAndBuildXslt(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString());
+    await writeFile(xsltPath, xslt);
+  })
+
+    test('generate pdf stylesheet', async () => {
+    const templatePath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'template.fo.xslt')
+    const templateBuffer = await readFile(templatePath)
+
+    const xsltPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'form.fo.xslt')
+    const xslt = loadAndBuildXslt(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString());
     await writeFile(xsltPath, xslt);
   })
 })

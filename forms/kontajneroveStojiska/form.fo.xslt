@@ -1,16 +1,13 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:z="http://schemas.gov.sk/doc/eform/00603481.dopravneZnacenie.sk/0.2">
-  <xsl:output method="text" encoding="utf-8" indent="no"/>
-  <xsl:preserve-space elements="*"/>
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet xml:lang="en" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:z="http://schemas.gov.sk/doc/eform/00603481.dopravneZnacenie.sk/0.2" version="1.0" xmlns:Xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:template match="/z:E-form">
     <xsl:call-template name="base_eform"/>
   </xsl:template>
 
   <!-- this is the template which gets called inside the FO structure -->
-  <xsl:template name="body">  
-
+  <xsl:template name="body">
+    
   <xsl:call-template name="base_block_with_title">
             <xsl:with-param name="template_name" select="'ziadatel'"/>
             <xsl:with-param name="title" select="'Žiadateľ'"/>
@@ -46,11 +43,10 @@
   <xsl:template name="map">
     <xsl:param name="template"/>
     <xsl:param name="values"/>
-    
-    <xsl:choose>
 
-    
-  <xsl:when test="$template = 'ziadatel'">
+    <xsl:choose>
+      
+    <xsl:when test="$template = 'ziadatel'">
             <xsl:call-template name="ziadatel">
               <xsl:with-param name="values" select="$values"/>
             </xsl:call-template>
@@ -78,15 +74,42 @@
         <xsl:call-template name="wrapper">
           <xsl:with-param name="values" select="$values"/>
         </xsl:call-template>
-      </xsl:when></xsl:choose></xsl:template>
+      </xsl:when></xsl:choose>
+  </xsl:template>
 
   <!-- ########################## -->
   <!-- ALL templates below, prefixed with "base_", are format-specific and should not be modified. -->
   <!-- ########################## -->
 
   <xsl:template name="base_eform">
-    <xsl:value-of select="concat(z:Meta/z:Name, '&#10;')"/>
-    <xsl:call-template name="body"/>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="A4" page-height="842px" page-width="595px" margin-top="10px" margin-bottom="10px" margin-left="10px" margin-right="10px">
+          <fo:region-body margin-bottom="20mm"/>
+          <fo:region-after region-name="footer" extent="10mm"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="document">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="A4"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="document" font-family="Arial">
+        <fo:static-content flow-name="footer">
+          <fo:block text-align="end"><fo:page-number/></fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block font-size="20pt" text-align="center">
+            <xsl:value-of select="z:Meta/z:Name"/>
+          </fo:block>
+          <fo:block color="white">|</fo:block>
+          <fo:block/>
+
+          <xsl:call-template name="body"/>
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
   </xsl:template>
 
   <xsl:template name="base_block_with_title">
@@ -106,15 +129,16 @@
     </xsl:call-template>
   </xsl:template>
 
-  <!-- todo you cannot actually wrap text inside block, so the spacing is off in the result -->
   <xsl:template name="base_block">
     <xsl:param name="template_name"/>
     <xsl:param name="values"/>
 
-    <xsl:call-template name="map">
-      <xsl:with-param name="template" select="$template_name"/>
-      <xsl:with-param name="values" select="$values"/>
-    </xsl:call-template>
+    <fo:block margin-left="5mm">
+      <xsl:call-template name="map">
+        <xsl:with-param name="template" select="$template_name"/>
+        <xsl:with-param name="values" select="$values"/>
+      </xsl:call-template>
+    </fo:block>
   </xsl:template>
 
   <xsl:template name="base_format_telefonne_cislo">
@@ -169,20 +193,46 @@
 
   <xsl:template name="base_title">
     <xsl:param name="title"/>
-    <xsl:value-of select="concat($title, '&#10;')"/>
+
+    <fo:block margin-left="5mm" margin-top="2mm">
+      <fo:block padding-left="2mm">
+        <xsl:value-of select="$title"/>
+      </fo:block>
+    </fo:block>
   </xsl:template>
 
   <xsl:template name="base_labeled_field">
     <xsl:param name="text"/>
     <xsl:param name="node"/>
-    <xsl:choose>
-      <xsl:when test="$node">
-        <xsl:value-of select="concat('&#09;', $text, ': ', $node, '&#10;')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="concat('&#09;', $text, '&#10;')"/>
-      </xsl:otherwise>
-    </xsl:choose>
+
+    <fo:table space-before="2mm">
+      <fo:table-column/>
+      <fo:table-column column-width="300px"/>
+      <fo:table-body>
+        <fo:table-row>
+          <fo:table-cell>
+            <fo:block>
+              <xsl:value-of select="$text"/>
+            </fo:block>
+          </fo:table-cell>
+          <xsl:choose>
+            <xsl:when test="$node">
+              <fo:table-cell border-width="0.6pt" border-style="solid" background-color="white" padding="1pt">
+                <fo:block>
+                  <xsl:value-of select="$node"/>
+                  <fo:inline color="white">___</fo:inline>
+                </fo:block>
+              </fo:table-cell>
+            </xsl:when>
+            <xsl:otherwise>
+              <fo:table-cell>
+                <fo:block/>
+              </fo:table-cell>
+            </xsl:otherwise>
+          </xsl:choose>
+        </fo:table-row>
+      </fo:table-body>
+    </fo:table>
   </xsl:template>
 
   <xsl:template name="base_labeled_textarea">
