@@ -2,39 +2,33 @@ import { describe, test } from '@jest/globals'
 import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { cwd } from 'node:process'
-import { loadAndBuildXslt } from '../../src/utils/xslt'
+import type { JsonSchema } from '../../src'
+import { loadAndBuildHtmlXslt, loadAndBuildPdfXslt, loadAndBuildTextXslt } from '../../src/utils/xslt'
 
 describe('generate stylesheets', () => {
-  let jsonSchemaBuffer: Buffer
+  let jsonSchema: JsonSchema
   beforeAll(async () => {
     const jsonSchemaPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'schema.json')
-    jsonSchemaBuffer = await readFile(jsonSchemaPath)
+    const jsonSchemaBuffer = await readFile(jsonSchemaPath)
+    jsonSchema = JSON.parse(jsonSchemaBuffer.toString());
   })
 
   test('generate text stylesheet', async () => {
-    const templatePath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'template.sb.xslt')
-    const templateBuffer = await readFile(templatePath)
 
     const xsltPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'form.sb.xslt')
-    const xslt = loadAndBuildXslt(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString());
+    const xslt = loadAndBuildTextXslt(jsonSchema);
     await writeFile(xsltPath, xslt);
   })
 
   test('generate html stylesheet', async () => {
-    const templatePath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'template.html.xslt')
-    const templateBuffer = await readFile(templatePath)
-
     const xsltPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'form.html.xslt')
-    const xslt = loadAndBuildXslt(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString());
+    const xslt = loadAndBuildHtmlXslt(jsonSchema);
     await writeFile(xsltPath, xslt);
   })
 
     test('generate pdf stylesheet', async () => {
-    const templatePath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'template.fo.xslt')
-    const templateBuffer = await readFile(templatePath)
-
     const xsltPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'form.fo.xslt')
-    const xslt = loadAndBuildXslt(JSON.parse(jsonSchemaBuffer.toString()), templateBuffer.toString());
+    const xslt = loadAndBuildPdfXslt(jsonSchema);
     await writeFile(xsltPath, xslt);
   })
 })
