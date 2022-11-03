@@ -6,7 +6,6 @@ const { readFile, writeFile, access } = require('node:fs/promises')
 const { cwd } = require('node:process')
 const { resolve } = require('node:path')
 const { loadAndBuildXsd, loadAndValidate } = require('../dist/json-schema-xsd-tools')
-const defaultTemplate = require('./template')
 
 async function fileExists(path) {
   try {
@@ -23,7 +22,7 @@ const generateXsd = async (jsonSchemaPath, templatePath, xsdPath) => {
     return
   }
 
-  let template = defaultTemplate
+  let template;
   if (await fileExists(templatePath)) {
     const templateBuffer = await readFile(templatePath)
     template = templateBuffer.toString()

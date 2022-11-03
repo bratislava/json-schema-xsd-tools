@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio'
 import mergeAllOf from 'json-schema-merge-allof'
+import defaultXsdTemplate from '../templates/template.xsd'
 import { firstCharToLower, firstCharToUpper } from './strings'
 
 type XsdType =
@@ -359,11 +360,11 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
  * ```
  *
  * @param jsonSchema - JSON schema
- * @param xsd - XSD template including E-form metadata and some basic types (EnumerationType, PrilohaType)
+ * @param xsdTemplate - XSD template including E-form metadata and some basic types (EnumerationType, PrilohaType)
  * @returns XSD schema
  */
-export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
-  const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
+export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsdTemplate: string | undefined = defaultXsdTemplate): string => {
+  const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
 
   const mergedJsonSchema = mergeJsonSchema(jsonSchema)
   const properties = getAllPossibleJsonSchemaProperties(mergedJsonSchema)

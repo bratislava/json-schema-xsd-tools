@@ -1,5 +1,8 @@
 /* eslint-disable no-secrets/no-secrets */
 import * as cheerio from 'cheerio'
+import defaultPdfTemplate from '../templates/template.fo.xslt'
+import defaultHtmlTemplate from '../templates/template.html.xslt'
+import defaultTextTemplate from '../templates/template.sb.xslt'
 import {
   getAllPossibleJsonSchemaProperties,
   JsonSchema,
@@ -78,14 +81,14 @@ const buildXslt = (
   rootEl.append(template.join(''))
 }
 
-export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
-  const $ = cheerio.load(xslt, { xmlMode: true, decodeEntities: false })
+export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): string => {
+  const $ = cheerio.load(xsltTemplate, { xmlMode: true, decodeEntities: false })
   const mapEl = $(`xsl\\:template[name='map'] > xsl\\:choose`)
   const bodyEl = $(`xsl\\:template[name='body']`)
   const rootEl = $(`xsl\\:stylesheet`)
 
-  const oneLevelProperties : JsonSchemaProperties = {}
-  const properties = getAllPossibleJsonSchemaProperties(mergeJsonSchema(jsonSchema));
+  const oneLevelProperties: JsonSchemaProperties = {}
+  const properties = getAllPossibleJsonSchemaProperties(mergeJsonSchema(jsonSchema))
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {
@@ -110,12 +113,12 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
 
         buildXslt(rootEl, templateName, getAllPossibleJsonSchemaProperties(property))
       } else {
-        oneLevelProperties[key] = property;
+        oneLevelProperties[key] = property
       }
     }
   })
 
-  if(Object.keys(oneLevelProperties).length > 0) {
+  if (Object.keys(oneLevelProperties).length > 0) {
     const templateName = 'wrapper'
     mapEl.append(
       `<xsl:when test="$template = '${templateName}'">
@@ -142,4 +145,16 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xslt: string) => {
   }
 
   return $.html()
+}
+
+export const loadAndBuildTextXslt = (jsonSchema: JsonSchema): string => {
+  return loadAndBuildXslt(jsonSchema, defaultTextTemplate)
+}
+
+export const loadAndBuildHtmlXslt = (jsonSchema: JsonSchema): string => {
+  return loadAndBuildXslt(jsonSchema, defaultHtmlTemplate)
+}
+
+export const loadAndBuildPdfXslt = (jsonSchema: JsonSchema): string => {
+  return loadAndBuildXslt(jsonSchema, defaultPdfTemplate)
 }
