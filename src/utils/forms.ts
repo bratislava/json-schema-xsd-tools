@@ -80,6 +80,9 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
 export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
   return mergeAllOf(jsonSchema, {
     resolvers: {
+      // ignore, as if-then resolver does not exist
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if: () => {
         return true
       },
