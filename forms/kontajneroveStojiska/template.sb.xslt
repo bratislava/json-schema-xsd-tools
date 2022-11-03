@@ -11,8 +11,8 @@
   </xsl:template>
 
   <!-- this is the template which gets called inside the FO structure -->
-  <xsl:template name="body">
-    
+  <xsl:template name="body">  
+
   </xsl:template>
 
   <!-- XSL cannot dynamically "yield" template, so here is simple mapping for each template based on name -->
@@ -20,11 +20,10 @@
   <xsl:template name="map">
     <xsl:param name="template"/>
     <xsl:param name="values" />
+    
     <xsl:choose>
 
     </choose>
-
-    
   </xsl:template>
 
   <!-- ########################## -->
