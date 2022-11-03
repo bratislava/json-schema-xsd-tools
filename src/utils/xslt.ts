@@ -13,6 +13,8 @@ import {
 } from './forms'
 import { firstCharToUpper, toSnakeCase } from './strings'
 
+export type TransformationType = 'text' | 'html' | 'pdf'
+
 const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): string => {
   if (type === 'string') {
     if (format === 'date') {
@@ -89,7 +91,7 @@ const buildXslt = (
  * Properties are generated into body of xslt template:
  * ```xml
  * <xsl:template name="body">
- *   
+ *
  * </xsl:template>
  * ```
  *
@@ -164,31 +166,28 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
 }
 
 /**
- * Loads JSON schema and returns generated text stylesheet.
+ * Loads JSON schema and returns generated stylesheet.
+ *
  *
  * @param jsonSchema - JSON schema
- * @returns text stylesheet
+ * @param tranformationType - type of transformation
+ * @returns stylesheet
  */
-export const loadAndBuildTextXslt = (jsonSchema: JsonSchema): string => {
-  return loadAndBuildXslt(jsonSchema, defaultTextTemplate)
-}
+export const loadAndBuildDefaultXslt = (jsonSchema: JsonSchema, tranformationType: TransformationType): string => {
+  let template
+  switch (tranformationType) {
+    case 'text':
+      template = defaultTextTemplate
+      break
+    case 'html':
+      template = defaultHtmlTemplate
+      break
+    case 'pdf':
+      template = defaultPdfTemplate
+      break
+    default:
+      return ''
+  }
 
-/**
- * Loads JSON schema and returns generated html stylesheet.
- *
- * @param jsonSchema - JSON schema
- * @returns html stylesheet
- */
-export const loadAndBuildHtmlXslt = (jsonSchema: JsonSchema): string => {
-  return loadAndBuildXslt(jsonSchema, defaultHtmlTemplate)
-}
-
-/**
- * Loads JSON schema and returns generated pdf stylesheet.
- *
- * @param jsonSchema - JSON schema
- * @returns pdf stylesheet
- */
-export const loadAndBuildPdfXslt = (jsonSchema: JsonSchema): string => {
-  return loadAndBuildXslt(jsonSchema, defaultPdfTemplate)
+  return loadAndBuildXslt(jsonSchema, template)
 }
