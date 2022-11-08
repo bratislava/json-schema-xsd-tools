@@ -379,9 +379,9 @@ export const loadAndBuildXsd = (
   return $.html()
 }
 
-export const fakeData = async (jsonSchema: JsonSchema) => {
+export const fakeData = (jsonSchema: JsonSchema) => {
   JSONSchemaFaker.format('data-url', () => JSONSchemaFaker.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
   JSONSchemaFaker.format('ciselnik', () => JSONSchemaFaker.random.randexp('[a-zA-Z]+'))
-  
-  return await JSONSchemaFaker.resolve(jsonSchema)
+
+  return JSONSchemaFaker.generate(jsonSchema)
 }

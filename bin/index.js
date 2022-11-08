@@ -5,7 +5,7 @@ const chalk = require('chalk')
 const { readFile, writeFile, access } = require('node:fs/promises')
 const { cwd } = require('node:process')
 const { resolve } = require('node:path')
-const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt } = require('../dist/json-schema-xsd-tools')
+const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt, fakeData } = require('../dist/json-schema-xsd-tools')
 
 async function fileExists(path) {
   try {
@@ -45,6 +45,18 @@ const generateXslt = async (jsonSchemaPath, xsltPath, transformationType) => {
   const xslt = loadAndBuildDefaultXslt(JSON.parse(jsonSchemaBuffer.toString()), transformationType)
   await writeFile(xsltPath, xslt)
   console.log(chalk.cyan.bold('generated: '), xsltPath)
+}
+
+const generateFakeData = async (jsonSchemaPath, dataPath) => {
+  if (!(await fileExists(jsonSchemaPath))) {
+    console.log(chalk.red.bold('JSON schema not found'))
+    return
+  }
+
+  const jsonSchemaBuffer = await readFile(jsonSchemaPath)
+  const data = fakeData(JSON.parse(jsonSchemaBuffer.toString()))
+  await writeFile(dataPath, JSON.stringify(data))
+  console.log(chalk.cyan.bold('generated: '), dataPath)
 }
 
 const validate = async (jsonSchemaPath, xsdPath) => {
@@ -89,16 +101,16 @@ yargs
         type: 'string',
         default: 'template.xsd',
       },
-      xsd: {
-        alias: 'x',
-        describe: 'XSD path',
+      out: {
+        alias: 'o',
+        describe: 'XSD output path',
         type: 'string',
         default: 'schema.xsd',
       },
     },
 
     handler(argv) {
-      generateXsd(resolve(cwd(), argv.json), resolve(cwd(), argv.template), resolve(cwd(), argv.xsd))
+      generateXsd(resolve(cwd(), argv.json), resolve(cwd(), argv.template), resolve(cwd(), argv.out))
     },
   })
   .command({
@@ -111,16 +123,16 @@ yargs
         demandOption: true,
         type: 'string',
       },
-      xslt: {
-        alias: 'x',
-        describe: 'xslt path',
+      out: {
+        alias: 'o',
+        describe: 'xslt output path',
         type: 'string',
         default: 'form.sb.xslt',
       },
     },
 
     handler(argv) {
-      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.xslt), 'text')
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'text')
     },
   })
   .command({
@@ -133,16 +145,16 @@ yargs
         demandOption: true,
         type: 'string',
       },
-      xslt: {
-        alias: 'x',
-        describe: 'xslt path',
+      out: {
+        alias: 'o',
+        describe: 'xslt output path',
         type: 'string',
         default: 'form.html.xslt',
       },
     },
 
     handler(argv) {
-      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.xslt), 'html')
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'html')
     },
   })
   .command({
@@ -155,16 +167,38 @@ yargs
         demandOption: true,
         type: 'string',
       },
-      xslt: {
-        alias: 'x',
-        describe: 'xslt path',
+      out: {
+        alias: 'o',
+        describe: 'xslt output path',
         type: 'string',
         default: 'form.fo.xslt',
       },
     },
 
     handler(argv) {
-      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.xslt), 'pdf')
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'pdf')
+    },
+  })
+  .command({
+    command: 'fake-data',
+    describe: 'generate fake data from JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      out: {
+        alias: 'o',
+        describe: 'data output path',
+        type: 'string',
+        default: 'data.json',
+      },
+    },
+
+    handler(argv) {
+      generateFakeData(resolve(cwd(), argv.json), resolve(cwd(), argv.out))
     },
   })
   .command({
