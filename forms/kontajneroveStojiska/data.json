@@ -1,0 +1,38 @@
+{
+  "zmluva": ["or6bBe2rPwJ.amd", ",DgSq1.ddg", "7wIcs27.mpY", "yjRON0LAy.CFo"],
+  "snimkaZMapy": ["5YK8kfxCZ.dmn", "w.UQW", "dhnJV.YEw"],
+  "podorysStanovista": ["rP.cjj", "xtShs19D.eRy", "c2niCQ.sQq", "KEfj3n.zoO", "U,yGe0_.UKe"],
+  "vizualStanovista": ["R2kRQv9s.qCU", "2.Pen", "Ij7RO3f.KqJ", "9NmbNM1Di5.lDg", "fVp6eXbfJ.rbl"],
+  "technickyVykres": { "technickyVykresPrilohy": ["34YgpH.BVW", ",6,g.kCp", "KahtgGYFORI.pFL"] },
+  "stavebnaDokumentacia": ["tWfwNsR_L.rmG", "gy.gpS"],
+  "rozpocet": { "rozpocetPrilohy": ["9z_z.gcs", "U2dpA.xgN", "XZ5iGj_Efb6.lXX", "wAka1IaL.WjF"] },
+  "stanovisteInformacie": {
+    "mestomPonukanaDokumentacia": true,
+    "popisZbernychNadob": "amet voluptate enim esse",
+    "vegetacnaStrecha": false,
+    "vegetacnaStena": true,
+    "sadoveUpravy": true
+  },
+  "typStanovista": { "typStanovistaUpresnenie": "Rekonštrukcia existujúceho stanovišťa" },
+  "miestoUmiestnenia": {
+    "kataster": ["sed incididunt labore", "laborum culpa dolore sit"],
+    "parcela": "bdqFWrVbMpt",
+    "adresaUmiestnenia": ["esse", "irure quis aute"],
+    "velkost": 34954088.98194325
+  },
+  "ziadatelUdaje": {
+    "nazov": "ut Duis exercitation deserunt consectetur",
+    "sidlo": "est fugiat proident labore",
+    "mesto": "nMhl",
+    "psc": "ad",
+    "ico": "ea eu",
+    "banka": "eiusmod",
+    "iban": "do ullamco fugiat",
+    "menoPriezvisko": "tempor",
+    "email": "jetrolGR-Wh@fwDWJUFlHaOYRehCTFgXmxwCQTAQXOmxk.tc",
+    "telefon": "+4"
+  },
+  "inePrilohy": ["a_xDRw3Q.riT", "yrdPNzjcGy.abn", "UJQuT.swP", "XJX_8.tOL", "w0W9.xGd"],
+  "ziadatel": { "ziatetelTyp": false },
+  "dovodZiadosti": { "zaujem": "Dotáciu na kontajnerové stojisko" }
+}
