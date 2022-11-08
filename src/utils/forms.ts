@@ -379,6 +379,13 @@ export const loadAndBuildXsd = (
   return $.html()
 }
 
+/**
+ * Generate mock data from JSON schema.
+ *
+ *
+ * @param jsonSchema - JSON schema
+ * @returns mock data
+ */
 export const fakeData = (jsonSchema: JsonSchema) => {
   JSONSchemaFaker.format('data-url', () => JSONSchemaFaker.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
   JSONSchemaFaker.format('ciselnik', () => JSONSchemaFaker.random.randexp('[a-zA-Z]+'))
