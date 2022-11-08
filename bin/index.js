@@ -181,7 +181,7 @@ yargs
   })
   .command({
     command: 'fake-data',
-    describe: 'generate fake data from JSON schema',
+    describe: 'generate mock data from JSON schema',
     builder: {
       json: {
         alias: 'j',
@@ -193,7 +193,7 @@ yargs
         alias: 'o',
         describe: 'data output path',
         type: 'string',
-        default: 'data.json',
+        default: 'form.json',
       },
     },
 
