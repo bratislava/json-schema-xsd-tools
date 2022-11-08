@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio'
+import { JSONSchemaFaker } from 'json-schema-faker'
 import mergeAllOf from 'json-schema-merge-allof'
 import defaultXsdTemplate from '../templates/template.xsd'
 import { firstCharToLower, firstCharToUpper } from './strings'
@@ -366,11 +367,21 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
  * @param xsdTemplate - XSD template including E-form metadata and some basic types (EnumerationType, PrilohaType)
  * @returns XSD schema
  */
-export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsdTemplate: string | undefined = defaultXsdTemplate): string => {
+export const loadAndBuildXsd = (
+  jsonSchema: JsonSchema,
+  xsdTemplate: string | undefined = defaultXsdTemplate
+): string => {
   const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
 
   const mergedJsonSchema = mergeJsonSchema(jsonSchema)
   const properties = getAllPossibleJsonSchemaProperties(mergedJsonSchema)
   buildXsd($(`xs\\:schema`), 'E-formBodyType', mergedJsonSchema.required, properties, [])
   return $.html()
+}
+
+export const fakeData = async (jsonSchema: JsonSchema) => {
+  JSONSchemaFaker.format('data-url', () => JSONSchemaFaker.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
+  JSONSchemaFaker.format('ciselnik', () => JSONSchemaFaker.random.randexp('[a-zA-Z]+'))
+  
+  return await JSONSchemaFaker.resolve(jsonSchema)
 }
