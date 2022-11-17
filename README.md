@@ -33,7 +33,7 @@ Usign npm:
 ## Get started
 ### using lib
 ```ts
-import { loadAndBuildXsd, loadAndValidate } from "json-schema-xsd-tools";
+import { loadAndBuildXsd, loadAndBuildDefaultXslt, loadAndValidate } from "json-schema-xsd-tools";
 import { readFile, writeFile } from "node:fs/promises";
 
 const jsonSchema = {
@@ -59,35 +59,40 @@ const jsonSchema = {
   },
 };
 
-const xsdPath = "schema.xsd"
-const templatePath = "template.xsd"
+const xsd = loadAndBuildXsd(jsonSchema)
+await writeFile("schema.xsd", xsd)
 
-const templateBuffer = await readFile(templatePath)
-const xsd = loadAndBuildXsd(jsonSchema, templateBuffer.toString())
-await writeFile(xsdPath, xsd)
+const xslt = loadAndBuildDefaultXslt(jsonSchema, "text")
+await writeFile("form.sb.xslt", xslt)
 
 const errors = loadAndValidate(xsd, jsonSchema);
 console.log(errors) // => [] 
 ```
 
-XSD template includes E-form metadata and some basic types (EnumerationType, PrilohaType), see [template.xsd](forms/00603481.dopravneZnacenie.sk/template.xsd)
-
 ### using CLI
-run `json-schema-xsd-tools <command> [options]` In case of `command not found`, try running using npx - `npx json-schema-xsd-tools <command> [options]`
+run `json-schema-xsd-tools <command> [options]` 
+
+In case of `command not found`, try running using npx - `npx json-schema-xsd-tools <command> [options]`
 
 CLI provides these commands:
 - `generate-xsd` - generate XSD from JSON schema 
+- `generate-text-xslt` - generate text stylesheet from JSON schema
+- `generate-html-xslt` - generate html stylesheet from JSON schema
+- `generate-pdf-xslt` - generate pdf stylesheet from JSON schema
 - `validate` - validate XSD against JSON schema
 
 ## Options
+### -j, --json
+JSON schema path
+
 ### -t, --template
 XSD template path, default 'template.xsd'
 
 ### -x, --xsd 
 XSD path, default 'schema.xsd'
 
-### -j, --xsd
-JSON schema path, default 'schema.json'
+### -x, --xslt
+XSLT path, default 'form.xslt'
 
 ## Documentation
 Explore the [docs](https://bratislava.github.io/json-schema-xsd-tools/).

@@ -1,0 +1,61 @@
+string
+Žiadateľ
+	Žiada o splnomocnenie?: Áno
+	Splnomocnenie na zastupovanie: string
+Žiadateľ (údaje)
+	Názov spoločenstva alebo obchodné meno správcu: string
+	Sídlo spoločenstva alebo správcu: string
+	Mesto: string
+	PSČ: string
+	IČO: string
+	Banka: string
+	IBAN: string
+	Meno a priezvisko zodpovednej osoby: string
+	E-mail: string
+	Telefónne číslo (v tvare +421...): +6
+Typ stanovišťa
+	Upresnite o aký typ stanovišťa sa jedná: Nové
+Informácie o stanovišti
+	Použijete niektorú z mestom ponúkaných projektových dokumentácií?: Áno
+	Popíšte počet a typ jednotlivých zberných nádob a ich objemy: string
+	Plánujete vybudovať / máte vegetačnú strechu?: Áno
+	Plánujete vybudovať / máte vegetačnú stenu kontajnerového stanovišťa?: Áno
+	Plánujete / urobili ste sadové úpravy bezprostredného okolia?: Nie
+Miesto umiestnenia
+	Katasttrálne územie pozemku: string
+	Parcelné číslo pozemku: string
+	Adresa bytových domov, ktorým bude stanovište slúžiť: string
+	Adresa bytových domov, ktorým bude stanovište slúžiť: string
+	Adresa bytových domov, ktorým bude stanovište slúžiť: string
+	Veľkosť plochy (v m2): 2161
+Dôvod žiadosti
+	Mám záujem o: Dotáciu na kontajnerové stojisko
+Ostatné
+	Zmluva o výkone správy / Zmluva o bytovom spoločenstve: string
+	Zmluva o výkone správy / Zmluva o bytovom spoločenstve: string
+	Snímka z katastrálnej mapy so zakresleným kontajnerovým stanovišťom: string
+	Snímka z katastrálnej mapy so zakresleným kontajnerovým stanovišťom: string
+	Snímka z katastrálnej mapy so zakresleným kontajnerovým stanovišťom: string
+	Pôdorys kontajnerového stanovišťa so zakreslením rozmiestnenia zberných nádob: string
+	Pôdorys kontajnerového stanovišťa so zakreslením rozmiestnenia zberných nádob: string
+	Pôdorys kontajnerového stanovišťa so zakreslením rozmiestnenia zberných nádob: string
+	Vizuál kontajnerového stanovišťa - ilustračná alebo reálna fotografia / vizualizácia: string
+	Vizuál kontajnerového stanovišťa - ilustračná alebo reálna fotografia / vizualizácia: string
+	Vizuál kontajnerového stanovišťa - ilustračná alebo reálna fotografia / vizualizácia: string
+	Vizuál kontajnerového stanovišťa - ilustračná alebo reálna fotografia / vizualizácia: string
+	Vizuál kontajnerového stanovišťa - ilustračná alebo reálna fotografia / vizualizácia: string
+	Prílohy: string
+	Prílohy: string
+	Stavebná dokumentácia kontajnerového stanovišťa alebo výber z poskytnutých stavebných dokumentácií: string
+	Prílohy: string
+	Prílohy: string
+	Text: string
+	Iné: string
+	Iné: string
+	Stanovisko OLO: string
+	Relevantný doklad potvrdzujúci súčasný odvoz: string
+	Relevantný doklad potvrdzujúci súčasný odvoz: string
+	Zmluva o nájme pozemku / List vlastníctva / Zmluva o zriadení vecného bremena: string
+	Zmluva o nájme pozemku / List vlastníctva / Zmluva o zriadení vecného bremena: string
+	Zmluva o nájme pozemku / List vlastníctva / Zmluva o zriadení vecného bremena: string
+	Zmluva o nájme pozemku / List vlastníctva / Zmluva o zriadení vecného bremena: string

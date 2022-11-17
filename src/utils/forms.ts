@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio'
 import mergeAllOf from 'json-schema-merge-allof'
+import defaultXsdTemplate from '../templates/template.xsd'
 import { firstCharToLower, firstCharToUpper } from './strings'
 
 type XsdType =
@@ -30,6 +31,9 @@ export interface JsonSchema {
   pattern?: string | undefined
   enum?: string[] | undefined
   then?: JsonSchema | undefined
+  oneOf?: JsonSchema[] | undefined
+  anyOf?: JsonSchema[] | undefined
+  allOf?: JsonSchema[] | undefined
 }
 
 export interface JsonSchemaItems {
@@ -73,14 +77,41 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   }
 }
 
-export const mergeJsonSchema = (jsonSchema: JsonSchema) : JsonSchema => {
-  return mergeAllOf(jsonSchema)
+export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
+  return mergeAllOf(jsonSchema, {
+    resolvers: {
+      // ignore, as if-then resolver does not exist
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if: () => {
+        return true
+      },
+      then: (values: JsonSchema[]): JsonSchema => {
+        let properties: JsonSchemaProperties = {}
+        values.forEach((s) => {
+          properties = { ...properties, ...s.properties }
+        })
+
+        return { properties, type: 'object' }
+      },
+    },
+  })
 }
 
 export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
   let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
   if (jsonSchema.then) {
-    properties = { ...properties, ...jsonSchema.then.properties }
+    properties = { ...properties, ...getAllPossibleJsonSchemaProperties(jsonSchema.then) }
+  }
+  if (jsonSchema.oneOf) {
+    jsonSchema.oneOf.forEach((s) => {
+      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
+    })
+  }
+  if (jsonSchema.anyOf) {
+    jsonSchema.anyOf.forEach((s) => {
+      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
+    })
   }
 
   return properties
@@ -332,11 +363,11 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
  * ```
  *
  * @param jsonSchema - JSON schema
- * @param xsd - XSD template including E-form metadata and some basic types (EnumerationType, PrilohaType)
+ * @param xsdTemplate - XSD template including E-form metadata and some basic types (EnumerationType, PrilohaType)
  * @returns XSD schema
  */
-export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsd: string): string => {
-  const $ = cheerio.load(xsd, { xmlMode: true, decodeEntities: false })
+export const loadAndBuildXsd = (jsonSchema: JsonSchema, xsdTemplate: string | undefined = defaultXsdTemplate): string => {
+  const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
 
   const mergedJsonSchema = mergeJsonSchema(jsonSchema)
   const properties = getAllPossibleJsonSchemaProperties(mergedJsonSchema)

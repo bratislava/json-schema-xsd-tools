@@ -1,16 +1,22 @@
+import type { JsonSchemaFormat, JsonSchemaType } from './utils/forms'
 import {
   JsonSchema,
   JsonSchemaItems,
-  JsonSchemaProperties, loadAndBuildJsonSchema,
+  JsonSchemaProperties,
+  loadAndBuildJsonSchema,
   loadAndBuildXsd
 } from './utils/forms'
+
 import { Error, ErrorType, loadAndValidate, Options } from './utils/validation'
 
-import type { JsonSchemaFormat, JsonSchemaType } from './utils/forms'
+import type { TransformationType } from './utils/xslt'
+import { loadAndBuildDefaultXslt, loadAndBuildXslt } from './utils/xslt'
 
 export {
   loadAndBuildJsonSchema,
   loadAndBuildXsd,
+  loadAndBuildXslt,
+  loadAndBuildDefaultXslt,
   loadAndValidate,
   JsonSchemaType,
   JsonSchemaFormat,
@@ -20,5 +26,6 @@ export {
   Error,
   ErrorType,
   Options,
+  TransformationType,
 }
 

@@ -5,8 +5,7 @@ const chalk = require('chalk')
 const { readFile, writeFile, access } = require('node:fs/promises')
 const { cwd } = require('node:process')
 const { resolve } = require('node:path')
-const { loadAndBuildXsd, loadAndValidate } = require('../dist/json-schema-xsd-tools')
-const defaultTemplate = require('./template')
+const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt } = require('../dist/json-schema-xsd-tools')
 
 async function fileExists(path) {
   try {
@@ -23,7 +22,7 @@ const generateXsd = async (jsonSchemaPath, templatePath, xsdPath) => {
     return
   }
 
-  let template = defaultTemplate
+  let template;
   if (await fileExists(templatePath)) {
     const templateBuffer = await readFile(templatePath)
     template = templateBuffer.toString()
@@ -34,6 +33,18 @@ const generateXsd = async (jsonSchemaPath, templatePath, xsdPath) => {
   await writeFile(xsdPath, xsd)
 
   console.log(chalk.cyan.bold('generated: '), xsdPath)
+}
+
+const generateXslt = async (jsonSchemaPath, xsltPath, transformationType) => {
+  if (!(await fileExists(jsonSchemaPath))) {
+    console.log(chalk.red.bold('JSON schema not found'))
+    return
+  }
+
+  const jsonSchemaBuffer = await readFile(jsonSchemaPath)
+  const xslt = loadAndBuildDefaultXslt(JSON.parse(jsonSchemaBuffer.toString()), transformationType)
+  await writeFile(xsltPath, xslt)
+  console.log(chalk.cyan.bold('generated: '), xsltPath)
 }
 
 const validate = async (jsonSchemaPath, xsdPath) => {
@@ -88,6 +99,72 @@ yargs
 
     handler(argv) {
       generateXsd(resolve(cwd(), argv.json), resolve(cwd(), argv.template), resolve(cwd(), argv.xsd))
+    },
+  })
+  .command({
+    command: 'generate-text-xslt',
+    describe: 'generate text stylesheet from JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      xslt: {
+        alias: 'x',
+        describe: 'xslt path',
+        type: 'string',
+        default: 'form.sb.xslt',
+      },
+    },
+
+    handler(argv) {
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.xslt), 'text')
+    },
+  })
+  .command({
+    command: 'generate-html-xslt',
+    describe: 'generate html stylesheet from JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      xslt: {
+        alias: 'x',
+        describe: 'xslt path',
+        type: 'string',
+        default: 'form.html.xslt',
+      },
+    },
+
+    handler(argv) {
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.xslt), 'html')
+    },
+  })
+  .command({
+    command: 'generate-pdf-xslt',
+    describe: 'generate pdf stylesheet from JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      xslt: {
+        alias: 'x',
+        describe: 'xslt path',
+        type: 'string',
+        default: 'form.fo.xslt',
+      },
+    },
+
+    handler(argv) {
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.xslt), 'pdf')
     },
   })
   .command({
