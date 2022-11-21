@@ -1,6 +1,7 @@
 {
   "title": "Dotácia kontajnerové stanovištia",
   "type": "object",
+  "required": ["ziadatel", "ziadatelUdaje", "typStanovista", "stanovisteInformacie", "miestoUmiestnenia", "dovodZiadosti"],
   "allOf": [
     {
       "properties": {
@@ -46,7 +47,8 @@
           "properties": {
             "nazov": {
               "type": "string",
-              "title": "Názov spoločenstva alebo obchodné meno správcu"
+              "title": "Názov spoločenstva alebo obchodné meno správcu",
+              "example": "Extropy"
             },
             "sidlo": {
               "type": "string",

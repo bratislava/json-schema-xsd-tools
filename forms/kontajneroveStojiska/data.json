@@ -1,1 +1,43 @@
-{"zmluva":["cr.Kfy","hbn_O N.jCI","G.VJx","4vfEsd36.xSN"],"snimkaZMapy":["l.EcI","iLctERE5eCC.CxX"],"podorysStanovista":["hwc298G6.ZmL","2zH2Ta.ISW","-.Vsm","vORUBWwQl.xcG","vY.Pzc"],"vizualStanovista":["S.nKN"],"technickyVykres":{"technickyVykresText":"labore et"},"stavebnaDokumentacia":["dJcN,lRf.zri"],"rozpocet":{"rozpocetText":"ea"},"inePrilohy":["N0cI.MzF","R.Ojn","OXLWV5.zwS","JauLQz.ArL","3qK,zWdN_lO.Zoq"],"ziadatelUdaje":{"nazov":"non","sidlo":"sint","mesto":"Iqi","psc":"sit proident ullamco consectetur","ico":"tempor laboris aliqua ut","banka":"esse voluptate","iban":"ullamco proident veniam pariatur","menoPriezvisko":"incididunt anim ea minim velit","email":"txnIF@mKwaplShJaAnCkyEcfgvDoJ.wn","telefon":"001"}}
+{
+  "ziadatel": { "ziatetelTyp": true },
+  "ziadatelUdaje": {
+    "nazov": "Extropy",
+    "sidlo": "in",
+    "mesto": "GeJ",
+    "psc": "magna nulla dolor dolore",
+    "ico": "consequat exercitation",
+    "banka": "consequat",
+    "iban": "do Excepteur quis culpa",
+    "menoPriezvisko": "in",
+    "email": "ZsCXCb2K@dZrgpOCMqKQCDkWrSPoKWnxDPiVK.sb",
+    "telefon": "001713"
+  },
+  "typStanovista": { "typStanovistaUpresnenie": "Rekonštrukcia existujúceho stanovišťa" },
+  "stanovisteInformacie": {
+    "mestomPonukanaDokumentacia": false,
+    "popisZbernychNadob": "adipisicing officia",
+    "vegetacnaStrecha": true,
+    "vegetacnaStena": true,
+    "sadoveUpravy": false
+  },
+  "miestoUmiestnenia": {
+    "kataster": [
+      "aute Ut qui cillum",
+      "voluptate ad laboris id dolore",
+      "pariatur eu est labore ad",
+      "occaecat ut sint adipisicing"
+    ],
+    "parcela": "CtKVuEUinm",
+    "adresaUmiestnenia": ["est Duis culpa dolor sint", "deserunt fugiat aliqua ut Duis", "elit Lorem occaecat"],
+    "velkost": 16196999.019446641
+  },
+  "dovodZiadosti": { "zaujem": "Dotáciu na kontajnerové stojisko" },
+  "zmluva": ["mO.pHb"],
+  "snimkaZMapy": ["9AY8U.fng", "xnsFWng6-cA.anb", "uk9Yii.gNM"],
+  "podorysStanovista": ["ln6Sw.MhZ"],
+  "vizualStanovista": ["UabTi6.bZk"],
+  "technickyVykres": { "technickyVykresText": "aute aliquip" },
+  "stavebnaDokumentacia": ["x.gNI", "4.rvY", "7j7cXrLj .Zge", "81U1U.pkp", "hP6yjDANKBW.tYu"],
+  "rozpocet": { "rozpocetText": "mollit consequat" },
+  "inePrilohy": ["jJ.qZO"]
+}
