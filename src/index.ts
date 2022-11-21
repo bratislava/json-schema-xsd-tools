@@ -1,5 +1,6 @@
 import type { JsonSchemaFormat, JsonSchemaType } from './utils/forms'
 import {
+  fakeData,
   JsonSchema,
   JsonSchemaItems,
   JsonSchemaProperties,
@@ -23,6 +24,7 @@ export {
   JsonSchema,
   JsonSchemaItems,
   JsonSchemaProperties,
+  fakeData,
   Error,
   ErrorType,
   Options,

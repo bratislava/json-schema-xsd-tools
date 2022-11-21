@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:z="http://schemas.gov.sk/doc/eform/00603481.dopravneZnacenie.sk/0.2">

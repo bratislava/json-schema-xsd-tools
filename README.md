@@ -33,7 +33,7 @@ Usign npm:
 ## Get started
 ### using lib
 ```ts
-import { loadAndBuildXsd, loadAndBuildDefaultXslt, loadAndValidate } from "json-schema-xsd-tools";
+import { loadAndBuildXsd, loadAndBuildDefaultXslt, loadAndValidate, fakeData } from "json-schema-xsd-tools";
 import { readFile, writeFile } from "node:fs/promises";
 
 const jsonSchema = {
@@ -65,6 +65,9 @@ await writeFile("schema.xsd", xsd)
 const xslt = loadAndBuildDefaultXslt(jsonSchema, "text")
 await writeFile("form.sb.xslt", xslt)
 
+const data = fakeData(jsonSchema)
+await writeFile("form.json", data)
+
 const errors = loadAndValidate(xsd, jsonSchema);
 console.log(errors) // => [] 
 ```
@@ -79,20 +82,18 @@ CLI provides these commands:
 - `generate-text-xslt` - generate text stylesheet from JSON schema
 - `generate-html-xslt` - generate html stylesheet from JSON schema
 - `generate-pdf-xslt` - generate pdf stylesheet from JSON schema
+- `fake-data` - generate mock data from JSON schema
 - `validate` - validate XSD against JSON schema
 
 ## Options
 ### -j, --json
 JSON schema path
 
-### -t, --template
-XSD template path, default 'template.xsd'
-
 ### -x, --xsd 
-XSD path, default 'schema.xsd'
+XSD path
 
-### -x, --xslt
-XSLT path, default 'form.xslt'
+### -o, --out
+output path, default form.* (extension is defined by used command)
 
 ## Documentation
 Explore the [docs](https://bratislava.github.io/json-schema-xsd-tools/).

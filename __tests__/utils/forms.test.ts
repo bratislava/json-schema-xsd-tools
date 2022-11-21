@@ -2,10 +2,10 @@ import { describe, test } from '@jest/globals'
 import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { cwd } from 'node:process'
-import { loadAndBuildXsd } from '../../src/utils/forms'
+import { fakeData, loadAndBuildXsd } from '../../src/utils/forms'
 import { loadAndValidate } from '../../src/utils/validation'
 
-describe('generate xsd', () => {
+describe('generate', () => {
   test('generate xsd', async () => {
     const xsdPath = resolve(cwd(), 'forms', '00603481.dopravneZnacenie.sk', 'schema.generated.xsd')
 
@@ -56,5 +56,14 @@ describe('generate xsd', () => {
 
     const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()))
     expect(errors).toHaveLength(0)
+  })
+
+  test('fake data', async () => {
+    const dataPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'data.json')
+    const jsonSchemaPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'schema.json')
+    const jsonSchemaBuffer = await readFile(jsonSchemaPath)
+
+    const data = await fakeData(JSON.parse(jsonSchemaBuffer.toString()))
+    await writeFile(dataPath, JSON.stringify(data))
   })
 })
