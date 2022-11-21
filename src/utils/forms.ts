@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import { JSONSchemaFaker } from 'json-schema-faker'
+import { JSONSchemaFaker as jsf } from 'json-schema-faker'
 import mergeAllOf from 'json-schema-merge-allof'
 import defaultXsdTemplate from '../templates/template.xsd'
 import { firstCharToLower, firstCharToUpper } from './strings'
@@ -387,8 +387,9 @@ export const loadAndBuildXsd = (
  * @returns mock data
  */
 export const fakeData = (jsonSchema: JsonSchema) => {
-  JSONSchemaFaker.format('data-url', () => JSONSchemaFaker.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
-  JSONSchemaFaker.format('ciselnik', () => JSONSchemaFaker.random.randexp('[a-zA-Z]+'))
+  jsf.option({ useExamplesValue: true })
+  jsf.format('data-url', () => jsf.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
+  jsf.format('ciselnik', () => jsf.random.randexp('[a-zA-Z]+'))
 
-  return JSONSchemaFaker.generate(jsonSchema)
+  return jsf.generate(jsonSchema)
 }
