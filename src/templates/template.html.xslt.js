@@ -4,7 +4,7 @@ export default `
 
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:z="http://schemas.gov.sk/doc/eform/00603481.dopravneZnacenie.sk/0.2"
+                xmlns:z="http://schemas.gov.sk/doc/eform/form/0.1"
                 exclude-result-prefixes="z">
 
   <xsl:template match="/z:E-form">
