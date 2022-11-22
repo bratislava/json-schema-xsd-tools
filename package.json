@@ -5,7 +5,7 @@
   "main": "dist/json-schema-xsd-tools.js",
   "scripts": {
     "build": "webpack",
-    "test": "jest",
+    "test": "jest --watch",
     "typecheck": "tsc && tsc-strict",
     "eslint": "eslint --color --ext .js,.json,.ts .",
     "eslint:fix": "npm run eslint -- --fix",
