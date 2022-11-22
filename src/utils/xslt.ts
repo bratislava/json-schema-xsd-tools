@@ -54,7 +54,7 @@ const buildXslt = (
         template.push(
           `<xsl:for-each select="$values/z:${el}">
               <xsl:call-template name="base_labeled_field">
-                <xsl:with-param name="text" select="'${childProperty.title}'" />
+                <xsl:with-param name="text" select="'${childProperty.title || childKey}'" />
                 <xsl:with-param name="node" select="${isAttachment ? 'z:Nazov' : '.'}" />
               </xsl:call-template>
             </xsl:for-each>`
@@ -71,7 +71,7 @@ const buildXslt = (
       } else {
         template.push(
           `<xsl:if test="$values/z:${el}"><xsl:call-template name="base_labeled_field">
-              <xsl:with-param name="text" select="'${childProperty.title}'" />
+              <xsl:with-param name="text" select="'${childProperty.title || childKey}'" />
               ${buildNode(el, childProperty.type, childProperty.format)}
             </xsl:call-template></xsl:if>`
         )
@@ -124,7 +124,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
         bodyEl.append(
           `<xsl:call-template name="base_block_with_title">
             <xsl:with-param name="template_name" select="'${templateName}'" />
-            <xsl:with-param name="title" select="'${property.title}'" />
+            <xsl:with-param name="title" select="'${property.title || key}'" />
             <xsl:with-param name="values" select="z:Body/z:${firstCharToUpper(key)}" />
           </xsl:call-template>`
         )
