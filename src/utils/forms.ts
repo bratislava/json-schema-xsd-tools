@@ -90,7 +90,7 @@ export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
       then: (values: JsonSchema[]): JsonSchema => {
         let properties: JsonSchemaProperties = {}
         values.forEach((s) => {
-          properties = { ...properties, ...s.properties }
+          properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
         })
 
         return { properties, type: 'object' }
@@ -101,8 +101,14 @@ export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
 
 export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
   let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
+
   if (jsonSchema.then) {
     properties = { ...properties, ...getAllPossibleJsonSchemaProperties(jsonSchema.then) }
+  }
+  if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s) => {
+      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
+    })
   }
   if (jsonSchema.oneOf) {
     jsonSchema.oneOf.forEach((s) => {
