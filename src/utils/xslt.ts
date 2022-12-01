@@ -9,7 +9,6 @@ import {
   JsonSchemaFormat,
   JsonSchemaProperties,
   JsonSchemaType,
-  mergeJsonSchema
 } from './forms'
 import { firstCharToUpper, toSnakeCase } from './strings'
 
@@ -106,7 +105,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
   const rootEl = $(`xsl\\:stylesheet`)
 
   const oneLevelProperties: JsonSchemaProperties = {}
-  const properties = getAllPossibleJsonSchemaProperties(mergeJsonSchema(jsonSchema))
+  const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {

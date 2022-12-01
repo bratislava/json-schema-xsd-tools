@@ -1,6 +1,5 @@
 import * as cheerio from 'cheerio'
 import { JSONSchemaFaker as jsf } from 'json-schema-faker'
-import mergeAllOf from 'json-schema-merge-allof'
 import defaultXsdTemplate from '../templates/template.xsd'
 import { firstCharToLower, firstCharToUpper } from './strings'
 
@@ -76,27 +75,6 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
     default:
       return undefined
   }
-}
-
-export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
-  return mergeAllOf(jsonSchema, {
-    resolvers: {
-      // ignore, as if-then resolver does not exist
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if: () => {
-        return true
-      },
-      then: (values: JsonSchema[]): JsonSchema => {
-        let properties: JsonSchemaProperties = {}
-        values.forEach((s) => {
-          properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
-        })
-
-        return { properties, type: 'object' }
-      },
-    },
-  })
 }
 
 export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
@@ -379,9 +357,8 @@ export const loadAndBuildXsd = (
 ): string => {
   const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
 
-  const mergedJsonSchema = mergeJsonSchema(jsonSchema)
-  const properties = getAllPossibleJsonSchemaProperties(mergedJsonSchema)
-  buildXsd($(`xs\\:schema`), 'E-formBodyType', mergedJsonSchema.required, properties, [])
+  const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
+  buildXsd($(`xs\\:schema`), 'E-formBodyType', jsonSchema.required, properties, [])
   return $.html()
 }
 

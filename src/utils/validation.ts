@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
-import { buildJsonSchema, getAllPossibleJsonSchemaProperties, JsonSchema, mergeJsonSchema } from './forms'
+import { buildJsonSchema, getAllPossibleJsonSchemaProperties, JsonSchema } from './forms'
 
 /**
  * Validation options
@@ -168,6 +168,6 @@ export const loadAndValidate = (
     ignore: ['title', 'description'],
   })
 
-  const errors = validate(xsdSchema, mergeJsonSchema(jsonSchema), options, [])
+  const errors = validate(xsdSchema, jsonSchema, options, [])
   return errors
 }
