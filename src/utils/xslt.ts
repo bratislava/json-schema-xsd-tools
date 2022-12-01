@@ -106,12 +106,14 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
 
   const oneLevelProperties: JsonSchemaProperties = {}
   const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
+
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {
       const templateName = toSnakeCase(key)
 
-      if (property.properties) {
+      const childProperties = getAllPossibleJsonSchemaProperties(property)
+      if (Object.keys(childProperties).length > 0) {
         mapEl.append(
           `<xsl:when test="$template = '${templateName}'">
             <xsl:call-template name="${templateName}">
@@ -128,7 +130,7 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
           </xsl:call-template>`
         )
 
-        buildXslt(rootEl, templateName, getAllPossibleJsonSchemaProperties(property))
+        buildXslt(rootEl, templateName, childProperties)
       } else {
         oneLevelProperties[key] = property
       }
