@@ -7,12 +7,15 @@
       "properties": {
         "lorem": {
           "title": "Lorem",
-          "type": "string"
+          "type": "string",
+          "oneOf": [
+            { "const": "STU FEI", "title": "fakulta elektrotechniky a informatiky" },
+            { "const": "STU FCHPT" },
+            { "const": "STU FIIT", "title": "fakulta informatiky a informacnych technologii" }
+          ]
         }
       },
-      "required": [
-        "lorem"
-      ]
+      "required": ["lorem"]
     },
     {
       "title": "second",
@@ -23,9 +26,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "ipsum"
-      ]
+      "required": ["ipsum"]
     }
   ]
 }

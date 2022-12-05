@@ -70,4 +70,4 @@
     </xs:sequence>
   </xs:complexType>
 
-<xs:complexType name="E-formBodyType"><xs:sequence><xs:element name="Lorem" type="xs:string" minOccurs="1" maxOccurs="1"/><xs:element name="Ipsum" type="xs:string" minOccurs="1" maxOccurs="1"/></xs:sequence></xs:complexType></xs:schema>
+<xs:simpleType name="LoremType"><xs:restriction base="xs:string"><xs:enumeration value="STU FEI"/><xs:enumeration value="STU FCHPT"/><xs:enumeration value="STU FIIT"/></xs:restriction></xs:simpleType><xs:complexType name="E-formBodyType"><xs:sequence><xs:element name="Lorem" type="LoremType" minOccurs="0" maxOccurs="1"/><xs:element name="Ipsum" type="xs:string" minOccurs="0" maxOccurs="1"/></xs:sequence></xs:complexType></xs:schema>
