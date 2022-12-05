@@ -34,6 +34,7 @@ export interface JsonSchema {
   oneOf?: JsonSchema[] | undefined
   anyOf?: JsonSchema[] | undefined
   allOf?: JsonSchema[] | undefined
+  const?: string
 }
 
 export interface JsonSchemaItems {
@@ -259,7 +260,7 @@ const getXsdType = (
 ): XsdType | string => {
   let xsdType
   if (type === 'string') {
-    if (property.pattern || (property.enum && property.enum.length)) {
+    if (property.pattern || (property.enum && property.enum.length) || (property.oneOf && property.oneOf.length)) {
       xsdType = firstCharToUpper(key) + 'Type'
     } else {
       xsdType = getXsdTypeByFormat(format)
@@ -303,10 +304,19 @@ const buildXsd = (
 
         if (type === 'object') {
           buildXsd(container, xsdType, property.required, getAllPossibleJsonSchemaProperties(property), processed)
-        } else if (property.enum && property.enum.length > 0) {
-          container.append(buildEnumSimpleType(xsdType, property.enum))
-        } else if (property.pattern) {
-          container.append(buildPatternSimpleType(xsdType, property.pattern))
+        } else if (type === 'string') {
+          if (property.enum && property.enum.length > 0) {
+            container.append(buildEnumSimpleType(xsdType, property.enum))
+          } else if (property.oneOf && property.oneOf.length > 0) {
+            container.append(
+              buildEnumSimpleType(
+                xsdType,
+                property.oneOf.map((e) => e.const!)
+              )
+            )
+          } else if (property.pattern) {
+            container.append(buildPatternSimpleType(xsdType, property.pattern))
+          }
         }
       }
     }
