@@ -78,6 +78,16 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   }
 }
 
+/**
+ * Get all possible JSON schema properties - merge properties, allOf, oneOf, anyOf and if-then.
+ *
+ * @remarks
+ *
+ * It is necessary to guarantee the exact order of properties, as we are using `<xs:sequence>` element in XSD schema.
+ *
+ * @param jsonSchema - JSON schema
+ * @returns properties - JSON schema properties
+ */
 export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
   let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
 
@@ -273,6 +283,17 @@ const getXsdType = (
   return xsdType
 }
 
+/**
+ * Elements are generated into `<xs:sequence>` element, so it is necessary to guarantee the exact order of properties.
+ *
+ * We would like to use `<xs:all>` element (child elements can appear in any order), but child elements can occurs more than one (eg attachments)
+ * and attribute maxOccurs is restricted to 1 in child elements (XSD 1.0).
+ * {@link https://www.w3.org/TR/xmlschema11-1/#element-all}
+ *
+ * Hacking `<xs:choice minOccurs="0" maxOccurs="unbounded">` ignores minOccurs and maxOccurs in children. Can not be used.
+ * {@link https://stackoverflow.com/questions/2290360/xsd-how-to-allow-elements-in-any-order-any-number-of-times}
+ *
+ */
 const buildXsd = (
   container: cheerio.Cheerio<cheerio.Element>,
   name: string,
