@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack",
     "test": "jest",
+    "test:ci": "jest --ci",
     "typecheck": "tsc && tsc-strict",
     "eslint": "eslint --color --ext .js,.json,.ts .",
     "eslint:fix": "npm run eslint -- --fix",
