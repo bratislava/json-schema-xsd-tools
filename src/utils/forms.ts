@@ -332,7 +332,7 @@ const buildXsd = (
             container.append(
               buildEnumSimpleType(
                 xsdType,
-                property.oneOf.map((e) => e.const!)
+                property.oneOf.map((e) => e.const || '')
               )
             )
           } else if (property.pattern) {
