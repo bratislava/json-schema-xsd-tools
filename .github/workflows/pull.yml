@@ -1,4 +1,4 @@
-name: Typecheck
+name: Validate code
 
 on:
   push:
@@ -32,3 +32,6 @@ jobs:
           level: warning
       - name: Typescript strict plugin check
         run: yarn typecheck
+
+      - name: Tests
+        run: yarn test:ci
