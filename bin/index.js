@@ -2,7 +2,7 @@
 
 const yargs = require('yargs')
 const chalk = require('chalk')
-const { readFile, writeFile, access } = require('node:fs/promises')
+const { readFile, writeFile, access, stat, mkdir } = require('node:fs/promises')
 const { cwd } = require('node:process')
 const { resolve } = require('node:path')
 const { exec } = require('child_process')
@@ -12,6 +12,15 @@ async function fileExists(path) {
   try {
     await access(path)
     return true
+  } catch {
+    return false
+  }
+}
+
+async function folderExists(path) {
+  try {
+    const stats = await stat(path)
+    return stats.isDirectory()
   } catch {
     return false
   }
@@ -87,6 +96,49 @@ const generate = async (jsonSchemaPath, outPath) => {
     console.log(chalk.red.bold('JSON schema not found'))
     return
   }
+
+  if (!(await folderExists(outPath))) {
+    await mkdir(outPath)
+  }
+
+  const jsonSchemaBuffer = await readFile(jsonSchemaPath)
+  const json = JSON.parse(jsonSchemaBuffer.toString())
+
+  const xsd = loadAndBuildXsd(json)
+  const xsdPath = resolve(outPath, 'schema.xsd')
+  await writeFile(xsdPath, xsd)
+
+  const textXslt = loadAndBuildDefaultXslt(json, 'text')
+  const textXsltPath = resolve(outPath, 'form.sb.xslt')
+  await writeFile(textXsltPath, textXslt)
+
+  const htmlXslt = loadAndBuildDefaultXslt(json, 'html')
+  const htmlXsltPath = resolve(outPath, 'form.html.xslt')
+  await writeFile(htmlXsltPath, htmlXslt)
+
+  const pdfXslt = loadAndBuildDefaultXslt(json, 'pdf')
+  const pdfXsltPath = resolve(outPath, 'form.fo.xslt')
+  await writeFile(pdfXsltPath, pdfXslt)
+
+  const data = fakeData(json)
+  const dataPath = resolve(outPath, 'data.json')
+  await writeFile(dataPath, JSON.stringify(data))
+
+  try {
+    const res = await execXslt3(textXsltPath)
+    console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
+
+  try {
+    const res = await execXslt3(htmlXsltPath)
+    console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
+
+  console.log(chalk.cyan.bold('done: '), outPath)
 }
 
 const validate = async (jsonSchemaPath, xsdPath) => {
