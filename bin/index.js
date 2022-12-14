@@ -5,6 +5,7 @@ const chalk = require('chalk')
 const { readFile, writeFile, access } = require('node:fs/promises')
 const { cwd } = require('node:process')
 const { resolve } = require('node:path')
+const { exec } = require('child_process')
 const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt, fakeData } = require('../dist/json-schema-xsd-tools')
 
 async function fileExists(path) {
@@ -22,7 +23,7 @@ const generateXsd = async (jsonSchemaPath, templatePath, xsdPath) => {
     return
   }
 
-  let template;
+  let template
   if (await fileExists(templatePath)) {
     const templateBuffer = await readFile(templatePath)
     template = templateBuffer.toString()
@@ -57,6 +58,35 @@ const generateFakeData = async (jsonSchemaPath, dataPath) => {
   const data = fakeData(JSON.parse(jsonSchemaBuffer.toString()))
   await writeFile(dataPath, JSON.stringify(data))
   console.log(chalk.cyan.bold('generated: '), dataPath)
+}
+
+const setExt = (path, ext) => {
+  return `${path.substr(0, path.lastIndexOf('.'))}.${ext}`
+}
+
+const execXslt3 = (path) => {
+  return new Promise((resolve, reject) => {
+    exec(`npx xslt3 -xsl:${path} -export:${setExt(path, 'sef.json')} -t`, (error, stdout, stderr) => {
+      if (error) {
+        reject(error.message)
+        return
+      }
+
+      if (stderr) {
+        reject(error.message)
+        return
+      }
+
+      resolve(stdout)
+    })
+  })
+}
+
+const generate = async (jsonSchemaPath, outPath) => {
+  if (!(await fileExists(jsonSchemaPath))) {
+    console.log(chalk.red.bold('JSON schema not found'))
+    return
+  }
 }
 
 const validate = async (jsonSchemaPath, xsdPath) => {
@@ -180,6 +210,28 @@ yargs
     },
   })
   .command({
+    command: 'generate',
+    describe: 'generate form from JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      out: {
+        alias: 'o',
+        describe: 'data output path',
+        type: 'string',
+        default: 'form',
+      },
+    },
+
+    handler(argv) {
+      generate(resolve(cwd(), argv.json), resolve(cwd(), argv.out))
+    },
+  })
+  .command({
     command: 'fake-data',
     describe: 'generate mock data from JSON schema',
     builder: {
@@ -223,5 +275,4 @@ yargs
       validate(resolve(cwd(), argv.json), resolve(cwd(), argv.xsd))
     },
   })
-  .demandCommand()
-  .argv
+  .demandCommand().argv
