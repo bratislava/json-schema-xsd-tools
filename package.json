@@ -1,5 +1,5 @@
 {
-  "name": "json-schema-xsd-tools",
+  "name": "@bratislava/json-schema-xsd-tools",
   "version": "0.1.0",
   "description": "",
   "main": "dist/json-schema-xsd-tools.js",
