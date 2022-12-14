@@ -9,26 +9,16 @@ Read more about [JSON Schema](https://json-schema.org/).
 
 ## Installation
 
+### lib
+
+- run `yarn add @bratislava/json-schema-xsd-tools` or `npm i @bratislava/json-schema-xsd-tools`
+
+### CLI
+
 - Clone or download this repository.
 - run `yarn` or `npm install`
 - run `yarn run build` or `npm run build`
-- For using CLI, run `npm install -g .`
-- Navigate to your app.
-- run `npm install <path to json-schema-xsd-tools folder>`
-
-<!--
-In a browser:
-
-`<script src="dist/json-schema-xsd-tools.js"></script>`
-
-Using yarn:
-
-`yarn add json-schema-xsd-tools`
-
-Usign npm:
-
-`npm install json-schema-xsd-tools`
--->
+- run `npm install -g .`
 
 ## Get started
 
