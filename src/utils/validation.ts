@@ -70,7 +70,7 @@ const validate = (
 
   if (!xsdSchema || !jsonSchema) {
     return errors
-  } else if (Object.keys(jsonSchema).length === 0 && options.strict === false) {
+  } else if (path.length === 0 && Object.keys(jsonSchema).length === 0 && options.strict === false) {
     return errors
   }
 
