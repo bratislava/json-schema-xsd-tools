@@ -9,16 +9,11 @@ Read more about [JSON Schema](https://json-schema.org/).
 
 ## Installation
 
-### lib
+`yarn add @bratislava/json-schema-xsd-tools`
 
-- run `yarn add @bratislava/json-schema-xsd-tools` or `npm i @bratislava/json-schema-xsd-tools`
+or
 
-### CLI
-
-- Clone or download this repository.
-- run `yarn` or `npm install`
-- run `yarn run build` or `npm run build`
-- run `npm install -g .`
+`npm i @bratislava/json-schema-xsd-tools`
 
 ## Get started
 
