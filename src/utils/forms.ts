@@ -79,7 +79,7 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
 }
 
 /**
- * Get all possible JSON schema properties - merge properties, allOf, oneOf, anyOf and if-then.
+ * Get all possible JSON schema properties - merge allOf, oneOf, anyOf and if-then.
  *
  * @remarks
  *
@@ -111,6 +111,37 @@ export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): Json
   }
 
   return properties
+}
+
+/**
+ * Get all possible required fields - merge allOf, oneOf, anyOf and if-then.
+ *
+ * @param jsonSchema - JSON schema
+ * @returns required - required fields
+ */
+export const getAllPossibleRequiredFields = (jsonSchema: JsonSchema): string[] => {
+  let required: string[] = jsonSchema.required ?? []
+
+  if (jsonSchema.then) {
+    required = [...required, ...getAllPossibleRequiredFields(jsonSchema.then)]
+  }
+  if (jsonSchema.allOf) {
+    jsonSchema.allOf.forEach((s) => {
+      required = [...required, ...getAllPossibleRequiredFields(s)]
+    })
+  }
+  if (jsonSchema.oneOf) {
+    jsonSchema.oneOf.forEach((s) => {
+      required = [...required, ...getAllPossibleRequiredFields(s)]
+    })
+  }
+  if (jsonSchema.anyOf) {
+    jsonSchema.anyOf.forEach((s) => {
+      required = [...required, ...getAllPossibleRequiredFields(s)]
+    })
+  }
+
+  return required
 }
 
 const enumMap = new Map()
@@ -324,7 +355,13 @@ const buildXsd = (
         processed.push(xsdType)
 
         if (type === 'object') {
-          buildXsd(container, xsdType, property.required, getAllPossibleJsonSchemaProperties(property), processed)
+          buildXsd(
+            container,
+            xsdType,
+            getAllPossibleRequiredFields(property),
+            getAllPossibleJsonSchemaProperties(property),
+            processed
+          )
         } else if (type === 'string') {
           if (property.enum && property.enum.length > 0) {
             container.append(buildEnumSimpleType(xsdType, property.enum))
@@ -389,7 +426,7 @@ export const loadAndBuildXsd = (
   const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
 
   const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
-  buildXsd($(`xs\\:schema`), 'E-formBodyType', jsonSchema.required, properties, [])
+  buildXsd($(`xs\\:schema`), 'E-formBodyType', getAllPossibleRequiredFields(jsonSchema), properties, [])
   return $.html()
 }
 
