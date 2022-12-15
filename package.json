@@ -1,6 +1,6 @@
 {
   "name": "@bratislava/json-schema-xsd-tools",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "",
   "main": "dist/json-schema-xsd-tools.js",
   "scripts": {
