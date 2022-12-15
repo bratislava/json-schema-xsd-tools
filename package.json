@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "main": "dist/json-schema-xsd-tools.js",
+  "types": "dist/json-schema-xsd-tools.d.ts",
   "scripts": {
     "build": "webpack",
     "test": "jest",
