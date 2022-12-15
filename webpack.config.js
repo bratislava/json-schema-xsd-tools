@@ -1,8 +1,8 @@
-const path = require('path');
-const ESLintPlugin = require('eslint-webpack-plugin');
+const path = require('path')
+const ESLintPlugin = require('eslint-webpack-plugin')
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: './src/json-schema-xsd-tools.ts',
   devtool: 'inline-source-map',
   module: {
     rules: [
@@ -39,6 +39,6 @@ module.exports = {
       commonjs2: 'cheerio',
       amd: 'cheerio',
       root: 'cheerio',
-    }
-  }
-};
+    },
+  },
+}
