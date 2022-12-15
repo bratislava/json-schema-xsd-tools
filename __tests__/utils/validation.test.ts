@@ -16,7 +16,7 @@ describe('validation', () => {
     const jsonSchemaPath = resolve(cwd(), 'forms', '00603481.dopravneZnacenie.sk', 'schema.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
-    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), bodyElement)
+    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), { bodyElement })
     expect(errors).toHaveLength(0)
   })
 
@@ -24,7 +24,7 @@ describe('validation', () => {
     const jsonSchemaPath = resolve(cwd(), 'forms', '00603481.dopravneZnacenie.sk', 'schema.invalid.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
-    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), bodyElement)
+    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), { bodyElement })
 
     expect(errors).toEqual(
       expect.arrayContaining([
@@ -39,15 +39,11 @@ describe('validation', () => {
     const jsonSchemaPath = resolve(cwd(), 'forms', '00603481.dopravneZnacenie.sk', 'schema.invalid.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
-    const options = {
-      ignore: ['enum'],
-    }
-    const errors = loadAndValidate(
-      xsdSchemaBuffer.toString(),
-      JSON.parse(jsonSchemaBuffer.toString()),
+    const ignore = ['enum']
+    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), {
       bodyElement,
-      options
-    )
+      ignore,
+    })
     expect(errors).toHaveLength(0)
   })
 
@@ -55,7 +51,7 @@ describe('validation', () => {
     const jsonSchemaPath = resolve(cwd(), 'forms', '00603481.dopravneZnacenie.sk', 'schema.valid.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
-    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), bodyElement)
+    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), { bodyElement })
     expect(errors).toHaveLength(0)
   })
 
@@ -63,16 +59,11 @@ describe('validation', () => {
     const jsonSchemaPath = resolve(cwd(), 'forms', '00603481.dopravneZnacenie.sk', 'schema.empty.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
-    const options = {
-      strict: false,
-      ignore: [],
-    }
-    const errors = loadAndValidate(
-      xsdSchemaBuffer.toString(),
-      JSON.parse(jsonSchemaBuffer.toString()),
+    const ignore = ['empty']
+    const errors = loadAndValidate(xsdSchemaBuffer.toString(), JSON.parse(jsonSchemaBuffer.toString()), {
       bodyElement,
-      options
-    )
+      ignore,
+    })
     expect(errors).toHaveLength(0)
   })
 })
