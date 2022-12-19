@@ -7,30 +7,25 @@ const { cwd } = require('node:process')
 const { resolve } = require('node:path')
 const { exec } = require('child_process')
 const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt, fakeData } = require('../dist/json-schema-xsd-tools')
+const uiSchema = require('./uiSchema.json')
 
-const xmlTemplate = `<?xml version="1.0" encoding="utf-8"?>
+const buildXmlTemplate = (form) => `<?xml version="1.0" encoding="utf-8"?>
 <E-form xmlns="http://schemas.gov.sk/doc/eform/form/0.1"
         xsi:schemaLocation="http://schemas.gov.sk/doc/eform/form/0.1"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Meta>
-    <ID>00603481.dopravneZnacenie.sk</ID>
-    <Name>Dopravné značenie</Name>
+    <ID>${form}</ID>
+    <Name>${form}</Name>
     <Gestor></Gestor>
     <RecipientId></RecipientId>
-    <Version>0.2</Version>
+    <Version>0.1</Version>
     <ZepRequired>false</ZepRequired>
     <EformUuid>5ea0cad2-8759-4826-8d4c-c59c1d09ec29</EformUuid>
     <SenderID>mailto:hruska@example.com</SenderID>
   </Meta>
 </E-form>`
 
-const uiSchema = {
-  'ui:submitButtonOptions': {
-    norender: true,
-  },
-}
-
-const getTs = (form) => `import htmlStylesheet from './${form}/form.html.sef.json'
+const buildFormIndex = (form) => `import htmlStylesheet from './${form}/form.html.sef.json'
 import textStylesheet from './${form}/form.sb.sef.json'
 import schema from './${form}/schema.json'
 import xsd from './${form}/schema.xsd'
@@ -170,7 +165,7 @@ const generate = async (jsonSchemaPath, out) => {
   await writeFile(schemaPath, JSON.stringify(schema))
 
   const xmlTemplatePath = resolve(outPath, 'xmlTemplate.ts')
-  await writeFile(xmlTemplatePath, `export default \`${xmlTemplate}\``)
+  await writeFile(xmlTemplatePath, `export default \`${buildXmlTemplate(out)}\``)
 
   try {
     const res = await execXslt3(textXsltPath)
@@ -186,7 +181,7 @@ const generate = async (jsonSchemaPath, out) => {
     console.error(error)
   }
 
-  await writeFile(outPath + '.ts', getTs(out))
+  await writeFile(outPath + '.ts', buildFormIndex(out))
   console.log(chalk.cyan.bold('done: '), outPath)
 }
 
