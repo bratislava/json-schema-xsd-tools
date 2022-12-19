@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-secrets/no-secrets
-export default `
-<?xml version="1.0" encoding="utf-8"?>
+export default `<?xml version="1.0" encoding="utf-8"?>
 <xs:schema elementFormDefault="qualified" xmlns="http://schemas.gov.sk/doc/eform/form/0.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.gov.sk/doc/eform/form/0.1">
   <xs:element name="E-form">
     <xs:complexType>
@@ -71,5 +70,4 @@ export default `
     </xs:sequence>
   </xs:complexType>
 
-</xs:schema>
-`
+</xs:schema>`
