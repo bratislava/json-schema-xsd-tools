@@ -3,13 +3,7 @@ import * as cheerio from 'cheerio'
 import defaultPdfTemplate from '../templates/template.fo.xslt'
 import defaultHtmlTemplate from '../templates/template.html.xslt'
 import defaultTextTemplate from '../templates/template.sb.xslt'
-import {
-  getAllPossibleJsonSchemaProperties,
-  JsonSchema,
-  JsonSchemaFormat,
-  JsonSchemaProperties,
-  JsonSchemaType,
-} from './forms'
+import { JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType, mergeJsonSchema } from './forms'
 import { firstCharToUpper, toSnakeCase } from './strings'
 
 export type TransformationType = 'text' | 'html' | 'pdf'
@@ -66,7 +60,7 @@ const buildXslt = (
             </xsl:call-template>`
         )
 
-        buildXslt(rootEl, childTemplateName, getAllPossibleJsonSchemaProperties(childProperty))
+        buildXslt(rootEl, childTemplateName, mergeJsonSchema(childProperty).properties)
       } else {
         template.push(
           `<xsl:if test="$values/z:${el}"><xsl:call-template name="base_labeled_field">
@@ -105,14 +99,14 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
   const rootEl = $(`xsl\\:stylesheet`)
 
   const oneLevelProperties: JsonSchemaProperties = {}
-  const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
+  const { properties } = mergeJsonSchema(jsonSchema)
 
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {
       const templateName = toSnakeCase(key)
 
-      const childProperties = getAllPossibleJsonSchemaProperties(property)
+      const childProperties = mergeJsonSchema(property).properties
       if (Object.keys(childProperties).length > 0) {
         mapEl.append(
           `<xsl:when test="$template = '${templateName}'">

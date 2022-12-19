@@ -46,6 +46,8 @@ export interface JsonSchemaProperties {
   [key: string]: JsonSchema
 }
 
+type JsonSchemaComposition = 'allOf' | 'oneOf' | 'anyOf'
+
 const getJsonSchemaType = (type: string | undefined): JsonSchemaType => {
   switch (type) {
     case 'xs:boolean':
@@ -79,69 +81,34 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
 }
 
 /**
- * Get all possible JSON schema properties - merge allOf, oneOf, anyOf and if-then.
+ * Merge JSON Schema properties and required fields - merge allOf, oneOf, anyOf and if-then.
  *
  * @remarks
  *
  * It is necessary to guarantee the exact order of properties, as we are using `<xs:sequence>` element in XSD schema.
  *
  * @param jsonSchema - JSON schema
- * @returns properties - JSON schema properties
+ * @returns merged JSON schema - JSON schema properties and required fields
  */
-export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
-  let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
+export const mergeJsonSchema = (jsonSchema: JsonSchema) => {
+  const allProperties: JsonSchemaProperties = jsonSchema.properties ?? {}
+  const allRequiredFields: string[] = jsonSchema.required ?? []
 
   if (jsonSchema.then) {
-    properties = { ...properties, ...getAllPossibleJsonSchemaProperties(jsonSchema.then) }
-  }
-  if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s) => {
-      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
-    })
-  }
-  if (jsonSchema.oneOf) {
-    jsonSchema.oneOf.forEach((s) => {
-      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
-    })
-  }
-  if (jsonSchema.anyOf) {
-    jsonSchema.anyOf.forEach((s) => {
-      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
-    })
+    const { properties, required } = mergeJsonSchema(jsonSchema.then)
+    Object.assign(allProperties, properties)
+    allRequiredFields.push(...required)
   }
 
-  return properties
-}
-
-/**
- * Get all possible required fields - merge allOf, oneOf, anyOf and if-then.
- *
- * @param jsonSchema - JSON schema
- * @returns required - required fields
- */
-export const getAllPossibleRequiredFields = (jsonSchema: JsonSchema): string[] => {
-  let required: string[] = jsonSchema.required ?? []
-
-  if (jsonSchema.then) {
-    required = [...required, ...getAllPossibleRequiredFields(jsonSchema.then)]
-  }
-  if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach((s) => {
-      required = [...required, ...getAllPossibleRequiredFields(s)]
+  ;['allOf', 'oneOf', 'anyOf'].forEach((c: string) => {
+    jsonSchema[c as JsonSchemaComposition]?.forEach((s) => {
+      const { properties, required } = mergeJsonSchema(s)
+      Object.assign(allProperties, properties)
+      allRequiredFields.push(...required)
     })
-  }
-  if (jsonSchema.oneOf) {
-    jsonSchema.oneOf.forEach((s) => {
-      required = [...required, ...getAllPossibleRequiredFields(s)]
-    })
-  }
-  if (jsonSchema.anyOf) {
-    jsonSchema.anyOf.forEach((s) => {
-      required = [...required, ...getAllPossibleRequiredFields(s)]
-    })
-  }
+  })
 
-  return required
+  return { properties: allProperties, required: allRequiredFields }
 }
 
 const enumMap = new Map()
@@ -355,13 +322,8 @@ const buildXsd = (
         processed.push(xsdType)
 
         if (type === 'object') {
-          buildXsd(
-            container,
-            xsdType,
-            getAllPossibleRequiredFields(property),
-            getAllPossibleJsonSchemaProperties(property),
-            processed
-          )
+          const mergedSchema = mergeJsonSchema(property)
+          buildXsd(container, xsdType, mergedSchema.required, mergedSchema.properties, processed)
         } else if (type === 'string') {
           if (property.enum && property.enum.length > 0) {
             container.append(buildEnumSimpleType(xsdType, property.enum))
@@ -425,8 +387,8 @@ export const loadAndBuildXsd = (
 ): string => {
   const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
 
-  const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
-  buildXsd($(`xs\\:schema`), 'E-formBodyType', getAllPossibleRequiredFields(jsonSchema), properties, [])
+  const { properties, required } = mergeJsonSchema(jsonSchema)
+  buildXsd($(`xs\\:schema`), 'E-formBodyType', required, properties, [])
   return $.html()
 }
 

@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
-import { buildJsonSchema, getAllPossibleJsonSchemaProperties, getAllPossibleRequiredFields, JsonSchema } from './forms'
+import { buildJsonSchema, JsonSchema, mergeJsonSchema } from './forms'
 
 /**
  * Validation options
@@ -67,7 +67,7 @@ const validate = (
   options: Options,
   path: string[]
 ): Error[] => {
-  let errors: Error[] = []
+  const errors: Error[] = []
 
   if (!xsdSchema || !jsonSchema) {
     return errors
@@ -84,6 +84,8 @@ const validate = (
       return errors
     }
   }
+
+  const { properties, required } = mergeJsonSchema(jsonSchema)
 
   if (!options.ignore?.includes('title') && xsdSchema.title && xsdSchema.title !== jsonSchema.title) {
     errors.push({
@@ -117,10 +119,7 @@ const validate = (
     })
   }
 
-  if (
-    !options.ignore?.includes('required') &&
-    !isSubset(xsdSchema.required, getAllPossibleRequiredFields(jsonSchema))
-  ) {
+  if (!options.ignore?.includes('required') && !isSubset(xsdSchema.required, required)) {
     errors.push({
       path,
       type: ErrorType.Required,
@@ -152,9 +151,8 @@ const validate = (
   if (xsdSchema.properties) {
     Object.keys(xsdSchema.properties).forEach((key) => {
       if (xsdSchema.properties) {
-        const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
         if (properties[key]) {
-          errors = [...errors, ...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key])]
+          errors.push(...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key]))
         } else {
           errors.push({
             path,
