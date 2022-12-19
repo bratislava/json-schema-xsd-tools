@@ -8,6 +8,44 @@ const { resolve } = require('node:path')
 const { exec } = require('child_process')
 const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt, fakeData } = require('../dist/json-schema-xsd-tools')
 
+const xmlTemplate = `<?xml version="1.0" encoding="utf-8"?>
+<E-form xmlns="http://schemas.gov.sk/doc/eform/form/0.1"
+        xsi:schemaLocation="http://schemas.gov.sk/doc/eform/form/0.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Meta>
+    <ID>00603481.dopravneZnacenie.sk</ID>
+    <Name>Dopravné značenie</Name>
+    <Gestor></Gestor>
+    <RecipientId></RecipientId>
+    <Version>0.2</Version>
+    <ZepRequired>false</ZepRequired>
+    <EformUuid>5ea0cad2-8759-4826-8d4c-c59c1d09ec29</EformUuid>
+    <SenderID>mailto:hruska@example.com</SenderID>
+  </Meta>
+</E-form>`
+
+const uiSchema = {
+  'ui:submitButtonOptions': {
+    norender: true,
+  },
+}
+
+const getTs = (form) => `import htmlStylesheet from './${form}/form.html.sef.json'
+import textStylesheet from './${form}/form.sb.sef.json'
+import schema from './${form}/schema.json'
+import xsd from './${form}/schema.xsd'
+import uiSchema from './${form}/uiSchema.json'
+import xmlTemplate from './${form}/xmlTemplate'
+
+export default {
+  schema,
+  uiSchema,
+  xsd,
+  xmlTemplate,
+  textStylesheet,
+  htmlStylesheet,
+}`
+
 async function fileExists(path) {
   try {
     await access(path)
@@ -91,38 +129,48 @@ const execXslt3 = (path) => {
   })
 }
 
-const generate = async (jsonSchemaPath, outPath) => {
+const generate = async (jsonSchemaPath, out) => {
   if (!(await fileExists(jsonSchemaPath))) {
     console.log(chalk.red.bold('JSON schema not found'))
     return
   }
 
+  const outPath = resolve(cwd(), out)
   if (!(await folderExists(outPath))) {
     await mkdir(outPath)
   }
 
   const jsonSchemaBuffer = await readFile(jsonSchemaPath)
-  const json = JSON.parse(jsonSchemaBuffer.toString())
+  const schema = JSON.parse(jsonSchemaBuffer.toString())
 
-  const xsd = loadAndBuildXsd(json)
-  const xsdPath = resolve(outPath, 'schema.xsd')
-  await writeFile(xsdPath, xsd)
+  const xsd = loadAndBuildXsd(schema)
+  const xsdPath = resolve(outPath, 'schema.xsd.ts')
+  await writeFile(xsdPath, `export default \`${xsd}\``)
 
-  const textXslt = loadAndBuildDefaultXslt(json, 'text')
+  const textXslt = loadAndBuildDefaultXslt(schema, 'text')
   const textXsltPath = resolve(outPath, 'form.sb.xslt')
   await writeFile(textXsltPath, textXslt)
 
-  const htmlXslt = loadAndBuildDefaultXslt(json, 'html')
+  const htmlXslt = loadAndBuildDefaultXslt(schema, 'html')
   const htmlXsltPath = resolve(outPath, 'form.html.xslt')
   await writeFile(htmlXsltPath, htmlXslt)
 
-  const pdfXslt = loadAndBuildDefaultXslt(json, 'pdf')
+  const pdfXslt = loadAndBuildDefaultXslt(schema, 'pdf')
   const pdfXsltPath = resolve(outPath, 'form.fo.xslt')
   await writeFile(pdfXsltPath, pdfXslt)
 
-  const data = fakeData(json)
+  const data = fakeData(schema)
   const dataPath = resolve(outPath, 'data.json')
   await writeFile(dataPath, JSON.stringify(data))
+
+  const uiSchemaPath = resolve(outPath, 'uiSchema.json')
+  await writeFile(uiSchemaPath, JSON.stringify(uiSchema))
+
+  const schemaPath = resolve(outPath, 'schema.json')
+  await writeFile(schemaPath, JSON.stringify(schema))
+
+  const xmlTemplatePath = resolve(outPath, 'xmlTemplate.ts')
+  await writeFile(xmlTemplatePath, `export default \`${xmlTemplate}\``)
 
   try {
     const res = await execXslt3(textXsltPath)
@@ -138,6 +186,7 @@ const generate = async (jsonSchemaPath, outPath) => {
     console.error(error)
   }
 
+  await writeFile(outPath + '.ts', getTs(out))
   console.log(chalk.cyan.bold('done: '), outPath)
 }
 
@@ -280,7 +329,7 @@ yargs
     },
 
     handler(argv) {
-      generate(resolve(cwd(), argv.json), resolve(cwd(), argv.out))
+      generate(resolve(cwd(), argv.json), argv.out)
     },
   })
   .command({
