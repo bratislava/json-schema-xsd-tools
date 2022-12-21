@@ -2,9 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Node 16 + ESM + Strictest",
   "compilerOptions": {
-    "lib": [
-      "es2021"
-    ],
+    "outDir": "dist",
+    "lib": ["es2021"],
     "module": "es2022",
     "target": "es2021",
     "allowJs": true,
@@ -24,12 +23,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "importsNotUsedAsValues": "error",
-    "checkJs": true
+    "checkJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "plugins": [
+      {
+        "name": "typescript-strict-plugin"
+      }
+    ]
   },
-  "exclude": [
-    "dist",
-    "docs",
-    "node_modules",
-    "bin"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "docs", "node_modules", "bin"]
 }
