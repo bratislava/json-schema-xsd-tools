@@ -67,6 +67,7 @@ In case of `command not found`, try running using npx - `npx json-schema-xsd-too
 
 CLI provides these commands:
 
+- `generate` - generate whole form (XSD, stylesheets, some mock data) from JSON schema
 - `generate-xsd` - generate XSD from JSON schema
 - `generate-text-xslt` - generate text stylesheet from JSON schema
 - `generate-html-xslt` - generate html stylesheet from JSON schema
