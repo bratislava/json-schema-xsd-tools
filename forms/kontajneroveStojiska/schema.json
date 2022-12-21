@@ -87,7 +87,7 @@
             "telefon": {
               "type": "string",
               "title": "Telefónne číslo (v tvare +421...)",
-              "pattern": "(((\\+[1-9])|(\\+[1-9][0-9]{1,8}))|((00[1-9])|(00[1-9][0-9]{1,7})))"
+              "pattern": "((([+][1-9])|([+][1-9][0-9]{1,8}))|((00[1-9])|(00[1-9][0-9]{1,7})))"
             }
           }
         }
@@ -223,6 +223,7 @@
           "if": {
             "properties": {
               "typStanovista": {
+                "type": "object",
                 "properties": {
                   "typStanovistaUpresnenie": {
                     "const": "Nové"
@@ -230,6 +231,7 @@
                 }
               },
               "dovodZiadosti": {
+                "type": "object",
                 "properties": {
                   "zaujem": {
                     "oneOf": [
@@ -263,6 +265,7 @@
           "if": {
             "properties": {
               "typStanovista": {
+                "type": "object",
                 "properties": {
                   "typStanovistaUpresnenie": {
                     "oneOf": [
@@ -277,6 +280,7 @@
                 }
               },
               "dovodZiadosti": {
+                "type": "object",
                 "properties": {
                   "zaujem": {
                     "oneOf": [
@@ -310,6 +314,7 @@
           "if": {
             "properties": {
               "dovodZiadosti": {
+                "type": "object",
                 "properties": {
                   "zaujem": {
                     "const": "Dotáciu na kontajnerové stojisko"

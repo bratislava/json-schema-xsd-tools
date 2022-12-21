@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { defaults, isMatch } from 'lodash'
-import { buildJsonSchema, getAllPossibleJsonSchemaProperties, JsonSchema, mergeJsonSchema } from './forms'
+import { buildJsonSchema, JsonSchema, mergeJsonSchema } from './forms'
 
 /**
  * Validation options
@@ -11,7 +11,14 @@ export interface Options {
    *
    * @defaultValue ['title','description']
    */
-  ignore: string[]
+  ignore?: string[]
+
+  /**
+   * Path to body element in XSD.
+   *
+   * @defaultValue 'xs:complexType[name="E-formBodyType"]'
+   */
+  bodyElement?: string
 }
 
 /**
@@ -33,7 +40,7 @@ export interface Error {
  */
 export enum ErrorType {
   Empty = 'EMPTY',
-  Porperties = 'PROPERTIES:',
+  Properties = 'PROPERTIES:',
   Title = 'TITLE',
   Description = 'DESCRIPTION',
   Type = 'TYPE',
@@ -60,13 +67,27 @@ const validate = (
   options: Options,
   path: string[]
 ): Error[] => {
-  let errors: Error[] = []
+  const errors: Error[] = []
 
   if (!xsdSchema || !jsonSchema) {
     return errors
   }
 
-  if (!options.ignore.includes('title') && xsdSchema.title && xsdSchema.title !== jsonSchema.title) {
+  if (Object.keys(jsonSchema).length === 0) {
+    if (options.ignore?.includes('empty')) {
+      return errors
+    } else {
+      errors.push({
+        path,
+        type: ErrorType.Empty,
+      })
+      return errors
+    }
+  }
+
+  const { properties, required } = mergeJsonSchema(jsonSchema)
+
+  if (!options.ignore?.includes('title') && xsdSchema.title && xsdSchema.title !== jsonSchema.title) {
     errors.push({
       path,
       type: ErrorType.Title,
@@ -74,7 +95,7 @@ const validate = (
   }
 
   if (
-    !options.ignore.includes('description') &&
+    !options.ignore?.includes('description') &&
     xsdSchema.description &&
     xsdSchema.description !== jsonSchema.description
   ) {
@@ -84,42 +105,42 @@ const validate = (
     })
   }
 
-  if (!options.ignore.includes('type') && xsdSchema.type !== jsonSchema.type) {
+  if (!options.ignore?.includes('type') && xsdSchema.type !== jsonSchema.type) {
     errors.push({
       path,
       type: ErrorType.Type,
     })
   }
 
-  if (!options.ignore.includes('format') && xsdSchema.format && xsdSchema.format !== jsonSchema.format) {
+  if (!options.ignore?.includes('format') && xsdSchema.format && xsdSchema.format !== jsonSchema.format) {
     errors.push({
       path,
       type: ErrorType.Format,
     })
   }
 
-  if (!options.ignore.includes('required') && !isSubset(xsdSchema.required, jsonSchema.required)) {
+  if (!options.ignore?.includes('required') && !isSubset(xsdSchema.required, required)) {
     errors.push({
       path,
       type: ErrorType.Required,
     })
   }
 
-  if (!options.ignore.includes('pattern') && xsdSchema.pattern && xsdSchema.pattern !== jsonSchema.pattern) {
+  if (!options.ignore?.includes('pattern') && xsdSchema.pattern && xsdSchema.pattern !== jsonSchema.pattern) {
     errors.push({
       path,
       type: ErrorType.Pattern,
     })
   }
 
-  if (!options.ignore.includes('enum') && !isSubset(jsonSchema.enum, xsdSchema.enum)) {
+  if (!options.ignore?.includes('enum') && !isSubset(jsonSchema.enum, xsdSchema.enum)) {
     errors.push({
       path,
       type: ErrorType.Enum,
     })
   }
 
-  if (!options.ignore.includes('items') && !isMatch(xsdSchema.items || {}, jsonSchema.items || {})) {
+  if (!options.ignore?.includes('items') && !isMatch(xsdSchema.items || {}, jsonSchema.items || {})) {
     console
     errors.push({
       path,
@@ -130,13 +151,12 @@ const validate = (
   if (xsdSchema.properties) {
     Object.keys(xsdSchema.properties).forEach((key) => {
       if (xsdSchema.properties) {
-        const properties = getAllPossibleJsonSchemaProperties(jsonSchema)
         if (properties[key]) {
-          errors = [...errors, ...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key])]
+          errors.push(...validate(xsdSchema.properties?.[key], properties[key], options, [...path, key]))
         } else {
           errors.push({
             path,
-            type: ErrorType.Porperties,
+            type: ErrorType.Properties,
           })
         }
       }
@@ -151,23 +171,22 @@ const validate = (
  *
  * @param xsd - XSD schema
  * @param jsonSchema - JSON schema
- * @param bodyElement - path to body element in XSD, default `xs:complexType[name="E-formBodyType"]`
  * @param options - Options object
  * @returns List of errors, empty array if JSON schema is valid
  */
 export const loadAndValidate = (
   xsd: string,
   jsonSchema: JsonSchema,
-  bodyElement: string | undefined = `xs\\:complexType[name='E-formBodyType']`,
   options: Options | undefined = undefined
 ): Error[] => {
-  const $ = cheerio.load(xsd, { xmlMode: true })
-  const xsdSchema = buildJsonSchema($, bodyElement)
-
   options = defaults(options, {
     ignore: ['title', 'description'],
+    bodyElement: `xs\\:complexType[name='E-formBodyType']`,
   })
 
-  const errors = validate(xsdSchema, mergeJsonSchema(jsonSchema), options, [])
+  const $ = cheerio.load(xsd, { xmlMode: true })
+  const xsdSchema = buildJsonSchema($, options.bodyElement as string)
+
+  const errors = validate(xsdSchema, jsonSchema, options, [])
   return errors
 }

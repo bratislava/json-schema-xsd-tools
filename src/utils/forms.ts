@@ -1,6 +1,5 @@
 import * as cheerio from 'cheerio'
 import { JSONSchemaFaker as jsf } from 'json-schema-faker'
-import mergeAllOf from 'json-schema-merge-allof'
 import defaultXsdTemplate from '../templates/template.xsd'
 import { firstCharToLower, firstCharToUpper } from './strings'
 
@@ -35,6 +34,7 @@ export interface JsonSchema {
   oneOf?: JsonSchema[] | undefined
   anyOf?: JsonSchema[] | undefined
   allOf?: JsonSchema[] | undefined
+  const?: string
 }
 
 export interface JsonSchemaItems {
@@ -45,6 +45,8 @@ export interface JsonSchemaItems {
 export interface JsonSchemaProperties {
   [key: string]: JsonSchema
 }
+
+type JsonSchemaComposition = 'allOf' | 'oneOf' | 'anyOf'
 
 const getJsonSchemaType = (type: string | undefined): JsonSchemaType => {
   switch (type) {
@@ -78,44 +80,33 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   }
 }
 
-export const mergeJsonSchema = (jsonSchema: JsonSchema): JsonSchema => {
-  return mergeAllOf(jsonSchema, {
-    resolvers: {
-      // ignore, as if-then resolver does not exist
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if: () => {
-        return true
-      },
-      then: (values: JsonSchema[]): JsonSchema => {
-        let properties: JsonSchemaProperties = {}
-        values.forEach((s) => {
-          properties = { ...properties, ...s.properties }
-        })
+/**
+ * Merge JSON Schema properties and required fields - merge allOf, oneOf, anyOf and if-then.
+ *
+ * @remarks
+ *
+ * It is necessary to guarantee the exact order of properties, as we are using `<xs:sequence>` element in XSD schema.
+ *
+ * @param jsonSchema - JSON schema
+ * @returns merged JSON schema - JSON schema properties and required fields
+ */
+export const mergeJsonSchema = (jsonSchema: JsonSchema) => {
+  const allProperties: JsonSchemaProperties = jsonSchema.properties ?? {}
+  const allRequiredFields: string[] = jsonSchema.required ?? []
 
-        return { properties, type: 'object' }
-      },
-    },
-  })
-}
-
-export const getAllPossibleJsonSchemaProperties = (jsonSchema: JsonSchema): JsonSchemaProperties => {
-  let properties: JsonSchemaProperties = jsonSchema.properties ?? {}
   if (jsonSchema.then) {
-    properties = { ...properties, ...getAllPossibleJsonSchemaProperties(jsonSchema.then) }
-  }
-  if (jsonSchema.oneOf) {
-    jsonSchema.oneOf.forEach((s) => {
-      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
-    })
-  }
-  if (jsonSchema.anyOf) {
-    jsonSchema.anyOf.forEach((s) => {
-      properties = { ...properties, ...getAllPossibleJsonSchemaProperties(s) }
-    })
+    Object.assign(allProperties, mergeJsonSchema(jsonSchema.then).properties)
   }
 
-  return properties
+  ;['allOf', 'oneOf', 'anyOf'].forEach((c: string) => {
+    jsonSchema[c as JsonSchemaComposition]?.forEach((s) => {
+      const { properties, required } = mergeJsonSchema(s)
+      Object.assign(allProperties, properties)
+      allRequiredFields.push(...required)
+    })
+  })
+
+  return { properties: allProperties, required: allRequiredFields }
 }
 
 const enumMap = new Map()
@@ -275,7 +266,7 @@ const getXsdType = (
 ): XsdType | string => {
   let xsdType
   if (type === 'string') {
-    if (property.pattern || (property.enum && property.enum.length)) {
+    if (property.pattern || (property.enum && property.enum.length) || (property.oneOf && property.oneOf.length)) {
       xsdType = firstCharToUpper(key) + 'Type'
     } else {
       xsdType = getXsdTypeByFormat(format)
@@ -288,6 +279,17 @@ const getXsdType = (
   return xsdType
 }
 
+/**
+ * Elements are generated into `<xs:sequence>` element, so it is necessary to guarantee the exact order of properties.
+ *
+ * We would like to use `<xs:all>` element (child elements can appear in any order), but child elements can occurs more than one (eg attachments)
+ * and attribute maxOccurs is restricted to 1 in child elements (XSD 1.0).
+ * {@link https://www.w3.org/TR/xmlschema11-1/#element-all}
+ *
+ * Hacking `<xs:choice minOccurs="0" maxOccurs="unbounded">` ignores minOccurs and maxOccurs in children. Can not be used.
+ * {@link https://stackoverflow.com/questions/2290360/xsd-how-to-allow-elements-in-any-order-any-number-of-times}
+ *
+ */
 const buildXsd = (
   container: cheerio.Cheerio<cheerio.Element>,
   name: string,
@@ -318,11 +320,21 @@ const buildXsd = (
         processed.push(xsdType)
 
         if (type === 'object') {
-          buildXsd(container, xsdType, property.required, getAllPossibleJsonSchemaProperties(property), processed)
-        } else if (property.enum && property.enum.length > 0) {
-          container.append(buildEnumSimpleType(xsdType, property.enum))
-        } else if (property.pattern) {
-          container.append(buildPatternSimpleType(xsdType, property.pattern))
+          const mergedSchema = mergeJsonSchema(property)
+          buildXsd(container, xsdType, mergedSchema.required, mergedSchema.properties, processed)
+        } else if (type === 'string') {
+          if (property.enum && property.enum.length > 0) {
+            container.append(buildEnumSimpleType(xsdType, property.enum))
+          } else if (property.oneOf && property.oneOf.length > 0) {
+            container.append(
+              buildEnumSimpleType(
+                xsdType,
+                property.oneOf.map((e) => e.const || '')
+              )
+            )
+          } else if (property.pattern) {
+            container.append(buildPatternSimpleType(xsdType, property.pattern))
+          }
         }
       }
     }
@@ -373,9 +385,8 @@ export const loadAndBuildXsd = (
 ): string => {
   const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
 
-  const mergedJsonSchema = mergeJsonSchema(jsonSchema)
-  const properties = getAllPossibleJsonSchemaProperties(mergedJsonSchema)
-  buildXsd($(`xs\\:schema`), 'E-formBodyType', mergedJsonSchema.required, properties, [])
+  const { properties, required } = mergeJsonSchema(jsonSchema)
+  buildXsd($(`xs\\:schema`), 'E-formBodyType', required, properties, [])
   return $.html()
 }
 

@@ -1,6 +1,6 @@
 
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xml:lang="en" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:z="http://schemas.gov.sk/doc/eform/00603481.dopravneZnacenie.sk/0.2" version="1.0" xmlns:Xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet xml:lang="en" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:z="http://schemas.gov.sk/doc/eform/form/0.1" version="1.0" xmlns:Xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:template match="/z:E-form">
     <xsl:call-template name="base_eform"/>
@@ -33,6 +33,14 @@
             <xsl:with-param name="template_name" select="'dovod_ziadosti'"/>
             <xsl:with-param name="title" select="'Dôvod žiadosti'"/>
             <xsl:with-param name="values" select="z:Body/z:DovodZiadosti"/>
+          </xsl:call-template><xsl:call-template name="base_block_with_title">
+            <xsl:with-param name="template_name" select="'technicky_vykres'"/>
+            <xsl:with-param name="title" select="'Technický výkres a rozmery navrhovanej konštrukci, popis navrhovaných / použitých materiálov a farieb'"/>
+            <xsl:with-param name="values" select="z:Body/z:TechnickyVykres"/>
+          </xsl:call-template><xsl:call-template name="base_block_with_title">
+            <xsl:with-param name="template_name" select="'rozpocet'"/>
+            <xsl:with-param name="title" select="'Položkový rozpočet'"/>
+            <xsl:with-param name="values" select="z:Body/z:Rozpocet"/>
           </xsl:call-template><xsl:call-template name="base_block_with_title">
         <xsl:with-param name="template_name" select="'wrapper'"/>
         <xsl:with-param name="title" select="'Ostatné'"/>
@@ -69,6 +77,14 @@
             </xsl:call-template>
           </xsl:when><xsl:when test="$template = 'dovod_ziadosti'">
             <xsl:call-template name="dovod_ziadosti">
+              <xsl:with-param name="values" select="$values"/>
+            </xsl:call-template>
+          </xsl:when><xsl:when test="$template = 'technicky_vykres'">
+            <xsl:call-template name="technicky_vykres">
+              <xsl:with-param name="values" select="$values"/>
+            </xsl:call-template>
+          </xsl:when><xsl:when test="$template = 'rozpocet'">
+            <xsl:call-template name="rozpocet">
               <xsl:with-param name="values" select="$values"/>
             </xsl:call-template>
           </xsl:when><xsl:when test="$template = 'wrapper'">
@@ -341,6 +357,21 @@
                 <xsl:with-param name="text" select="'Zmluva o výkone správy / Zmluva o bytovom spoločenstve'"/>
                 <xsl:with-param name="node" select="z:Nazov"/>
               </xsl:call-template>
+            </xsl:for-each><xsl:for-each select="$values/z:Stanovisko">
+              <xsl:call-template name="base_labeled_field">
+                <xsl:with-param name="text" select="'Stanovisko OLO'"/>
+                <xsl:with-param name="node" select="z:Nazov"/>
+              </xsl:call-template>
+            </xsl:for-each><xsl:for-each select="$values/z:Doklad">
+              <xsl:call-template name="base_labeled_field">
+                <xsl:with-param name="text" select="'Relevantný doklad potvrdzujúci súčasný odvoz'"/>
+                <xsl:with-param name="node" select="z:Nazov"/>
+              </xsl:call-template>
+            </xsl:for-each><xsl:for-each select="$values/z:ListVlastnictva">
+              <xsl:call-template name="base_labeled_field">
+                <xsl:with-param name="text" select="'Zmluva o nájme pozemku / List vlastníctva / Zmluva o zriadení vecného bremena'"/>
+                <xsl:with-param name="node" select="z:Nazov"/>
+              </xsl:call-template>
             </xsl:for-each><xsl:for-each select="$values/z:SnimkaZMapy">
               <xsl:call-template name="base_labeled_field">
                 <xsl:with-param name="text" select="'Snímka z katastrálnej mapy so zakresleným kontajnerovým stanovišťom'"/>
@@ -356,33 +387,14 @@
                 <xsl:with-param name="text" select="'Vizuál kontajnerového stanovišťa - ilustračná alebo reálna fotografia / vizualizácia'"/>
                 <xsl:with-param name="node" select="z:Nazov"/>
               </xsl:call-template>
-            </xsl:for-each><xsl:call-template name="technicky_vykres">
-              <xsl:with-param name="values" select="$values/*[local-name() = 'TechnickyVykres']"/>
-            </xsl:call-template><xsl:for-each select="$values/z:StavebnaDokumentacia">
+            </xsl:for-each><xsl:for-each select="$values/z:StavebnaDokumentacia">
               <xsl:call-template name="base_labeled_field">
                 <xsl:with-param name="text" select="'Stavebná dokumentácia kontajnerového stanovišťa alebo výber z poskytnutých stavebných dokumentácií'"/>
                 <xsl:with-param name="node" select="z:Nazov"/>
               </xsl:call-template>
-            </xsl:for-each><xsl:call-template name="rozpocet">
-              <xsl:with-param name="values" select="$values/*[local-name() = 'Rozpocet']"/>
-            </xsl:call-template><xsl:for-each select="$values/z:InePrilohy">
+            </xsl:for-each><xsl:for-each select="$values/z:InePrilohy">
               <xsl:call-template name="base_labeled_field">
                 <xsl:with-param name="text" select="'Iné'"/>
-                <xsl:with-param name="node" select="z:Nazov"/>
-              </xsl:call-template>
-            </xsl:for-each><xsl:for-each select="$values/z:Stanovisko">
-              <xsl:call-template name="base_labeled_field">
-                <xsl:with-param name="text" select="'Stanovisko OLO'"/>
-                <xsl:with-param name="node" select="z:Nazov"/>
-              </xsl:call-template>
-            </xsl:for-each><xsl:for-each select="$values/z:Doklad">
-              <xsl:call-template name="base_labeled_field">
-                <xsl:with-param name="text" select="'Relevantný doklad potvrdzujúci súčasný odvoz'"/>
-                <xsl:with-param name="node" select="z:Nazov"/>
-              </xsl:call-template>
-            </xsl:for-each><xsl:for-each select="$values/z:ListVlastnictva">
-              <xsl:call-template name="base_labeled_field">
-                <xsl:with-param name="text" select="'Zmluva o nájme pozemku / List vlastníctva / Zmluva o zriadení vecného bremena'"/>
                 <xsl:with-param name="node" select="z:Nazov"/>
               </xsl:call-template>
             </xsl:for-each></xsl:template></xsl:stylesheet>

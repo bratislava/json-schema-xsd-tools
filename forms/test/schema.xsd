@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-secrets/no-secrets
-export default `<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xs:schema elementFormDefault="qualified" xmlns="http://schemas.gov.sk/doc/eform/form/0.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.gov.sk/doc/eform/form/0.1">
   <xs:element name="E-form">
     <xs:complexType>
@@ -70,4 +69,4 @@ export default `<?xml version="1.0" encoding="utf-8"?>
     </xs:sequence>
   </xs:complexType>
 
-</xs:schema>`
+<xs:complexType name="ZiadatelType"><xs:sequence><xs:element name="FirstName" type="xs:string" minOccurs="0" maxOccurs="1"/><xs:element name="LastName" type="xs:string" minOccurs="0" maxOccurs="1"/><xs:element name="BirthDate" type="xs:string" minOccurs="0" maxOccurs="1"/><xs:element name="NewTaxpayer" type="xs:boolean" minOccurs="0" maxOccurs="1"/><xs:element name="Address" type="xs:string" minOccurs="1" maxOccurs="1"/><xs:element name="PostalCode" type="xs:string" minOccurs="0" maxOccurs="1"/><xs:element name="City" type="xs:string" minOccurs="0" maxOccurs="1"/></xs:sequence></xs:complexType><xs:complexType name="E-formBodyType"><xs:sequence><xs:element name="Ziadatel" type="ZiadatelType" minOccurs="0" maxOccurs="1"/><xs:element name="Email" type="xs:string" minOccurs="1" maxOccurs="1"/><xs:element name="Phone" type="xs:string" minOccurs="0" maxOccurs="1"/></xs:sequence></xs:complexType></xs:schema>

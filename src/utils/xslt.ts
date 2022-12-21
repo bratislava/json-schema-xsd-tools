@@ -3,14 +3,7 @@ import * as cheerio from 'cheerio'
 import defaultPdfTemplate from '../templates/template.fo.xslt'
 import defaultHtmlTemplate from '../templates/template.html.xslt'
 import defaultTextTemplate from '../templates/template.sb.xslt'
-import {
-  getAllPossibleJsonSchemaProperties,
-  JsonSchema,
-  JsonSchemaFormat,
-  JsonSchemaProperties,
-  JsonSchemaType,
-  mergeJsonSchema
-} from './forms'
+import { JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType, mergeJsonSchema } from './forms'
 import { firstCharToUpper, toSnakeCase } from './strings'
 
 export type TransformationType = 'text' | 'html' | 'pdf'
@@ -54,7 +47,7 @@ const buildXslt = (
         template.push(
           `<xsl:for-each select="$values/z:${el}">
               <xsl:call-template name="base_labeled_field">
-                <xsl:with-param name="text" select="'${childProperty.title}'" />
+                <xsl:with-param name="text" select="'${childProperty.title || childKey}'" />
                 <xsl:with-param name="node" select="${isAttachment ? 'z:Nazov' : '.'}" />
               </xsl:call-template>
             </xsl:for-each>`
@@ -67,11 +60,11 @@ const buildXslt = (
             </xsl:call-template>`
         )
 
-        buildXslt(rootEl, childTemplateName, getAllPossibleJsonSchemaProperties(childProperty))
+        buildXslt(rootEl, childTemplateName, mergeJsonSchema(childProperty).properties)
       } else {
         template.push(
           `<xsl:if test="$values/z:${el}"><xsl:call-template name="base_labeled_field">
-              <xsl:with-param name="text" select="'${childProperty.title}'" />
+              <xsl:with-param name="text" select="'${childProperty.title || childKey}'" />
               ${buildNode(el, childProperty.type, childProperty.format)}
             </xsl:call-template></xsl:if>`
         )
@@ -106,13 +99,15 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
   const rootEl = $(`xsl\\:stylesheet`)
 
   const oneLevelProperties: JsonSchemaProperties = {}
-  const properties = getAllPossibleJsonSchemaProperties(mergeJsonSchema(jsonSchema))
+  const { properties } = mergeJsonSchema(jsonSchema)
+
   Object.keys(properties).forEach((key) => {
     const property = properties[key]
     if (property) {
       const templateName = toSnakeCase(key)
 
-      if (property.properties) {
+      const childProperties = mergeJsonSchema(property).properties
+      if (Object.keys(childProperties).length > 0) {
         mapEl.append(
           `<xsl:when test="$template = '${templateName}'">
             <xsl:call-template name="${templateName}">
@@ -124,12 +119,12 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
         bodyEl.append(
           `<xsl:call-template name="base_block_with_title">
             <xsl:with-param name="template_name" select="'${templateName}'" />
-            <xsl:with-param name="title" select="'${property.title}'" />
+            <xsl:with-param name="title" select="'${property.title || key}'" />
             <xsl:with-param name="values" select="z:Body/z:${firstCharToUpper(key)}" />
           </xsl:call-template>`
         )
 
-        buildXslt(rootEl, templateName, getAllPossibleJsonSchemaProperties(property))
+        buildXslt(rootEl, templateName, childProperties)
       } else {
         oneLevelProperties[key] = property
       }
