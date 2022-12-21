@@ -95,9 +95,7 @@ export const mergeJsonSchema = (jsonSchema: JsonSchema) => {
   const allRequiredFields: string[] = jsonSchema.required ?? []
 
   if (jsonSchema.then) {
-    const { properties, required } = mergeJsonSchema(jsonSchema.then)
-    Object.assign(allProperties, properties)
-    allRequiredFields.push(...required)
+    Object.assign(allProperties, mergeJsonSchema(jsonSchema.then).properties)
   }
 
   ;['allOf', 'oneOf', 'anyOf'].forEach((c: string) => {
