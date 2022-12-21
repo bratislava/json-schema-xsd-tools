@@ -30,6 +30,7 @@ import textStylesheet from './${form}/form.sb.sef.json'
 import schema from './${form}/schema.json'
 import xsd from './${form}/schema.xsd'
 import uiSchema from './${form}/uiSchema.json'
+import data from './${form}/data.json'
 import xmlTemplate from './${form}/xmlTemplate'
 
 export default {
@@ -39,6 +40,7 @@ export default {
   xmlTemplate,
   textStylesheet,
   htmlStylesheet,
+  data
 }`
 
 async function fileExists(path) {
