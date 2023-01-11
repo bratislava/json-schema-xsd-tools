@@ -102,7 +102,9 @@ export const mergeJsonSchema = (jsonSchema: JsonSchema) => {
     jsonSchema[c as JsonSchemaComposition]?.forEach((s) => {
       const { properties, required } = mergeJsonSchema(s)
       Object.assign(allProperties, properties)
-      allRequiredFields.push(...required)
+      if (c === 'allOf') {
+        allRequiredFields.push(...required)
+      }
     })
   })
 
