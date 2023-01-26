@@ -1,7 +1,5 @@
 # json-schema-xsd-tools
 
-<!-- [![npm](https://img.shields.io/npm/v/json-schema-xsd-tools)](https://www.npmjs.com/package/json-schema-xsd-tools) -->
-
 Tools capable of using JSON Schema to generate and validate XSD.
 
 JSON Schema is a vocabulary that allows to annotate and validate JSON documents.
@@ -88,6 +86,15 @@ XSD path
 ### -o, --out
 
 output path, default form.\* (extension is defined by used command)
+
+## Publishing new version
+
+[![Publish Package to npm](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish.yml/badge.svg?event=release)](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish.yml)
+[![npm](https://img.shields.io/npm/v/@bratislava/json-schema-xsd-tools)](https://www.npmjs.com/package/@bratislava/json-schema-xsd-tools)
+
+- Update version in [package.json](package.json). Follow [Semantic Versioning Specification](https://semver.org/).
+- Create new [release](https://github.com/bratislava/json-schema-xsd-tools/releases/new).
+- [Publish action](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish.yml) publish package to npm automatically. Check status of workflow run.
 
 ## Documentation
 
