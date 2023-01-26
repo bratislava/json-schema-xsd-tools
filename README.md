@@ -92,9 +92,9 @@ output path, default form.\* (extension is defined by used command)
 [![Publish Package to npm](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish.yml/badge.svg?event=release)](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish.yml)
 [![npm](https://img.shields.io/npm/v/@bratislava/json-schema-xsd-tools)](https://www.npmjs.com/package/@bratislava/json-schema-xsd-tools)
 
-- Update version in [package.json](package.json). Follow [Semantic Versioning Specification](https://semver.org/).
-- Create new [release](https://github.com/bratislava/json-schema-xsd-tools/releases/new).
-- [Publish action](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish.yml) publish package to npm automatically. Check status of workflow run.
+- Update the version in [package.json](package.json). Follow [Semantic Versioning Specification](https://semver.org/).
+- Create a new [release](https://github.com/bratislava/json-schema-xsd-tools/releases/new).
+- [Publish action](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish.yml) publish package to npm automatically. Check the status of workflow run.
 
 ## Documentation
 
