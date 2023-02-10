@@ -1,6 +1,6 @@
 # json-schema-xsd-tools
 
-<!-- [![npm](https://img.shields.io/npm/v/json-schema-xsd-tools)](https://www.npmjs.com/package/json-schema-xsd-tools) -->
+[![npm](https://img.shields.io/npm/v/@bratislava/json-schema-xsd-tools)](https://www.npmjs.com/package/@bratislava/json-schema-xsd-tools)
 
 Tools capable of using JSON Schema to generate and validate XSD.
 
