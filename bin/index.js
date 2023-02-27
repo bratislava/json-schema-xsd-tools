@@ -32,6 +32,7 @@ import xsd from './${form}/schema.xsd'
 import uiSchema from './${form}/uiSchema.json'
 import data from './${form}/data.json'
 import xmlTemplate from './${form}/xmlTemplate'
+import pdfStylesheet from './${form}/form.fo.xslt'
 
 export default {
   schema,
@@ -40,6 +41,7 @@ export default {
   xmlTemplate,
   textStylesheet,
   htmlStylesheet,
+  pdfStylesheet,
   data
 }`
 
@@ -153,8 +155,8 @@ const generate = async (jsonSchemaPath, out) => {
   await writeFile(htmlXsltPath, htmlXslt)
 
   const pdfXslt = loadAndBuildDefaultXslt(schema, 'pdf')
-  const pdfXsltPath = resolve(outPath, 'form.fo.xslt')
-  await writeFile(pdfXsltPath, pdfXslt)
+  const pdfXsltPath = resolve(outPath, 'form.fo.xslt.ts')
+  await writeFile(pdfXsltPath, `export default \`${pdfXslt}\``)
 
   const data = fakeData(schema)
   const dataPath = resolve(outPath, 'data.json')
