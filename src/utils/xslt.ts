@@ -4,7 +4,7 @@ import defaultPdfTemplate from '../templates/template.fo.xslt'
 import defaultHtmlTemplate from '../templates/template.html.xslt'
 import defaultTextTemplate from '../templates/template.sb.xslt'
 import { JsonSchema, JsonSchemaFormat, JsonSchemaProperties, JsonSchemaType, mergeJsonSchema } from './forms'
-import { firstCharToUpper, toSnakeCase } from './strings'
+import { firstCharToUpper, formatUnicorn, toSnakeCase } from './strings'
 
 export type TransformationType = 'text' | 'html' | 'pdf'
 
@@ -166,9 +166,16 @@ export const loadAndBuildXslt = (jsonSchema: JsonSchema, xsltTemplate: string): 
  *
  * @param jsonSchema - JSON schema
  * @param tranformationType - type of transformation
+ * @param identifier - Form identifier
+ * @param version - Form version
  * @returns stylesheet
  */
-export const loadAndBuildDefaultXslt = (jsonSchema: JsonSchema, tranformationType: TransformationType): string => {
+export const loadAndBuildDefaultXslt = (
+  jsonSchema: JsonSchema,
+  tranformationType: TransformationType,
+  identifier: string | undefined = 'form',
+  version: string | undefined = '0.1'
+): string => {
   let template
   switch (tranformationType) {
     case 'text':
@@ -184,5 +191,9 @@ export const loadAndBuildDefaultXslt = (jsonSchema: JsonSchema, tranformationTyp
       return ''
   }
 
+  template = formatUnicorn(template, {
+    eformIdentifier: identifier,
+    eformVersion: version,
+  })
   return loadAndBuildXslt(jsonSchema, template)
 }
