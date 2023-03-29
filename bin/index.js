@@ -9,29 +9,29 @@ const { exec } = require('child_process')
 const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt, fakeData } = require('../dist/json-schema-xsd-tools')
 const uiSchema = require('./uiSchema.json')
 
-const buildXmlTemplate = (form) => `<?xml version="1.0" encoding="utf-8"?>
-<E-form xmlns="http://schemas.gov.sk/doc/eform/form/0.1"
-        xsi:schemaLocation="http://schemas.gov.sk/doc/eform/form/0.1"
+const buildXmlTemplate = (identifier, version) => `<?xml version="1.0" encoding="utf-8"?>
+<E-form xmlns="http://schemas.gov.sk/doc/eform/${identifier}/${version}"
+        xsi:schemaLocation="http://schemas.gov.sk/doc/eform/${identifier}/${version}"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Meta>
-    <ID>${form}</ID>
-    <Name>${form}</Name>
+    <ID>${identifier}</ID>
+    <Name>${identifier}</Name>
     <Gestor></Gestor>
     <RecipientId></RecipientId>
-    <Version>0.1</Version>
+    <Version>${version}</Version>
     <ZepRequired>false</ZepRequired>
     <EformUuid>5ea0cad2-8759-4826-8d4c-c59c1d09ec29</EformUuid>
     <SenderID>mailto:hruska@example.com</SenderID>
   </Meta>
 </E-form>`
 
-const buildFormIndex = (form) => `import htmlStylesheet from './${form}/form.html.sef.json'
-import textStylesheet from './${form}/form.sb.sef.json'
-import schema from './${form}/schema.json'
-import xsd from './${form}/schema.xsd'
-import uiSchema from './${form}/uiSchema.json'
-import data from './${form}/data.json'
-import xmlTemplate from './${form}/xmlTemplate'
+const buildFormIndex = (identifier) => `import htmlStylesheet from './${identifier}/form.html.sef.json'
+import textStylesheet from './${identifier}/form.sb.sef.json'
+import schema from './${identifier}/schema.json'
+import xsd from './${identifier}/schema.xsd'
+import uiSchema from './${identifier}/uiSchema.json'
+import data from './${identifier}/data.json'
+import xmlTemplate from './${identifier}/xmlTemplate'
 
 export default {
   schema,
@@ -61,7 +61,7 @@ async function folderExists(path) {
   }
 }
 
-const generateXsd = async (jsonSchemaPath, templatePath, xsdPath) => {
+const generateXsd = async (jsonSchemaPath, identifier, version, templatePath, xsdPath) => {
   if (!(await fileExists(jsonSchemaPath))) {
     console.log(chalk.red.bold('JSON schema not found'))
     return
@@ -74,20 +74,20 @@ const generateXsd = async (jsonSchemaPath, templatePath, xsdPath) => {
   }
 
   const jsonSchemaBuffer = await readFile(jsonSchemaPath)
-  const xsd = loadAndBuildXsd(JSON.parse(jsonSchemaBuffer.toString()), template)
+  const xsd = loadAndBuildXsd(JSON.parse(jsonSchemaBuffer.toString()), identifier, version, template)
   await writeFile(xsdPath, xsd)
 
   console.log(chalk.cyan.bold('generated: '), xsdPath)
 }
 
-const generateXslt = async (jsonSchemaPath, xsltPath, transformationType) => {
+const generateXslt = async (jsonSchemaPath, xsltPath, transformationType, identifier, version) => {
   if (!(await fileExists(jsonSchemaPath))) {
     console.log(chalk.red.bold('JSON schema not found'))
     return
   }
 
   const jsonSchemaBuffer = await readFile(jsonSchemaPath)
-  const xslt = loadAndBuildDefaultXslt(JSON.parse(jsonSchemaBuffer.toString()), transformationType)
+  const xslt = loadAndBuildDefaultXslt(JSON.parse(jsonSchemaBuffer.toString()), transformationType, identifier, version)
   await writeFile(xsltPath, xslt)
   console.log(chalk.cyan.bold('generated: '), xsltPath)
 }
@@ -126,13 +126,13 @@ const execXslt3 = (path) => {
   })
 }
 
-const generate = async (jsonSchemaPath, out) => {
+const generate = async (jsonSchemaPath, identifier, version) => {
   if (!(await fileExists(jsonSchemaPath))) {
     console.log(chalk.red.bold('JSON schema not found'))
     return
   }
 
-  const outPath = resolve(cwd(), out)
+  const outPath = resolve(cwd(), identifier)
   if (!(await folderExists(outPath))) {
     await mkdir(outPath)
   }
@@ -140,19 +140,19 @@ const generate = async (jsonSchemaPath, out) => {
   const jsonSchemaBuffer = await readFile(jsonSchemaPath)
   const schema = JSON.parse(jsonSchemaBuffer.toString())
 
-  const xsd = loadAndBuildXsd(schema)
+  const xsd = loadAndBuildXsd(schema, identifier, version)
   const xsdPath = resolve(outPath, 'schema.xsd.ts')
   await writeFile(xsdPath, `export default \`${xsd}\``)
 
-  const textXslt = loadAndBuildDefaultXslt(schema, 'text')
+  const textXslt = loadAndBuildDefaultXslt(schema, 'text', identifier, version)
   const textXsltPath = resolve(outPath, 'form.sb.xslt')
   await writeFile(textXsltPath, textXslt)
 
-  const htmlXslt = loadAndBuildDefaultXslt(schema, 'html')
+  const htmlXslt = loadAndBuildDefaultXslt(schema, 'html', identifier, version)
   const htmlXsltPath = resolve(outPath, 'form.html.xslt')
   await writeFile(htmlXsltPath, htmlXslt)
 
-  const pdfXslt = loadAndBuildDefaultXslt(schema, 'pdf')
+  const pdfXslt = loadAndBuildDefaultXslt(schema, 'pdf', identifier, version)
   const pdfXsltPath = resolve(outPath, 'form.fo.xslt')
   await writeFile(pdfXsltPath, pdfXslt)
 
@@ -167,7 +167,7 @@ const generate = async (jsonSchemaPath, out) => {
   await writeFile(schemaPath, JSON.stringify(schema))
 
   const xmlTemplatePath = resolve(outPath, 'xmlTemplate.ts')
-  await writeFile(xmlTemplatePath, `export default \`${buildXmlTemplate(out)}\``)
+  await writeFile(xmlTemplatePath, `export default \`${buildXmlTemplate(identifier, version)}\``)
 
   try {
     const res = await execXslt3(textXsltPath)
@@ -183,7 +183,7 @@ const generate = async (jsonSchemaPath, out) => {
     console.error(error)
   }
 
-  await writeFile(outPath + '.ts', buildFormIndex(out))
+  await writeFile(outPath + '.ts', buildFormIndex(identifier))
   console.log(chalk.cyan.bold('done: '), outPath)
 }
 
@@ -211,6 +211,20 @@ const validate = async (jsonSchemaPath, xsdPath) => {
   }
 }
 
+const identifier = {
+  alias: 'i',
+  describe: 'Form identifier',
+  type: 'string',
+  default: 'form',
+}
+
+const ver = {
+  alias: 'v',
+  describe: 'Form version',
+  type: 'string',
+  default: '0.1',
+}
+
 yargs
   .usage('Usage: json-schema-xsd-tools <command> -t <template> -x <xsd> -j <json>')
   .command({
@@ -223,6 +237,8 @@ yargs
         demandOption: true,
         type: 'string',
       },
+      identifier,
+      ver,
       template: {
         alias: 't',
         describe: 'Template path',
@@ -238,7 +254,13 @@ yargs
     },
 
     handler(argv) {
-      generateXsd(resolve(cwd(), argv.json), resolve(cwd(), argv.template), resolve(cwd(), argv.out))
+      generateXsd(
+        resolve(cwd(), argv.json),
+        argv.identifier,
+        argv.ver,
+        resolve(cwd(), argv.template),
+        resolve(cwd(), argv.out)
+      )
     },
   })
   .command({
@@ -251,6 +273,8 @@ yargs
         demandOption: true,
         type: 'string',
       },
+      identifier,
+      ver,
       out: {
         alias: 'o',
         describe: 'xslt output path',
@@ -260,7 +284,7 @@ yargs
     },
 
     handler(argv) {
-      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'text')
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'text', argv.identifier, argv.ver)
     },
   })
   .command({
@@ -273,6 +297,8 @@ yargs
         demandOption: true,
         type: 'string',
       },
+      identifier,
+      ver,
       out: {
         alias: 'o',
         describe: 'xslt output path',
@@ -282,7 +308,7 @@ yargs
     },
 
     handler(argv) {
-      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'html')
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'html', argv.identifier, argv.ver)
     },
   })
   .command({
@@ -295,6 +321,8 @@ yargs
         demandOption: true,
         type: 'string',
       },
+      identifier,
+      ver,
       out: {
         alias: 'o',
         describe: 'xslt output path',
@@ -304,7 +332,7 @@ yargs
     },
 
     handler(argv) {
-      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'pdf')
+      generateXslt(resolve(cwd(), argv.json), resolve(cwd(), argv.out), 'pdf', argv.identifier, argv.ver)
     },
   })
   .command({
@@ -317,16 +345,12 @@ yargs
         demandOption: true,
         type: 'string',
       },
-      out: {
-        alias: 'o',
-        describe: 'data output path',
-        type: 'string',
-        default: 'form',
-      },
+      identifier,
+      ver,
     },
 
     handler(argv) {
-      generate(resolve(cwd(), argv.json), argv.out)
+      generate(resolve(cwd(), argv.json), argv.identifier, argv.ver)
     },
   })
   .command({
