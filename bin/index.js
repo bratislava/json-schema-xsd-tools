@@ -32,6 +32,7 @@ import xsd from './${identifier}/schema.xsd'
 import uiSchema from './${identifier}/uiSchema.json'
 import data from './${identifier}/data.json'
 import xmlTemplate from './${identifier}/xmlTemplate'
+import pdfStylesheet from './${identifier}/form.fo.xslt'
 
 export default {
   schema,
@@ -40,6 +41,7 @@ export default {
   xmlTemplate,
   textStylesheet,
   htmlStylesheet,
+  pdfStylesheet,
   data
 }`
 
