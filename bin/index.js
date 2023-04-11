@@ -100,6 +100,44 @@ const execXslt3 = (path) => {
   })
 }
 
+const pack = async (jsonSchemaPath, identifier, version) => {
+  if (!(await fileExists(jsonSchemaPath))) {
+    console.log(chalk.red.bold('JSON schema not found'))
+    return
+  }
+
+  const outPath = resolve(cwd(), identifier)
+  if (!(await folderExists(outPath))) {
+    await mkdir(outPath)
+    await mkdir(resolve(outPath, 'Content'))
+  }
+
+  const jsonSchemaBuffer = await readFile(jsonSchemaPath)
+  const schema = JSON.parse(jsonSchemaBuffer.toString())
+
+  const xsd = loadAndBuildXsd(schema, identifier, version)
+  const xsdPath = resolve(outPath, 'Content', 'schema.xsd')
+  await writeFile(xsdPath, xsd)
+
+  const textXslt = loadAndBuildDefaultXslt(schema, 'text', identifier, version)
+  const textXsltPath = resolve(outPath, 'Content', 'form.sb.xslt')
+  await writeFile(textXsltPath, textXslt)
+
+  const htmlXslt = loadAndBuildDefaultXslt(schema, 'html', identifier, version)
+  const htmlXsltPath = resolve(outPath, 'Content', 'form.html.xslt')
+  await writeFile(htmlXsltPath, htmlXslt)
+
+  const pdfXslt = loadAndBuildDefaultXslt(schema, 'pdf', identifier, version)
+  const pdfXsltPath = resolve(outPath, 'Content', 'form.fo.xslt')
+  await writeFile(pdfXsltPath, pdfXslt)
+
+  const data = fakeData(schema)
+  const dataPath = resolve(outPath, 'data.json')
+  await writeFile(dataPath, JSON.stringify(data))
+
+  console.log(chalk.cyan.bold('done: '), outPath)
+}
+
 const generate = async (jsonSchemaPath, identifier, version) => {
   if (!(await fileExists(jsonSchemaPath))) {
     console.log(chalk.red.bold('JSON schema not found'))
@@ -328,6 +366,24 @@ yargs
 
     handler(argv) {
       generate(resolve(cwd(), argv.json), argv.identifier, argv.ver)
+    },
+  })
+  .command({
+    command: 'pack',
+    describe: 'generate and pack form from JSON schema',
+    builder: {
+      json: {
+        alias: 'j',
+        describe: 'JSON schema path',
+        demandOption: true,
+        type: 'string',
+      },
+      identifier,
+      ver,
+    },
+
+    handler(argv) {
+      pack(resolve(cwd(), argv.json), argv.identifier, argv.ver)
     },
   })
   .command({
