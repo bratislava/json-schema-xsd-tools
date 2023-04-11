@@ -6,44 +6,16 @@ const { readFile, writeFile, access, stat, mkdir } = require('node:fs/promises')
 const { cwd } = require('node:process')
 const { resolve } = require('node:path')
 const { exec } = require('child_process')
-const { loadAndBuildXsd, loadAndValidate, loadAndBuildDefaultXslt, fakeData } = require('../dist/json-schema-xsd-tools')
-const uiSchema = require('./uiSchema.json')
-
-const buildXmlTemplate = (identifier, version) => `<?xml version="1.0" encoding="utf-8"?>
-<E-form xmlns="http://schemas.gov.sk/doc/eform/${identifier}/${version}"
-        xsi:schemaLocation="http://schemas.gov.sk/doc/eform/${identifier}/${version}"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Meta>
-    <ID>${identifier}</ID>
-    <Name>${identifier}</Name>
-    <Gestor></Gestor>
-    <RecipientId></RecipientId>
-    <Version>${version}</Version>
-    <ZepRequired>false</ZepRequired>
-    <EformUuid>5ea0cad2-8759-4826-8d4c-c59c1d09ec29</EformUuid>
-    <SenderID>mailto:hruska@example.com</SenderID>
-  </Meta>
-</E-form>`
-
-const buildFormIndex = (identifier) => `import htmlStylesheet from './${identifier}/form.html.sef.json'
-import textStylesheet from './${identifier}/form.sb.sef.json'
-import schema from './${identifier}/schema.json'
-import xsd from './${identifier}/schema.xsd'
-import uiSchema from './${identifier}/uiSchema.json'
-import data from './${identifier}/data.json'
-import xmlTemplate from './${identifier}/xmlTemplate'
-import pdfStylesheet from './${identifier}/form.fo.xslt'
-
-export default {
-  schema,
-  uiSchema,
-  xsd,
-  xmlTemplate,
-  textStylesheet,
-  htmlStylesheet,
-  pdfStylesheet,
-  data
-}`
+const {
+  loadAndBuildXsd,
+  loadAndValidate,
+  loadAndBuildDefaultXslt,
+  fakeData,
+  formatUnicorn,
+} = require('../dist/json-schema-xsd-tools')
+const uiSchema = require('./templates/uiSchema.json')
+const xmlTemplate = require('./templates/template.xml')
+const formIndex = require('./templates/formIndex')
 
 async function fileExists(path) {
   try {
@@ -169,7 +141,10 @@ const generate = async (jsonSchemaPath, identifier, version) => {
   await writeFile(schemaPath, JSON.stringify(schema))
 
   const xmlTemplatePath = resolve(outPath, 'xmlTemplate.ts')
-  await writeFile(xmlTemplatePath, `export default \`${buildXmlTemplate(identifier, version)}\``)
+  await writeFile(
+    xmlTemplatePath,
+    `export default \`${formatUnicorn(xmlTemplate, { eformIdentifier: identifier, eformVersion: version })}\``
+  )
 
   try {
     const res = await execXslt3(textXsltPath)
@@ -185,7 +160,7 @@ const generate = async (jsonSchemaPath, identifier, version) => {
     console.error(error)
   }
 
-  await writeFile(outPath + '.ts', buildFormIndex(identifier))
+  await writeFile(outPath + '.ts', formatUnicorn(formIndex, { eformIdentifier: identifier }))
   console.log(chalk.cyan.bold('done: '), outPath)
 }
 
