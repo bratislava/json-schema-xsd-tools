@@ -13,7 +13,7 @@ type XsdType =
   | 'xs:integer'
   | ''
 export type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-export type JsonSchemaFormat = 'date' | 'date-time' | 'data-url' | 'ciselnik' | undefined
+export type JsonSchemaFormat = 'date' | 'date-time' | 'file' | 'ciselnik' | undefined
 
 /**
  * JSON schema object
@@ -72,7 +72,7 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
     case 'xs:dateTime':
       return 'date-time'
     case 'PrilohaType':
-      return 'data-url'
+      return 'file'
     case 'EnumerationType':
       return 'ciselnik'
     default:
@@ -214,7 +214,7 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
     description,
     required,
     type: isEnum || isAttachment ? 'string' : 'object',
-    format: isAttachment ? 'data-url' : isEnum ? 'ciselnik' : undefined,
+    format: isAttachment ? 'file' : isEnum ? 'ciselnik' : undefined,
   }
 }
 
@@ -251,7 +251,7 @@ const getXsdTypeByFormat = (format: JsonSchemaFormat): XsdType => {
       return 'xs:date'
     case 'date-time':
       return 'xs:dateTime'
-    case 'data-url':
+    case 'file':
       return 'PrilohaType'
     case 'ciselnik':
       return 'EnumerationType'
@@ -401,7 +401,7 @@ export const loadAndBuildXsd = (
  */
 export const fakeData = (jsonSchema: JsonSchema) => {
   jsf.option({ useExamplesValue: true })
-  jsf.format('data-url', () => jsf.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
+  jsf.format('file', () => jsf.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
   jsf.format('ciselnik', () => jsf.random.randexp('[a-zA-Z]+'))
 
   return jsf.generate(jsonSchema)
