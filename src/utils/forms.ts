@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio'
 import { JSONSchemaFaker as jsf } from 'json-schema-faker'
 import defaultXsdTemplate from '../templates/template.xsd'
-import { firstCharToLower, firstCharToUpper } from './strings'
+import { firstCharToLower, firstCharToUpper, formatUnicorn } from './strings'
 
 type XsdType =
   | 'xs:string'
@@ -378,14 +378,22 @@ const buildEnumSimpleType = (name: string, enumeration: string[]): string => {
  * ```
  *
  * @param jsonSchema - JSON schema
+ * @param identifier - Form identifier
+ * @param version - Form version
  * @param xsdTemplate - XSD template including E-form metadata and some basic types (EnumerationType, PrilohaType)
  * @returns XSD schema
  */
 export const loadAndBuildXsd = (
   jsonSchema: JsonSchema,
+  identifier: string | undefined = 'form',
+  version: string | undefined = '0.1',
   xsdTemplate: string | undefined = defaultXsdTemplate
 ): string => {
-  const $ = cheerio.load(xsdTemplate, { xmlMode: true, decodeEntities: false })
+  const template = formatUnicorn(xsdTemplate, {
+    eformIdentifier: identifier,
+    eformVersion: version,
+  })
+  const $ = cheerio.load(template, { xmlMode: true, decodeEntities: false })
 
   const { properties, required } = mergeJsonSchema(jsonSchema)
   buildXsd($(`xs\\:schema`), 'E-formBodyType', required, properties, [])

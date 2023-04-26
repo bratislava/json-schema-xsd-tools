@@ -5,8 +5,9 @@ import {
   JsonSchemaItems,
   JsonSchemaProperties,
   loadAndBuildJsonSchema,
-  loadAndBuildXsd
+  loadAndBuildXsd,
 } from './utils/forms'
+import { formatUnicorn } from './utils/strings'
 
 import { Error, ErrorType, loadAndValidate, Options } from './utils/validation'
 
@@ -15,6 +16,7 @@ import { loadAndBuildDefaultXslt, loadAndBuildXslt } from './utils/xslt'
 
 export {
   loadAndBuildJsonSchema,
+  formatUnicorn,
   loadAndBuildXsd,
   loadAndBuildXslt,
   loadAndBuildDefaultXslt,
@@ -30,4 +32,3 @@ export {
   Options,
   TransformationType,
 }
-
