@@ -16,7 +16,7 @@ const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): 
       return `<xsl:with-param name="node"><xsl:call-template name="base_format_datetime"><xsl:with-param name="dateTime" select="$values/z:${el}" /></xsl:call-template></xsl:with-param>`
     } else if (format === 'ciselnik') {
       return `<xsl:with-param name="node" select="$values/z:${el}/z:Name" />`
-    } else if (format === 'data-url') {
+    } else if (format === 'file') {
       return `<xsl:with-param name="node" select="$values/z:${el}/z:Nazov" />`
     }
   } else if (type === 'boolean') {
@@ -43,7 +43,7 @@ const buildXslt = (
 
       if (childProperty.type === 'array' && childProperty.items) {
         const isAttachment =
-          childProperty.items && childProperty.items.type === 'string' && childProperty.items.format === 'data-url'
+          childProperty.items && childProperty.items.type === 'string' && childProperty.items.format === 'file'
         template.push(
           `<xsl:for-each select="$values/z:${el}">
               <xsl:call-template name="base_labeled_field">
