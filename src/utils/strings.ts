@@ -23,3 +23,15 @@ export const toCamelCase = (input: string): string => {
 export const toSnakeCase = (input: string): string => {
   return _.snakeCase(input)
 }
+
+interface Args {
+  [key: string]: string | number
+}
+
+export const formatUnicorn = (str: string, args: Args): string => {
+  Object.entries(args).forEach(([key, value]) => {
+    str = str.replace(new RegExp(`\\{${key}\\}`, 'gi'), value.toString())
+  })
+
+  return str
+}

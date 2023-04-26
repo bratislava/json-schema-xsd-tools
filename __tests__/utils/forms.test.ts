@@ -12,7 +12,7 @@ describe('generate', () => {
     const jsonSchemaPath = resolve(cwd(), 'forms', '00603481.dopravneZnacenie.sk', 'schema.json')
     const jsonSchemaBuffer = await readFile(jsonSchemaPath)
 
-    const xsd = loadAndBuildXsd(JSON.parse(jsonSchemaBuffer.toString()))
+    const xsd = loadAndBuildXsd(JSON.parse(jsonSchemaBuffer.toString()), '00603481.dopravneZnacenie.sk', '1.9')
     await writeFile(xsdPath, xsd)
   })
 
