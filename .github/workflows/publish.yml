@@ -5,12 +5,16 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./core
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
       - run: yarn --frozen-lockfile
       - run: yarn build
       - run: yarn publish --access public

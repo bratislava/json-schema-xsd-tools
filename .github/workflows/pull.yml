@@ -2,20 +2,23 @@ name: Validate code
 
 on:
   push:
-    branches: ['master']
+    branches: ["master"]
   pull_request:
-    branches: ['master']
+    branches: ["master"]
 
 jobs:
   build:
     name: Typescript check
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./core
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "16"
       - run: yarn --frozen-lockfile
       - name: Typescript check
         uses: EPMatt/reviewdog-action-tsc@v1
