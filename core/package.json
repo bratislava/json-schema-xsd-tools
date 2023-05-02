@@ -11,7 +11,7 @@
     "typecheck": "tsc && tsc-strict",
     "eslint": "eslint --color --ext .js,.json,.ts .",
     "eslint:fix": "npm run eslint -- --fix",
-    "docs": "typedoc --out docs src/index.ts --name \"JSON schema XSD tools\" --includeVersion"
+    "docs": "typedoc --out ../docs src/json-schema-xsd-tools.ts --name \"JSON schema XSD tools\" --includeVersion"
   },
   "bin": {
     "json-schema-xsd-tools": "./bin/index.js"
