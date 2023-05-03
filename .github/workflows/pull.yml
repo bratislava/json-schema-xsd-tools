@@ -56,7 +56,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "16"
-      - run: yarn --frozen-lockfile
+      - run: yarn install --check-files
+      - name: Typescript strict plugin check
+        run: yarn typecheck
       - name: Typescript check
         uses: EPMatt/reviewdog-action-tsc@v1
         with:
@@ -71,5 +73,3 @@ jobs:
           # https://github.com/reviewdog/reviewdog#reporters
           level: warning
           workdir: cli
-      - name: Typescript strict plugin check
-        run: yarn typecheck
