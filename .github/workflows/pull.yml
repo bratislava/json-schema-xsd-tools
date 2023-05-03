@@ -10,16 +10,15 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./core
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: "16"
-      - run: yarn --frozen-lockfile
+      - name: yarn
+        working-directory: ./core
+        run: yarn --frozen-lockfile
       # - name: Typescript check
       #   uses: EPMatt/reviewdog-action-tsc@v1
       #   with:
@@ -41,8 +40,11 @@ jobs:
       #   run: yarn test:ci
 
       - name: Build
+        working-directory: ./core
         run: yarn build
-      - run: ls
+      - name: ls
+        working-directory: ./core
+        run: ls
 
   # validate-cli:
   #   name: Typescript check
