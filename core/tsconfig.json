@@ -33,5 +33,5 @@
     ]
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "docs", "node_modules", "bin"]
+  "exclude": ["dist", "node_modules"]
 }
