@@ -1,3 +1,4 @@
+/* eslint-disable no-secrets/no-secrets */
 export default `<?xml version="1.0" encoding="utf-8"?>
 <E-form xmlns="http://schemas.gov.sk/doc/eform/{eformIdentifier}/{eformVersion}"
         xsi:schemaLocation="http://schemas.gov.sk/doc/eform/{eformIdentifier}/{eformVersion}"

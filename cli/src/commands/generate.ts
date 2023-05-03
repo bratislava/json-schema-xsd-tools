@@ -26,14 +26,14 @@ const execXslt3 = (path: string) => {
   return new Promise((resolve, reject) => {
     exec(
       `npx xslt3 -xsl:${path} -export:${setExt(path, 'sef.json')} -t`,
-      (error: any, stdout: string, stderr: string) => {
+      (error: unknown, stdout: string, stderr: string) => {
         if (error) {
-          reject(error.message)
+          reject(error)
           return
         }
 
         if (stderr) {
-          reject(error?.message)
+          reject(error)
           return
         }
 

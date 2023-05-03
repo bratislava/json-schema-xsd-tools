@@ -48,7 +48,7 @@ const validate = async (jsonSchemaPath: string, xsdPath: string) => {
     console.log(chalk.cyan.bold('valid'))
   } else {
     console.log(chalk.red.bold('errors:'))
-    errors.forEach((error: any) => {
+    errors.forEach((error) => {
       console.log(`${chalk.red.bold(error.type)} at ${error.path.join('.')}`)
     })
   }
