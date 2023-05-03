@@ -1,6 +1,6 @@
 {
   "name": "@bratislava/jsxt",
-  "version": "0.2.0",
+  "version": "0.2.12",
   "description": "",
   "main": "dist/jsxt.js",
   "types": "dist/jsxt.d.ts",
