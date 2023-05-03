@@ -42,39 +42,23 @@ jobs:
       - name: Build
         working-directory: ./core
         run: yarn build
-      - name: ls
-        working-directory: ./core
-        run: ls
-
-  # validate-cli:
-  #   name: Typescript check
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./cli
-
-  #   steps:
-  # - uses: actions/checkout@v3
-  # - uses: actions/setup-node@v3
-  #   with:
-  #     node-version: "16"
-  # - run: yarn cache clean
-  # - run: yarn install --check-files
-  # - run: yarn upgrade
-  # - name: Typescript strict plugin check
-  #   run: yarn typecheck
-  # - name: Typescript check
-  #   uses: EPMatt/reviewdog-action-tsc@v1
-  #   with:
-  #     # Change reviewdog reporter if you need
-  #     # [github-pr-check,github-check,github-pr-review].
-  #     # More about reviewdog reporters at
-  #     # https://github.com/reviewdog/reviewdog#reporters
-  #     reporter: github-check
-  #     # Change reporter level if you need
-  #     # [info,warning,error].
-  #     # More about reviewdog reporter level at
-  #     # https://github.com/reviewdog/reviewdog#reporters
-  #     level: warning
-  #     workdir: cli
+      - name: yarn
+        working-directory: ./cli
+        run: yarn --frozen-lockfile
+      - name: Typescript strict plugin check
+        working-directory: ./cli
+        run: yarn typecheck
+      - name: Typescript check
+        uses: EPMatt/reviewdog-action-tsc@v1
+        with:
+          # Change reviewdog reporter if you need
+          # [github-pr-check,github-check,github-pr-review].
+          # More about reviewdog reporters at
+          # https://github.com/reviewdog/reviewdog#reporters
+          reporter: github-check
+          # Change reporter level if you need
+          # [info,warning,error].
+          # More about reviewdog reporter level at
+          # https://github.com/reviewdog/reviewdog#reporters
+          level: warning
+          workdir: cli
