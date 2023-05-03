@@ -33,6 +33,7 @@ jobs:
           # More about reviewdog reporter level at
           # https://github.com/reviewdog/reviewdog#reporters
           level: warning
+          workdir: core
       - name: Typescript strict plugin check
         run: yarn typecheck
 
