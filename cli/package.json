@@ -47,7 +47,7 @@
     "yarn": "1.22"
   },
   "dependencies": {
-    "@bratislava/json-schema-xsd-tools": "file:../core",
+    "@bratislava/json-schema-xsd-tools": "0.3.x",
     "chalk": "2.4",
     "yargs": "^17.6.0",
     "cheerio": "^1.0.0-rc.12",
