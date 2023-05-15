@@ -20,7 +20,7 @@ export default `<?xml version="1.0" encoding="utf-8"?>
         description="eDoc (elektronický dokument) prázdne xml" filename="data.xml" />
     <manifest:file-entry media-type="application/xslt+xml" media-destination="view"
         media-language="sk" full-path="Content\\form.html.xslt"
-        description="Xslt transformácia z eDoc xml do html" filename="form.185.xslt" />
+        description="Xslt transformácia z eDoc xml do html" filename="form.html.xslt" />
     <manifest:file-entry media-type="text/xml" media-language="sk" full-path="schema.xsd"
         description="Xsd výsledného eDoc (elektronický dokument)  xml" filename="schema.xsd" />
     <manifest:file-entry media-type="text/xml" media-language="sk" full-path="meta.xml" />
