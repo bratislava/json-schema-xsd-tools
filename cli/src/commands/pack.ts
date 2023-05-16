@@ -19,6 +19,10 @@ export const desc = 'generate and pack form from JSON schema'
 
 export const builder: CommandBuilder<Options, Options> = (yargs) => addDefaultOptions(yargs)
 
+const dateToIsoString = (date: Date): string => {
+  return String(date.toISOString().split('T')[0])
+}
+
 const pack = async (jsonSchemaPath: string, identifier: string, version: string) => {
   if (!(await fileExists(jsonSchemaPath))) {
     console.log(chalk.red.bold('JSON schema not found'))
@@ -37,9 +41,6 @@ const pack = async (jsonSchemaPath: string, identifier: string, version: string)
   const schema = JSON.parse(jsonSchemaBuffer.toString())
 
   const xsd = loadAndBuildXsd(schema, identifier, version)
-  const xsdPath = resolve(outPath, 'Content', 'form.xsd')
-  await writeFile(xsdPath, xsd)
-
   const schemaPath = resolve(outPath, 'schema.xsd')
   await writeFile(schemaPath, xsd)
 
@@ -64,8 +65,20 @@ const pack = async (jsonSchemaPath: string, identifier: string, version: string)
   const attachmentsPath = resolve(outPath, 'attachments.xml')
   await writeFile(attachmentsPath, attachments)
 
+  const dateFrom = new Date()
+  const dateTo = new Date()
+  dateTo.setFullYear(dateTo.getFullYear() + 1)
+
   const metaPath = resolve(outPath, 'meta.xml')
-  await writeFile(metaPath, formatUnicorn(meta, { eformIdentifier: identifier, eformVersion: version }))
+  await writeFile(
+    metaPath,
+    formatUnicorn(meta, {
+      eformIdentifier: identifier,
+      eformVersion: version,
+      eformDateFrom: dateToIsoString(dateFrom),
+      eformDateTo: dateToIsoString(dateTo),
+    })
+  )
 
   const manifestPath = resolve(outPath, 'META-INF', 'manifest.xml')
   await writeFile(manifestPath, manifest)

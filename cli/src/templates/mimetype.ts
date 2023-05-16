@@ -1,1 +1,1 @@
-export default `application/vnd.gov.sk.e-form+zip`
+export default 'application/vnd.gov.sk.e-form+zip'
