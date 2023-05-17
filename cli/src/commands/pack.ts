@@ -1,4 +1,4 @@
-import { fakeData, formatUnicorn, loadAndBuildDefaultXslt, loadAndBuildXsd } from '@bratislava/json-schema-xsd-tools'
+import { formatUnicorn, loadAndBuildDefaultXslt, loadAndBuildXsd } from '@bratislava/json-schema-xsd-tools'
 import chalk from 'chalk'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
@@ -82,10 +82,6 @@ const pack = async (jsonSchemaPath: string, identifier: string, version: string)
 
   const manifestPath = resolve(outPath, 'META-INF', 'manifest.xml')
   await writeFile(manifestPath, manifest)
-
-  const data = fakeData(schema)
-  const dataPath = resolve(outPath, 'data.json')
-  await writeFile(dataPath, JSON.stringify(data))
 
   console.log(chalk.cyan.bold('done: '), outPath)
 }
