@@ -70,8 +70,8 @@ const generate = async (jsonSchemaPath: string, identifier: string, version: str
   await writeFile(htmlXsltPath, htmlXslt)
 
   const pdfXslt = loadAndBuildDefaultXslt(schema, 'pdf', identifier, version)
-  const pdfXsltPath = resolve(outPath, 'form.fo.xslt')
-  await writeFile(pdfXsltPath, pdfXslt)
+  const pdfXsltPath = resolve(outPath, 'form.fo.xslt.ts')
+  await writeFile(pdfXsltPath, `export default \`${pdfXslt}\``)
 
   const data = fakeData(schema)
   const dataPath = resolve(outPath, 'data.json')
