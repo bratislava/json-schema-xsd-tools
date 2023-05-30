@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
-import { defaults, isMatch } from 'lodash'
-import { buildJsonSchema, JsonSchema, mergeJsonSchema } from './forms'
+import { defaults, isMatch, isUndefined, omitBy } from 'lodash'
+import { JsonSchema, buildJsonSchema, mergeJsonSchema } from './forms'
 
 /**
  * Validation options
@@ -140,8 +140,7 @@ const validate = (
     })
   }
 
-  if (!options.ignore?.includes('items') && !isMatch(xsdSchema.items || {}, jsonSchema.items || {})) {
-    console
+  if (!options.ignore?.includes('items') && !isMatch(jsonSchema.items || {}, omitBy(xsdSchema.items, isUndefined))) {
     errors.push({
       path,
       type: ErrorType.Items,

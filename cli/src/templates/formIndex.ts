@@ -1,4 +1,4 @@
-module.exports = `import htmlStylesheet from './{eformIdentifier}/form.html.sef.json'
+export default `import htmlStylesheet from './{eformIdentifier}/form.html.sef.json'
 import textStylesheet from './{eformIdentifier}/form.sb.sef.json'
 import schema from './{eformIdentifier}/schema.json'
 import xsd from './{eformIdentifier}/schema.xsd'

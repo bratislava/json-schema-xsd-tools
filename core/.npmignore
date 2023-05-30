@@ -1,0 +1,19 @@
+.github
+.gitignore
+.prettierrc
+
+node_modules/
+tsconfig.json
+/.vscode
+.eslintrc.js
+.eslintignore
+
+
+# source
+**/*.ts
+*.ts
+/test
+
+# definitions
+!**/*.d.ts
+!*.d.ts
