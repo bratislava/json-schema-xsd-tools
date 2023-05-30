@@ -1,16 +1,17 @@
-name: Publish Package to npm
+name: Publish cli package to npm
 
 on:
   push:
     tags:
       - "v*.*.*"
+      - "cli-v*.*.*"
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./core
+        working-directory: ./cli
 
     steps:
       - uses: actions/checkout@v3

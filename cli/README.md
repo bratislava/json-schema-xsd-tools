@@ -44,6 +44,15 @@ output path, default form.\* (extension is defined by used command)
 
 Explore the [docs](https://bratislava.github.io/json-schema-xsd-tools/).
 
+## Publishing new version
+
+[![Publish cli package](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish-cli.yml/badge.svg?event=push)](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish-cli.yml)
+
+- Run `npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | from-git]`
+- Or you can update the version manually in [package.json](package.json) and create a tag with prefix `cli-v`.
+- Push changes.
+- [Action](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish-cli.yml) publish package to npm. Check the status of workflow run.
+
 ## License
 
 [EUPL-1.2](https://github.com/bratislava/json-schema-xsd-tools/blob/master/LICENSE.md)
