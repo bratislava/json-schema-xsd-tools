@@ -56,6 +56,15 @@ console.log(errors) // => []
 
 Explore the [docs](https://bratislava.github.io/json-schema-xsd-tools/).
 
+## Publishing new version
+
+[![Publish core package](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish-core.yml/badge.svg?event=push)](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish-core.yml)
+
+- Run `npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | from-git]`
+- Or update the version manually in [package.json](package.json) and create a tag with prefix `core-v`.
+- Push changes.
+- [Action](https://github.com/bratislava/json-schema-xsd-tools/actions/workflows/publish-core.yml) publish package to npm. Check the status of workflow run.
+
 ## License
 
 [EUPL-1.2](https://github.com/bratislava/json-schema-xsd-tools/blob/master/LICENSE.md)
