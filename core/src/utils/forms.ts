@@ -13,7 +13,7 @@ type XsdType =
   | 'xs:integer'
   | ''
 export type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-export type JsonSchemaFormat = 'date' | 'date-time' | 'file' | 'ciselnik' | undefined
+export type JsonSchemaFormat = 'date' | 'date-time' | 'file' | 'ciselnik' | 'zip' | 'localTime' | undefined
 
 /**
  * JSON schema object
@@ -411,6 +411,8 @@ export const fakeData = (jsonSchema: JsonSchema) => {
   jsf.option({ useExamplesValue: true })
   jsf.format('file', () => jsf.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
   jsf.format('ciselnik', () => jsf.random.randexp('[a-zA-Z]+'))
+  jsf.format('zip', () => jsf.random.randexp('[a-zA-Z0-9]+'))
+  jsf.format('localTime', () => jsf.random.date())
 
   return jsf.generate(jsonSchema)
 }
