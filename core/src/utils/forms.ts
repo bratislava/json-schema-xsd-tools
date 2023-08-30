@@ -411,7 +411,7 @@ export const fakeData = (jsonSchema: JsonSchema) => {
   jsf.option({ useExamplesValue: true })
   jsf.format('file', () => jsf.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
   jsf.format('ciselnik', () => jsf.random.randexp('[a-zA-Z]+'))
-  jsf.format('zip', () => jsf.random.randexp('[a-zA-Z0-9]+'))
+  jsf.format('zip', () => '81101')
   jsf.format('localTime', () => jsf.random.date())
 
   return jsf.generate(jsonSchema)
