@@ -58,8 +58,8 @@ const generate = async (jsonSchemaPath: string, identifier: string, version: str
   const schema = JSON.parse(jsonSchemaBuffer.toString())
 
   const xsd = loadAndBuildXsd(schema, identifier, version)
-  const xsdPath = resolve(outPath, 'schema.xsd.ts')
-  await writeFile(xsdPath, `export default \`${xsd}\``)
+  const xsdPath = resolve(outPath, 'schema.xsd')
+  await writeFile(xsdPath, xsd)
 
   const textXslt = loadAndBuildDefaultXslt(schema, 'text', identifier, version)
   const textXsltPath = resolve(outPath, 'form.sb.xslt')
@@ -70,8 +70,8 @@ const generate = async (jsonSchemaPath: string, identifier: string, version: str
   await writeFile(htmlXsltPath, htmlXslt)
 
   const pdfXslt = loadAndBuildDefaultXslt(schema, 'pdf', identifier, version)
-  const pdfXsltPath = resolve(outPath, 'form.fo.xslt.ts')
-  await writeFile(pdfXsltPath, `export default \`${pdfXslt}\``)
+  const pdfXsltPath = resolve(outPath, 'form.fo.xslt')
+  await writeFile(pdfXsltPath, pdfXslt)
 
   const data = fakeData(schema)
   const dataPath = resolve(outPath, 'data.json')
@@ -83,10 +83,10 @@ const generate = async (jsonSchemaPath: string, identifier: string, version: str
   const schemaPath = resolve(outPath, 'schema.json')
   await writeFile(schemaPath, JSON.stringify(schema))
 
-  const xmlTemplatePath = resolve(outPath, 'xmlTemplate.ts')
+  const xmlTemplatePath = resolve(outPath, 'xmlTemplate.xml')
   await writeFile(
     xmlTemplatePath,
-    `export default \`${formatUnicorn(xmlTemplate, { eformIdentifier: identifier, eformVersion: version })}\``
+    formatUnicorn(xmlTemplate, { eformIdentifier: identifier, eformVersion: version })
   )
 
   try {
