@@ -39,7 +39,8 @@
       "required": ["email"],
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "format": "email"
         },
         "phone": {
           "type": "string"

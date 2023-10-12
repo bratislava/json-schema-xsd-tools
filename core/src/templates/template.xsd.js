@@ -6,7 +6,6 @@ export default `<?xml version="1.0" encoding="utf-8"?>
       <xs:sequence>
         <xs:element name="Meta" type="E-formMetaType"/>
         <xs:element name="Body" type="E-formBodyType">
-          
         </xs:element>
       </xs:sequence>
     </xs:complexType>
@@ -28,6 +27,12 @@ export default `<?xml version="1.0" encoding="utf-8"?>
       <xs:element name="SenderID" type="xs:string" default="mailto:"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="EmailType">
+    <xs:restriction base="xs:string">
+        <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z\u0080-\uFFFF]{2,}"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="EnumerationType">
     <xs:annotation>
