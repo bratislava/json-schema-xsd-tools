@@ -1,6 +1,6 @@
 {
   "name": "@bratislava/jsxt",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "",
   "main": "dist/jsxt.js",
   "types": "dist/jsxt.d.ts",
@@ -29,6 +29,7 @@
   "homepage": "https://github.com/bratislava/json-schema-xsd-tools#readme",
   "devDependencies": {
     "@types/jest": "^29.1.1",
+    "@types/jstoxml": "^2.0.2",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
     "eslint": "^8.24.0",
@@ -47,11 +48,15 @@
     "yarn": "1.22"
   },
   "dependencies": {
-    "@bratislava/json-schema-xsd-tools": "0.3.x",
+    "@bratislava/json-schema-xsd-tools": "0.4.0",
     "chalk": "2.4",
-    "yargs": "^17.6.0",
     "cheerio": "^1.0.0-rc.12",
     "json-schema-faker": "^0.5.0-rcv.46",
-    "lodash": "^4.17.21"
+    "jstoxml": "^3.2.8",
+    "lodash": "^4.17.21",
+    "yargs": "^17.6.0"
+  },
+  "volta": {
+    "node": "16.20.2"
   }
 }

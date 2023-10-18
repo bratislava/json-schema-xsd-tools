@@ -417,6 +417,8 @@ export const fakeData = (jsonSchema: JsonSchema) => {
   jsf.option({ useExamplesValue: true })
   jsf.format('file', () => jsf.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
   jsf.format('ciselnik', () => jsf.random.randexp('[a-zA-Z]+'))
+  jsf.format('zip', () => jsf.random.randexp('[0-9]{5}'))
+  jsf.format('phone-number', () => jsf.random.randexp('+421[0-9]{9}'))
 
   return jsf.generate(jsonSchema)
 }
