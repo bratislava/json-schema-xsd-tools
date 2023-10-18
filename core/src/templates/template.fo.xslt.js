@@ -14,7 +14,7 @@ export default `<?xml version="1.0" encoding="utf-8"?>
 
   <!-- this is the template which gets called inside the FO structure -->
   <xsl:template name="body">
-    
+
   </xsl:template>
 
   <!-- XSL cannot dynamically "yield" template, so here is simple mapping for each template based on name -->
@@ -24,7 +24,7 @@ export default `<?xml version="1.0" encoding="utf-8"?>
     <xsl:param name="values" />
 
     <xsl:choose>
-      
+
     </xsl:choose>
   </xsl:template>
 
@@ -130,6 +130,11 @@ export default `<?xml version="1.0" encoding="utf-8"?>
     </xsl:variable>
 
     <xsl:value-of select="concat($dd,'.',$mm,'.',$yyyy)"/>
+  </xsl:template>
+
+  <xsl:template name="base_format_time">
+    <xsl:param name="instr"/>
+    <xsl:value-of select="format-time($instr, '[H01]:[m01]')"/>
   </xsl:template>
 
   <xsl:template name="base_format_datetime">
