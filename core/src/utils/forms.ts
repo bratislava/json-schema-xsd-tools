@@ -9,12 +9,13 @@ type XsdType =
   | 'xs:date'
   | 'xs:time'
   | 'xs:dateTime'
+  | 'EmailType'
   | 'PrilohaType'
   | 'EnumerationType'
   | 'xs:integer'
   | ''
 export type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-export type JsonSchemaFormat = 'date' | 'time' | 'date-time' | 'file' | 'ciselnik' | undefined
+export type JsonSchemaFormat = 'date' | 'time' | 'date-time' | 'email' | 'file' | 'ciselnik' | undefined
 
 /**
  * JSON schema object
@@ -57,6 +58,7 @@ const getJsonSchemaType = (type: string | undefined): JsonSchemaType => {
     case 'xs:date':
     case 'xs:time':
     case 'xs:dateTime':
+    case 'EmailType':
     case 'PrilohaType':
     case 'EnumerationType':
       return 'string'
@@ -75,6 +77,8 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
       return 'time'
     case 'xs:dateTime':
       return 'date-time'
+    case 'EmailType':
+      return 'email'
     case 'PrilohaType':
       return 'file'
     case 'EnumerationType':
@@ -127,7 +131,7 @@ const buildJsonSchemaProperty = ($: cheerio.CheerioAPI, el: cheerio.AnyNode): Js
       type: getJsonSchemaType(restriction.attr('base')),
       pattern: $(restriction).children(`xs\\:pattern`).attr('value'),
     }
-  } else if (type.startsWith('xs:') || type === 'PrilohaType' || type === 'EnumerationType') {
+  } else if (type.startsWith('xs:') || type === 'EmailType' || type === 'PrilohaType' || type === 'EnumerationType') {
     return {
       title,
       type: getJsonSchemaType(type),
@@ -257,6 +261,8 @@ const getXsdTypeByFormat = (format: JsonSchemaFormat): XsdType => {
       return 'xs:time'
     case 'date-time':
       return 'xs:dateTime'
+    case 'email':
+      return 'EmailType'
     case 'file':
       return 'PrilohaType'
     case 'ciselnik':
