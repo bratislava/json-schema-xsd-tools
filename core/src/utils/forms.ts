@@ -7,6 +7,7 @@ type XsdType =
   | 'xs:string'
   | 'xs:boolean'
   | 'xs:date'
+  | 'xs:time'
   | 'xs:dateTime'
   | 'EmailType'
   | 'PrilohaType'
@@ -14,7 +15,7 @@ type XsdType =
   | 'xs:integer'
   | ''
 export type JsonSchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-export type JsonSchemaFormat = 'date' | 'date-time' | 'email' | 'file' | 'ciselnik' | undefined
+export type JsonSchemaFormat = 'date' | 'time' | 'date-time' | 'email' | 'file' | 'ciselnik' | undefined
 
 /**
  * JSON schema object
@@ -55,6 +56,7 @@ const getJsonSchemaType = (type: string | undefined): JsonSchemaType => {
       return 'boolean'
     case 'xs:string':
     case 'xs:date':
+    case 'xs:time':
     case 'xs:dateTime':
     case 'EmailType':
     case 'PrilohaType':
@@ -71,6 +73,8 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   switch (type) {
     case 'xs:date':
       return 'date'
+    case 'xs:time':
+      return 'time'
     case 'xs:dateTime':
       return 'date-time'
     case 'EmailType':
@@ -253,6 +257,8 @@ const getXsdTypeByFormat = (format: JsonSchemaFormat): XsdType => {
   switch (format) {
     case 'date':
       return 'xs:date'
+    case 'time':
+      return 'xs:time'
     case 'date-time':
       return 'xs:dateTime'
     case 'email':

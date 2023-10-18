@@ -12,6 +12,8 @@ const buildNode = (el: string, type: JsonSchemaType, format: JsonSchemaFormat): 
   if (type === 'string') {
     if (format === 'date') {
       return `<xsl:with-param name="node"><xsl:call-template name="base_format_date"><xsl:with-param name="instr" select="$values/z:${el}" /></xsl:call-template></xsl:with-param>`
+    } else if (format === 'time') {
+      return `<xsl:with-param name="node"><xsl:call-template name="base_format_time"><xsl:with-param name="time" select="$values/z:${el}" /></xsl:call-template></xsl:with-param>`
     } else if (format === 'date-time') {
       return `<xsl:with-param name="node"><xsl:call-template name="base_format_datetime"><xsl:with-param name="dateTime" select="$values/z:${el}" /></xsl:call-template></xsl:with-param>`
     } else if (format === 'ciselnik') {
