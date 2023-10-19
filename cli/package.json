@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@bratislava/json-schema-xsd-tools": "0.4.0",
+    "@types/lodash": "^4.14.200",
     "chalk": "2.4",
     "cheerio": "^1.0.0-rc.12",
     "json-schema-faker": "^0.5.0-rcv.46",
