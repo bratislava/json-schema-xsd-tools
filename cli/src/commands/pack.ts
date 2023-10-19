@@ -12,18 +12,25 @@ import posp from '../templates/posp.xml'
 import { fileExists, folderExists } from '../utils/fsUtils'
 import { BaseOptions, addDefaultOptions } from '../utils/yargsUtils'
 
-type Options = BaseOptions
+type Options = BaseOptions & {
+  gestor: string
+}
 
 export const command = 'pack'
 export const desc = 'generate and pack form from JSON schema'
 
-export const builder: CommandBuilder<Options, Options> = (yargs) => addDefaultOptions(yargs)
+export const builder: CommandBuilder<Options, Options> = (yargs) => addDefaultOptions(yargs).options({gestor: {
+  alias: 'g',
+  describe: 'Gestor',
+  type: 'string',
+  default: 'Tisici Janko',
+}})
 
 const dateToIsoString = (date: Date): string => {
   return String(date.toISOString().split('T')[0])
 }
 
-const pack = async (jsonSchemaPath: string, identifier: string, version: string) => {
+const pack = async (jsonSchemaPath: string, identifier: string, version: string, gestor: string) => {
   if (!(await fileExists(jsonSchemaPath))) {
     console.log(chalk.red.bold('JSON schema not found'))
     return
@@ -66,8 +73,6 @@ const pack = async (jsonSchemaPath: string, identifier: string, version: string)
   await writeFile(attachmentsPath, attachments)
 
   const dateFrom = new Date()
-  const dateTo = new Date()
-  dateTo.setFullYear(dateTo.getFullYear() + 1)
 
   const metaPath = resolve(outPath, 'meta.xml')
   await writeFile(
@@ -76,7 +81,7 @@ const pack = async (jsonSchemaPath: string, identifier: string, version: string)
       eformIdentifier: identifier,
       eformVersion: version,
       eformDateFrom: dateToIsoString(dateFrom),
-      eformDateTo: dateToIsoString(dateTo),
+      gestor: gestor
     })
   )
 
@@ -87,5 +92,5 @@ const pack = async (jsonSchemaPath: string, identifier: string, version: string)
 }
 
 export const handler = (argv: Arguments<Options>) => {
-  pack(resolve(cwd(), argv.json), argv.identifier, argv.ver)
+  pack(resolve(cwd(), argv.json), argv.identifier, argv.ver, argv.gestor)
 }

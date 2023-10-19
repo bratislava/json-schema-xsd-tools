@@ -55,7 +55,9 @@ const buildXslt = (
             </xsl:for-each>`
         )
       } else if (childProperty.type === 'object') {
-        const childTemplateName = toSnakeCase(childKey)
+        // when the template is created (in recursive call of buildXslt below), we must ensure it is unique
+        // this allows us to have a subobject with same name in two different parents
+        const childTemplateName = `${templateName}__${toSnakeCase(childKey)}`
         template.push(
           `<xsl:call-template name="${childTemplateName}">
               <xsl:with-param name="values" select="$values/*[local-name() = '${el}']" />

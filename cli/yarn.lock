@@ -299,15 +299,14 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bratislava/json-schema-xsd-tools@0.3.x":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@bratislava/json-schema-xsd-tools/-/json-schema-xsd-tools-0.3.0.tgz#c94129dd42524e9708fada8997d8df01d7bfc47d"
-  integrity sha512-bCDB4ij3D7IiU5qYfzIr0CvBFNOz7pNdMb9OZJs5lbKWQ0zBK6BenFQgEfUcNHy3a7djfviA+lspsGUZfzdqvw==
+"@bratislava/json-schema-xsd-tools@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@bratislava/json-schema-xsd-tools/-/json-schema-xsd-tools-0.4.0.tgz#f87ce2c36ad7804989cf5ad641eaff7a71c71a1d"
+  integrity sha512-iLB4D3avF2pVnmz+nxwQ/fsG1BaPgIT5/4SDk9cjpTKkacTiGXPIiNnL0hLruLFW3iJAbJKhSg9vzTqWLo/+VA==
   dependencies:
     cheerio "^1.0.0-rc.12"
     json-schema-faker "^0.5.0-rcv.46"
     lodash "^4.17.21"
-    typescript "^4.8.4"
 
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
@@ -716,6 +715,16 @@
   version "7.0.11"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
+
+"@types/jstoxml@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/jstoxml/-/jstoxml-2.0.2.tgz#7ccfe12412857cc541a737ae56ce2559bd9b8ef4"
+  integrity sha512-60VaXPlZbd7tEhloAkE2E0lg+QoWpnGusdy+2pGMGFFpdsyxm/1GKs0o/nLJJKWXci92cnq2utmqaV5L7Zjqxw==
+
+"@types/lodash@^4.14.200":
+  version "4.14.200"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.200.tgz#435b6035c7eba9cdf1e039af8212c9e9281e7149"
+  integrity sha512-YI/M/4HRImtNf3pJgbF+W6FrXovqj+T+/HpENLTooK9PnkacBsDpeP3IpHab40CClUfhNmdM2WTNP2sa2dni5Q==
 
 "@types/node@*":
   version "18.16.3"
@@ -2381,6 +2390,11 @@ jsonpath-plus@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/jsonpath-plus/-/jsonpath-plus-5.1.0.tgz#2fc4b2e461950626c98525425a3a3518b85af6c3"
   integrity sha512-890w2Pjtj0iswAxalRlt2kHthi6HKrXEfZcn+ZNZptv7F3rUGIeDuZo+C+h4vXBHLEsVjJrHeCm35nYeZLzSBQ==
+
+jstoxml@^3.2.8:
+  version "3.2.8"
+  resolved "https://registry.yarnpkg.com/jstoxml/-/jstoxml-3.2.8.tgz#62b79943836bf02cfa418d91a3875d90a5064ac6"
+  integrity sha512-U/TYY7dFjfn6bvaix5WHLss4lSsZ0ER1LU6DqrQfCTkhwWADMuc4L5bKPTiXA2YzL58NcS8sRioQRPGR2p5J5g==
 
 kleur@^3.0.3:
   version "3.0.3"

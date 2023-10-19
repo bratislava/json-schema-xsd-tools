@@ -4,7 +4,7 @@ export default `<?xml version="1.0" encoding="utf-8"?>
         xml:lang="en"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         xmlns:fo="http://www.w3.org/1999/XSL/Format"
-        xmlns:z="http://schemas.gov.sk/doc/eform/{eformIdentifier}/{eformVersion}"
+        xmlns:z="http://schemas.gov.sk/form/{eformIdentifier}/{eformVersion}"
         version="1.0"
         xmlns:Xsl="http://www.w3.org/1999/XSL/Transform">
 

@@ -1,6 +1,6 @@
 {
   "name": "@bratislava/json-schema-xsd-tools",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "",
   "main": "dist/json-schema-xsd-tools.js",
   "types": "dist/json-schema-xsd-tools.d.ts",
@@ -57,5 +57,8 @@
     "cheerio": "^1.0.0-rc.12",
     "json-schema-faker": "^0.5.0-rcv.46",
     "lodash": "^4.17.21"
+  },
+  "volta": {
+    "node": "16.20.2"
   }
 }
