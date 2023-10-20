@@ -32,6 +32,16 @@
               "type": "string"
             }
           }
+        },
+        "ziadatelExtra": {
+          "title": "Žiadateľ Extra info",
+          "required": ["extraInfoProp"],
+          "type": ["object", "null"],
+          "properties": {
+            "extraInfoProp": {
+              "type": "string"
+            }
+          }
         }
       }
     },

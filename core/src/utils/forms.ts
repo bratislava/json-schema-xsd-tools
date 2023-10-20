@@ -320,14 +320,20 @@ const buildXsd = (
 
     if (property) {
       const isArray = property.type === 'array'
-      const type = isArray && property.items ? property.items.type : property.type
+      const hasMultipleTypes =
+        isArray && property.items ? Array.isArray(property.items.type) : Array.isArray(property.type)
+      const mixedType = (isArray && property.items ? property.items.type : property.type) as
+        | JsonSchemaType
+        | JsonSchemaType[]
+      const type = (hasMultipleTypes ? mixedType[0] : mixedType) as JsonSchemaType
+      const isNullable = hasMultipleTypes ? mixedType.includes('null') : false
       const format = isArray && property.items ? property.items.format : property.format
       const xsdType = getXsdType(key, property, type, format)
 
       content.push(
         `<xs:element name="${firstCharToUpper(key)}" type="${xsdType}" minOccurs="${isRequired ? 1 : 0}" maxOccurs="${
           isArray ? 'unbounded' : 1
-        }" />`
+        }"${isNullable ? 'nillable="true"' : ''} />`
       )
 
       if (!processed.includes(xsdType)) {

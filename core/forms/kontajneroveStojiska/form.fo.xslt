@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xml:lang="en" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:z="http://schemas.gov.sk/doc/eform/form/0.1" version="1.0" xmlns:Xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet xml:lang="en" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:z="http://schemas.gov.sk/form/form/0.1" version="1.0" xmlns:Xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:template match="/z:E-form">
     <xsl:call-template name="base_eform"/>
@@ -7,7 +7,7 @@
 
   <!-- this is the template which gets called inside the FO structure -->
   <xsl:template name="body">
-    
+
   <xsl:call-template name="base_block_with_title">
             <xsl:with-param name="template_name" select="'ziadatel'"/>
             <xsl:with-param name="title" select="'Žiadateľ'"/>
@@ -53,7 +53,7 @@
     <xsl:param name="values"/>
 
     <xsl:choose>
-      
+
     <xsl:when test="$template = 'ziadatel'">
             <xsl:call-template name="ziadatel">
               <xsl:with-param name="values" select="$values"/>
@@ -192,6 +192,11 @@
     </xsl:variable>
 
     <xsl:value-of select="concat($dd,'.',$mm,'.',$yyyy)"/>
+  </xsl:template>
+
+  <xsl:template name="base_format_time">
+    <xsl:param name="instr"/>
+    <xsl:value-of select="format-time($instr, '[H01]:[m01]')"/>
   </xsl:template>
 
   <xsl:template name="base_format_datetime">
