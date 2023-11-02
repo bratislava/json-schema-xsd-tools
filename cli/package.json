@@ -1,6 +1,6 @@
 {
   "name": "@bratislava/jsxt",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "main": "dist/jsxt.js",
   "types": "dist/jsxt.d.ts",
@@ -48,7 +48,7 @@
     "yarn": "1.22"
   },
   "dependencies": {
-    "@bratislava/json-schema-xsd-tools": "0.4.0",
+    "@bratislava/json-schema-xsd-tools": "0.4.1",
     "@types/lodash": "^4.14.200",
     "chalk": "2.4",
     "cheerio": "^1.0.0-rc.12",
