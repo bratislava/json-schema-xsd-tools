@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { cwd } from 'node:process'
-import { ErrorType, loadAndValidate } from '../../src/utils/validation'
+import { ErrorType, loadAndValidate } from '../../core/validation'
 
 describe('validation', () => {
   const bodyElement = `xs\\:element[name='Body']`

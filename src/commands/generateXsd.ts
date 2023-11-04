@@ -1,4 +1,3 @@
-import { loadAndBuildXsd } from '@bratislava/json-schema-xsd-tools'
 import chalk from 'chalk'
 import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
@@ -6,6 +5,7 @@ import { cwd } from 'node:process'
 import type { Arguments, CommandBuilder } from 'yargs'
 import { fileExists } from '../utils/fsUtils'
 import { BaseOptions, addDefaultOptions } from '../utils/yargsUtils'
+import { loadAndBuildXsd } from '../core/forms'
 
 type Options = BaseOptions & {
   template: string

@@ -1,10 +1,10 @@
-import { loadAndValidate } from '@bratislava/json-schema-xsd-tools'
 import chalk from 'chalk'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { cwd } from 'node:process'
 import type { Arguments, CommandBuilder } from 'yargs'
 import { fileExists } from '../utils/fsUtils'
+import { loadAndValidate } from '../core/validation'
 
 type Options = {
   json: string

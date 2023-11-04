@@ -1,4 +1,3 @@
-import { fakeData, formatUnicorn, loadAndBuildDefaultXslt, loadAndBuildXsd } from '@bratislava/json-schema-xsd-tools'
 import chalk from 'chalk'
 import { exec } from 'child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
@@ -10,6 +9,9 @@ import xmlTemplate from '../templates/template.xml'
 import uiSchema from '../templates/uiSchema.json'
 import { fileExists, folderExists } from '../utils/fsUtils'
 import { BaseOptions, addDefaultOptions } from '../utils/yargsUtils'
+import { loadAndBuildXsd, fakeData } from '../core/forms'
+import { formatUnicorn } from '../core/strings'
+import { loadAndBuildDefaultXslt } from '../core/xslt'
 
 type Options = BaseOptions
 
@@ -84,10 +86,7 @@ const generate = async (jsonSchemaPath: string, identifier: string, version: str
   await writeFile(schemaPath, JSON.stringify(schema))
 
   const xmlTemplatePath = resolve(outPath, 'xmlTemplate.xml')
-  await writeFile(
-    xmlTemplatePath,
-    formatUnicorn(xmlTemplate, { eformIdentifier: identifier, eformVersion: version })
-  )
+  await writeFile(xmlTemplatePath, formatUnicorn(xmlTemplate, { eformIdentifier: identifier, eformVersion: version }))
 
   try {
     const res = await execXslt3(textXsltPath)

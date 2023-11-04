@@ -2,8 +2,8 @@ import { describe, test } from '@jest/globals'
 import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { cwd } from 'node:process'
-import { fakeData, loadAndBuildXsd } from '../../src/utils/forms'
-import { loadAndValidate } from '../../src/utils/validation'
+import { fakeData, loadAndBuildXsd } from '../../core/forms'
+import { loadAndValidate } from '../../core/validation'
 
 describe('generate', () => {
   test('generate xsd', async () => {

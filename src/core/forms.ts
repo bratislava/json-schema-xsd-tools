@@ -1,7 +1,8 @@
 import * as cheerio from 'cheerio'
-import { JSONSchemaFaker as jsf } from 'json-schema-faker'
 import defaultXsdTemplate from '../templates/template.xsd'
 import { firstCharToLower, firstCharToUpper, formatUnicorn } from './strings'
+import { toXML } from 'jstoxml'
+import _ from 'lodash'
 
 type XsdType =
   | 'xs:string'
@@ -426,12 +427,31 @@ export const loadAndBuildXsd = (
  * @param jsonSchema - JSON schema
  * @returns mock data
  */
-export const fakeData = (jsonSchema: JsonSchema) => {
-  jsf.option({ useExamplesValue: true })
+export const fakeData = async (jsonSchema: JsonSchema) => {
+  const { default: jsf } = await import('json-schema-faker')
   jsf.format('file', () => jsf.random.randexp('^[\\w,\\s-]+\\.[A-Za-z]{3}$'))
   jsf.format('ciselnik', () => jsf.random.randexp('[a-zA-Z]+'))
   jsf.format('zip', () => jsf.random.randexp('[0-9]{5}'))
-  jsf.format('phone-number', () => jsf.random.randexp('+421[0-9]{9}'))
-
+  jsf.format('phone-number', () => jsf.random.randexp('\\+421[0-9]{9}'))
   return jsf.generate(jsonSchema)
+}
+
+export const emptyXml = async (jsonSchema: JsonSchema) => {
+  const emptyJson = await fakeData(jsonSchema)
+  // build xml from js data
+  // a recursive function that converts all keys to PascalCase, then transformed and used as <TagNames> in output xml
+  const toPascalCase = (data: any): any => {
+    if (typeof data !== 'object') {
+      return data
+    }
+    if (Array.isArray(data)) {
+      return data.map((item) => toPascalCase(item))
+    }
+    const result: any = {}
+    for (const key in data) {
+      result[_.upperFirst(key)] = toPascalCase(data[key])
+    }
+    return result
+  }
+  return toXML(toPascalCase(emptyJson), { indent: '  ' })
 }

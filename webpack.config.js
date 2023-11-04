@@ -2,7 +2,7 @@ const path = require('path')
 const ESLintPlugin = require('eslint-webpack-plugin')
 
 module.exports = {
-  entry: './src/json-schema-xsd-tools.ts',
+  entry: './src/jsxt.ts',
   devtool: 'inline-source-map',
   module: {
     rules: [

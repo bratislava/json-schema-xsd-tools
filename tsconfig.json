@@ -4,14 +4,13 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["es2021"],
-    "module": "es2022",
+    "module": "Node16",
     "target": "es2021",
-    "allowJs": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
     "exactOptionalPropertyTypes": true,
@@ -22,16 +21,15 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "importsNotUsedAsValues": "error",
     "checkJs": true,
     "declaration": true,
     "declarationMap": true,
-    "plugins": [
-      {
-        "name": "typescript-strict-plugin"
-      }
-    ]
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "docs", "node_modules", "bin"]
 }
