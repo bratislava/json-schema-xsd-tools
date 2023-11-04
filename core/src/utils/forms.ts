@@ -320,6 +320,7 @@ const buildXsd = (
 
     if (property) {
       const isArray = property.type === 'array'
+      // a limited support for JSON Schema multi types - https://json-schema.org/draft/2020-12/json-schema-validation#section-6.1.1 - allowing for "nullable" types. `null` type must be the latter one in the type array pair.
       const hasMultipleTypes =
         isArray && property.items ? Array.isArray(property.items.type) : Array.isArray(property.type)
       const mixedType = (isArray && property.items ? property.items.type : property.type) as
