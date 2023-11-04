@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema elementFormDefault="qualified" xmlns="http://schemas.gov.sk/doc/eform/form/0.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.gov.sk/doc/eform/form/0.1">
+<xs:schema elementFormDefault="qualified" xmlns="http://schemas.gov.sk/form/00603481.dopravneZnacenie.sk/1.9" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.gov.sk/form/00603481.dopravneZnacenie.sk/1.9">
   <xs:element name="E-form">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="Meta" type="E-formMetaType"/>
         <xs:element name="Body" type="E-formBodyType">
-          
         </xs:element>
       </xs:sequence>
     </xs:complexType>
@@ -27,6 +26,12 @@
       <xs:element name="SenderID" type="xs:string" default="mailto:"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="EmailType">
+    <xs:restriction base="xs:string">
+        <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z-￿]{2,}"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="EnumerationType">
     <xs:annotation>

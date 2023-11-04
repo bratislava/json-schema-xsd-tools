@@ -299,10 +299,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bratislava/json-schema-xsd-tools@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@bratislava/json-schema-xsd-tools/-/json-schema-xsd-tools-0.4.0.tgz#f87ce2c36ad7804989cf5ad641eaff7a71c71a1d"
-  integrity sha512-iLB4D3avF2pVnmz+nxwQ/fsG1BaPgIT5/4SDk9cjpTKkacTiGXPIiNnL0hLruLFW3iJAbJKhSg9vzTqWLo/+VA==
+"@bratislava/json-schema-xsd-tools@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@bratislava/json-schema-xsd-tools/-/json-schema-xsd-tools-0.4.1.tgz#40c9bfa5def565ad37b7ee10dbc19fadc78c2b77"
+  integrity sha512-z4fClj94JlkP9071RCDM/yHD1ufJMQyI4ltAmoqoabNe90IA8jEx7TluIAGc2m/WHKwZdLtCqcwPDhysF7cV/g==
   dependencies:
     cheerio "^1.0.0-rc.12"
     json-schema-faker "^0.5.0-rcv.46"

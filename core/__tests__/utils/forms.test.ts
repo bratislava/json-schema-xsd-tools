@@ -47,6 +47,16 @@ describe('generate', () => {
     await writeFile(xsdPath, xsd)
   })
 
+  test('generate xsd (test)', async () => {
+    const xsdPath = resolve(cwd(), 'forms', 'test', 'schema.xsd')
+
+    const jsonSchemaPath = resolve(cwd(), 'forms', 'test', 'schema.json')
+    const jsonSchemaBuffer = await readFile(jsonSchemaPath)
+
+    const xsd = loadAndBuildXsd(JSON.parse(jsonSchemaBuffer.toString()))
+    await writeFile(xsdPath, xsd)
+  })
+
   test('valid xsd (kontajnerove stojiska)', async () => {
     const xsdSchemaPath = resolve(cwd(), 'forms', 'kontajneroveStojiska', 'schema.xsd')
     const xsdSchemaBuffer = await readFile(xsdSchemaPath)

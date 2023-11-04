@@ -320,14 +320,21 @@ const buildXsd = (
 
     if (property) {
       const isArray = property.type === 'array'
-      const type = isArray && property.items ? property.items.type : property.type
+      // a limited support for JSON Schema multi types - https://json-schema.org/draft/2020-12/json-schema-validation#section-6.1.1 - allowing for "nullable" types. `null` type must be the latter one in the type array pair.
+      const hasMultipleTypes =
+        isArray && property.items ? Array.isArray(property.items.type) : Array.isArray(property.type)
+      const mixedType = (isArray && property.items ? property.items.type : property.type) as
+        | JsonSchemaType
+        | JsonSchemaType[]
+      const type = (hasMultipleTypes ? mixedType[0] : mixedType) as JsonSchemaType
+      const isNullable = hasMultipleTypes ? mixedType.includes('null') : false
       const format = isArray && property.items ? property.items.format : property.format
       const xsdType = getXsdType(key, property, type, format)
 
       content.push(
         `<xs:element name="${firstCharToUpper(key)}" type="${xsdType}" minOccurs="${isRequired ? 1 : 0}" maxOccurs="${
           isArray ? 'unbounded' : 1
-        }" />`
+        }"${isNullable ? 'nillable="true"' : ''} />`
       )
 
       if (!processed.includes(xsdType)) {
