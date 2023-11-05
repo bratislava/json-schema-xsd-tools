@@ -1,5 +1,5 @@
 const config = {
-  testPathIgnorePatterns: ['/forms/'],
+  testPathIgnorePatterns: ['/forms/', '/dist/'],
 }
 
 module.exports = config
