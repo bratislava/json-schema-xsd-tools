@@ -2,23 +2,20 @@ name: Validate code
 
 on:
   push:
-    branches: ["master"]
+    branches: ['master']
   pull_request:
-    branches: ["master"]
+    branches: ['master']
 
 jobs:
-  validate-core:
-    name: Validate core
+  validate:
+    name: Validate code
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./core
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: '16'
       - name: yarn
         run: yarn --frozen-lockfile
       - name: Typescript check
@@ -34,42 +31,9 @@ jobs:
           # More about reviewdog reporter level at
           # https://github.com/reviewdog/reviewdog#reporters
           level: warning
-          workdir: core
 
       - name: Typescript strict plugin check
         run: yarn typecheck
 
       - name: Tests
         run: yarn test:ci
-
-  validate-cli:
-    name: Validate cli
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./cli
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "16"
-      - name: yarn
-        run: yarn --frozen-lockfile
-      - name: Typescript check
-        uses: EPMatt/reviewdog-action-tsc@v1
-        with:
-          # Change reviewdog reporter if you need
-          # [github-pr-check,github-check,github-pr-review].
-          # More about reviewdog reporters at
-          # https://github.com/reviewdog/reviewdog#reporters
-          reporter: github-check
-          # Change reporter level if you need
-          # [info,warning,error].
-          # More about reviewdog reporter level at
-          # https://github.com/reviewdog/reviewdog#reporters
-          level: warning
-          workdir: cli
-
-      - name: Typescript strict plugin check
-        run: yarn typecheck
