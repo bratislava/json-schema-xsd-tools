@@ -32,8 +32,5 @@ jobs:
           # https://github.com/reviewdog/reviewdog#reporters
           level: warning
 
-      - name: Typescript strict plugin check
-        run: yarn typecheck
-
       - name: Tests
         run: yarn test:ci

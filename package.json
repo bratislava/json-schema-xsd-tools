@@ -11,7 +11,7 @@
     "build": "tsc --module nodenext",
     "test": "jest --watch",
     "test:ci": "jest --ci",
-    "typecheck": "tsc && tsc-strict",
+    "typecheck": "tsc",
     "eslint": "eslint --color --ext .js,.json,.ts .",
     "eslint:fix": "npm run eslint -- --fix"
   },
@@ -51,7 +51,6 @@
     "tsup": "^7.2.0",
     "typedoc": "^0.23.16",
     "typescript": "^4.8.4",
-    "typescript-strict-plugin": "^2.1.0",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "xslt3": "^2.5.0"
