@@ -170,10 +170,10 @@
     <xsl:value-of select="concat($dd,'.',$mm,'.',$yyyy)"/>
   </xsl:template>
 
-  <xsl:template name="base_format_time">
+  <!-- <xsl:template name="base_format_time">
     <xsl:param name="instr"/>
     <xsl:value-of select="format-time($instr, '[H01]:[m01]')"/>
-  </xsl:template>
+  </xsl:template> -->
 
   <xsl:template name="base_format_datetime">
     <xsl:param name="dateTime"/>

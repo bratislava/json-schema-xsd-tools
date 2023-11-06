@@ -74,8 +74,9 @@ const getJsonSchemaFormat = (type: string | undefined): JsonSchemaFormat => {
   switch (type) {
     case 'xs:date':
       return 'date'
-    case 'xs:time':
-      return 'time'
+    // disabled until we figure out how to make it work with https://github.com/bratislava/sk-bratislava-fop
+    // case 'xs:time':
+    //   return 'time'
     case 'xs:dateTime':
       return 'date-time'
     case 'EmailType':
@@ -258,8 +259,9 @@ const getXsdTypeByFormat = (format: JsonSchemaFormat): XsdType => {
   switch (format) {
     case 'date':
       return 'xs:date'
-    case 'time':
-      return 'xs:time'
+    // disabled until we figure out how to make it work with https://github.com/bratislava/sk-bratislava-fop
+    // case 'time':
+    //   return 'xs:time'
     case 'date-time':
       return 'xs:dateTime'
     case 'email':
