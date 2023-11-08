@@ -243,7 +243,7 @@
       <xs:element name="MestskaCast" type="MestskaCastEnumType" minOccurs="0" maxOccurs="1"/>
       <xs:element name="FaxPreDorucenie" type="TelefonneCisloType" minOccurs="0" maxOccurs="1"/>
       <xs:element name="TelefonPreDorucenie" type="TelefonneCisloType" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="EmailPreDorucenie" type="EMailType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="EmailPreDorucenie" type="EmailType" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -378,7 +378,7 @@
     <xs:sequence>
       <xs:element name="TelefonneCislo" type="TelefonneCisloType" minOccurs="0" maxOccurs="1"/>
       <xs:element name="TelefonneCisloCele" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Email" type="EMailType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Email" type="EmailType" minOccurs="0" maxOccurs="1"/>
       <xs:element name="KontaktnaOsoba" type="KontaktnaOsobaType" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
@@ -440,7 +440,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:simpleType name="EMailType">
+  <xs:simpleType name="EmailType">
     <xs:restriction base="xs:string">
       <xs:pattern
               value="([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,6}|[0-9]{1,3})(\]?)"/>
