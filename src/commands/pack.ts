@@ -9,6 +9,7 @@ import meta from '../templates/meta.xml'
 import mimetype from '../templates/mimetype'
 import posp from '../templates/posp.xml'
 import xmlTemplate from '../templates/template.xml'
+import xmlTemplateTemplate from '../templates/template.xmlTemplate'
 import { fileExists, folderExists } from '../utils/fsUtils'
 import { BaseOptions, addDefaultOptions } from '../utils/yargsUtils'
 import { emptyXml, fakeData, loadAndBuildXsd } from '../core/forms'
@@ -152,13 +153,12 @@ const pack = async (jsonSchemaPath: string, gestor: string, delay: boolean) => {
   const dataJsonPath = resolve(rootPath, 'data.json')
   await writeFile(dataJsonPath, JSON.stringify(dataObj))
 
-  const emptyXmlTemplateWithPrefilledHeader = formatUnicorn(xmlTemplate, {
+  const emptyXmlTemplateWithPrefilledHeader = formatUnicorn(xmlTemplateTemplate, {
     eformTitle: title,
     eformIdentifier: identifier,
     eformVersion: version,
     gestor,
-    zepRequired: '0',
-    body: '',
+    zepRequired: '0'
   })
   const emptyXmlTemplateWithPrefilledHeaderPath = resolve(rootPath, 'xmlTemplate.xml')
   await writeFile(emptyXmlTemplateWithPrefilledHeaderPath, emptyXmlTemplateWithPrefilledHeader)
