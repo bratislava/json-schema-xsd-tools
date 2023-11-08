@@ -30,7 +30,7 @@ export default `<?xml version="1.0" encoding="utf-8"?>
 
   <xs:simpleType name="EmailType">
     <xs:restriction base="xs:string">
-        <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z\u0080-\uFFFF]{2,}"/>
+        <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
     </xs:restriction>
   </xs:simpleType>
 

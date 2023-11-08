@@ -29,7 +29,7 @@
 
   <xs:simpleType name="EmailType">
     <xs:restriction base="xs:string">
-        <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z-￿]{2,}"/>
+        <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"/>
     </xs:restriction>
   </xs:simpleType>
 
