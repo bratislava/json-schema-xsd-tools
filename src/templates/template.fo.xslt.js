@@ -61,6 +61,11 @@ export default `<?xml version="1.0" encoding="utf-8"?>
 
           <xsl:call-template name="body" />
 
+          <fo:block font-size="12pt" text-align="left" margin-top="30px" margin-left="10px"
+            margin-right="10px">
+            Uložením a/alebo odoslaním Žiadosti výslovne vyhlasujem, že som sa oboznámil s podmienkami spracúvania osobných údajov Hlavného mesta ako prevádzkovateľa osobných údajov a beriem na vedomie, že ich spracúvanie je nevyhnutné na splnenie zákonných povinností Hlavného mesta v súvislosti s vybavením tejto žiadosti.
+          </fo:block>
+
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
