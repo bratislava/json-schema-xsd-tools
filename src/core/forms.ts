@@ -43,6 +43,8 @@ export interface JsonSchema {
 export interface JsonSchemaItems {
   type: JsonSchemaType
   format?: JsonSchemaFormat
+  properties?: JsonSchemaProperties
+  required?: string[]
 }
 
 export interface JsonSchemaProperties {
@@ -276,7 +278,7 @@ const getXsdTypeByFormat = (format: JsonSchemaFormat): XsdType => {
 }
 
 const getXsdType = (
-  key: string,
+  name: string,
   property: JsonSchema,
   type: JsonSchemaType,
   format: JsonSchemaFormat
@@ -284,12 +286,12 @@ const getXsdType = (
   let xsdType
   if (type === 'string') {
     if (property.pattern || (property.enum && property.enum.length) || (property.oneOf && property.oneOf.length)) {
-      xsdType = firstCharToUpper(key) + 'Type'
+      xsdType = `${name}Type`
     } else {
       xsdType = getXsdTypeByFormat(format)
     }
   } else if (type === 'object') {
-    xsdType = firstCharToUpper(key) + 'Type'
+    xsdType = `${name}Type`
   } else {
     xsdType = getXsdTypeByJsonSchemaType(type)
   }
@@ -312,13 +314,16 @@ const buildXsd = (
   name: string,
   required: string[] | undefined,
   properties: JsonSchemaProperties,
-  processed: string[]
+  processed: string[],
+  parentXsdNames?: string[]
 ) => {
   const content: string[] = []
   content.push(`<xs:complexType name=${name}><xs:sequence>`)
 
   Object.keys(properties).forEach((key) => {
     const property = properties?.[key]
+    const composedParentXsdNames = parentXsdNames ? parentXsdNames.concat(key) : [key]
+    const xsdElementName = composedParentXsdNames.map(firstCharToUpper).join('')
     const isRequired = required && required.includes(key)
 
     if (property) {
@@ -332,7 +337,7 @@ const buildXsd = (
       const type = (hasMultipleTypes ? mixedType[0] : mixedType) as JsonSchemaType
       const isNullable = hasMultipleTypes ? mixedType.includes('null') : false
       const format = isArray && property.items ? property.items.format : property.format
-      const xsdType = getXsdType(key, property, type, format)
+      const xsdType = getXsdType(xsdElementName, property, type, format)
 
       content.push(
         `<xs:element name="${firstCharToUpper(key)}" type="${xsdType}" minOccurs="${isRequired ? 1 : 0}" maxOccurs="${
@@ -344,8 +349,26 @@ const buildXsd = (
         processed.push(xsdType)
 
         if (type === 'object') {
-          const mergedSchema = mergeJsonSchema(property)
-          buildXsd(container, xsdType, mergedSchema.required, mergedSchema.properties, processed)
+          if (isArray && property.items?.properties) {
+            buildXsd(
+              container,
+              xsdType,
+              property.items.required,
+              property.items.properties,
+              processed,
+              composedParentXsdNames
+            )
+          } else {
+            const mergedSchema = mergeJsonSchema(property)
+            buildXsd(
+              container,
+              xsdType,
+              mergedSchema.required,
+              mergedSchema.properties,
+              processed,
+              composedParentXsdNames
+            )
+          }
         } else if (type === 'string') {
           if (property.enum && property.enum.length > 0) {
             container.append(buildEnumSimpleType(xsdType, property.enum))
