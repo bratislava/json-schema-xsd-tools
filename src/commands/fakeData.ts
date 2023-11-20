@@ -65,7 +65,7 @@ const generateFakeData = async (
 
   const jsonSchemaBuffer = await readFile(jsonSchemaPath)
   const parsedSchema = JSON.parse(jsonSchemaBuffer.toString())
-  const data = fakeData(parsedSchema)
+  const data = await fakeData(parsedSchema)
 
   await writeFile(dataPath, JSON.stringify(data))
 
