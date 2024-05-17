@@ -47,14 +47,28 @@ const buildXslt = (
       if (childProperty.type === 'array' && childProperty.items) {
         const isAttachment =
           childProperty.items && childProperty.items.type === 'string' && childProperty.items.format === 'file'
-        template.push(
-          `<xsl:for-each select="$values/z:${el}">
-              <xsl:call-template name="base_labeled_field">
-                <xsl:with-param name="text" select="'${childProperty.title || childKey}'" />
-                <xsl:with-param name="node" select="${isAttachment ? 'z:Nazov' : '.'}" />
-              </xsl:call-template>
-            </xsl:for-each>`
-        )
+        if (childProperty.items.type === 'object' && childProperty.items.properties) {
+          const childTemplateName = `${templateName}__${toSnakeCase(childKey)}`
+          template.push(
+            `<xsl:for-each select="$values/z:${el}">
+                <xsl:call-template name="base_labeled_field">
+                  <xsl:with-param name="text" select="'${childProperty.title || childKey}'" />
+                  <xsl:with-param name="node" select="${childTemplateName}" />
+                </xsl:call-template>
+              </xsl:for-each>`
+          )
+
+          buildXslt(rootEl, childTemplateName, childProperty.items?.properties)
+        } else {
+          template.push(
+            `<xsl:for-each select="$values/z:${el}">
+                <xsl:call-template name="base_labeled_field">
+                  <xsl:with-param name="text" select="'${childProperty.title || childKey}'" />
+                  <xsl:with-param name="node" select="${isAttachment ? 'z:Nazov' : '.'}" />
+                </xsl:call-template>
+              </xsl:for-each>`
+          )
+        }
       } else if (childProperty.type === 'object') {
         // when the template is created (in recursive call of buildXslt below), we must ensure it is unique
         // this allows us to have a subobject with same name in two different parents
