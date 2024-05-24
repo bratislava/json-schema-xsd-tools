@@ -30,6 +30,8 @@ export interface JsonSchema {
   description?: string | undefined
   properties?: JsonSchemaProperties | undefined
   items?: JsonSchemaItems | undefined
+  minItems?: number | undefined
+  maxItems?: number | undefined
   required?: string[] | undefined
   pattern?: string | undefined
   enum?: string[] | undefined
@@ -211,12 +213,17 @@ export const buildJsonSchema = ($: cheerio.CheerioAPI, path: string): JsonSchema
         property.items = { type: property.type, format: property.format }
         property.type = 'array'
         property.format = undefined
+      } else if (maxOccurs && /^\d+$/.test(maxOccurs)) {
+        property.maxItems = Number.parseInt(maxOccurs)
       }
       properties[key] = property
 
       const minOccurs = $(this).attr('minOccurs')
-      if (!minOccurs || minOccurs === '1') {
-        required.push(key)
+      if (minOccurs && /^\d+$/.test(minOccurs)) {
+        if (minOccurs !== '0') {
+          required.push(key)
+        }
+        property.minItems = Number.parseInt(minOccurs)
       }
     })
   }
@@ -338,11 +345,15 @@ const buildXsd = (
       const isNullable = hasMultipleTypes ? mixedType.includes('null') : false
       const format = isArray && property.items ? property.items.format : property.format
       const xsdType = getXsdType(xsdElementName, property, type, format)
+      const minOccurs = property.minItems ?? (isRequired ? 1 : 0)
+      const maxOccurs = property.maxItems ?? (isArray ? 'unbounded' : 1)
 
       content.push(
-        `<xs:element name="${firstCharToUpper(key)}" type="${xsdType}" minOccurs="${isRequired ? 1 : 0}" maxOccurs="${
-          isArray ? 'unbounded' : 1
-        }"${isNullable ? 'nillable="true"' : ''} />`
+        `<xs:element name="${firstCharToUpper(
+          key
+        )}" type="${xsdType}" minOccurs="${minOccurs}" maxOccurs="${maxOccurs}"${
+          isNullable ? 'nillable="true"' : ''
+        } />`
       )
 
       if (!processed.includes(xsdType)) {
