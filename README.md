@@ -1,5 +1,7 @@
 # json-schema-xsd-tools
 
+> 🗄️ archived project - instead of this, we're generating both json-schemas and xsd files from a single source using the code in city account monorepo [forms-shared](https://github.com/bratislava/konto.bratislava.sk/tree/master/forms-shared) section
+
 Tools capable of using JSON Schema to generate and validate XSD.
 
 JSON Schema is a vocabulary that allows to annotate and validate JSON documents.
